@@ -1,0 +1,141 @@
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+
+import { ThemedText } from "@/components/themed-text";
+import { TUser } from "@/types";
+import { UserRole } from "@/types/users";
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
+// import { postLogout } from "../Service/authSvc";
+// import { initializeSocket } from "../Service/socketSvc";
+
+export interface AuthContextValue {
+  token?: string;
+  currUser?: TUser;
+  setCurrUser: Dispatch<SetStateAction<TUser | undefined>>;
+  setToken: Dispatch<SetStateAction<string | undefined>>;
+  isInitializing: boolean;
+  logout: () => void;
+  isLoggingOut: boolean;
+  removeInformationsForLogout: () => void;
+  userRole?: UserRole;
+  setUserRole: Dispatch<SetStateAction<UserRole | undefined>>;
+}
+
+export const AuthContext = createContext<AuthContextValue | null>(null);
+
+export interface AuthProviderProps {
+  children: ReactNode;
+}
+
+const AuthProvider = ({ children }: AuthProviderProps) => {
+  const router = useRouter();
+  const [userRole, setUserRole] = useState<UserRole>();
+  const [token, setToken] = useState<string>();
+  const [currUser, setCurrUser] = useState<TUser>();
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const logout = useCallback(async () => {
+    try {
+      setIsLoggingOut(true);
+      // const res = await postLogout({ sessionId: currUser?.sessionId });
+      // console.log("postLogout res", res);
+      // if (res?.message) {
+      await removeInformationsForLogout();
+      // }
+    } catch (error) {
+      console.log("error", await error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }, []);
+
+  const getUserAuthendication = useCallback(async () => {
+    try {
+      setIsInitializing(true);
+      const accessToken = await AsyncStorage.getItem("accessToken");
+      const currUserString = await AsyncStorage.getItem("currUser");
+      const userRole = await AsyncStorage.getItem("userRole");
+      const currUser = currUserString && (JSON.parse(currUserString) as TUser);
+      const is2FAuthVerified = await AsyncStorage.getItem("is2FAuthVerified");
+
+      if (is2FAuthVerified) {
+        logout();
+        setIsInitializing(false);
+        return;
+      }
+      if (accessToken) setToken(accessToken);
+      if (currUser) setCurrUser(currUser);
+      if (userRole) {
+        setUserRole(userRole as UserRole);
+      }
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setIsInitializing(false);
+    }
+  }, [logout]);
+
+  const removeInformationsForLogout = async () => {
+    setToken(undefined);
+    setCurrUser(undefined);
+    setUserRole(undefined);
+    await AsyncStorage.removeItem("accessToken");
+    await AsyncStorage.removeItem("currUser");
+    await AsyncStorage.removeItem("is2FAuthVerified");
+    // await GoogleSignin?.signOut();
+    // await GoogleSignin.revokeAccess();
+  };
+
+  useEffect(() => {
+    getUserAuthendication();
+  }, [getUserAuthendication]);
+
+  // useEffect(() => {
+  //   if (hasToken) {
+  //     initializeSocket(token);
+  //   }
+  // }, [hasToken]);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        token,
+        currUser,
+        setCurrUser,
+        setToken,
+        isInitializing,
+        logout,
+        isLoggingOut,
+        removeInformationsForLogout,
+        userRole,
+        setUserRole,
+      }}
+    >
+      {isInitializing ? <ThemedText>Loading...</ThemedText> : children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthProvider;
+
+export const useAuth = () => {
+  const auth = useContext(AuthContext);
+
+  if (!auth) {
+    throw new Error("Cannot use useAuth outside AuthContextProvider");
+  }
+  return auth;
+};
