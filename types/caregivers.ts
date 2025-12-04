@@ -36,6 +36,8 @@ export interface TCaregiver {
   petTypes?: TPetType[];
   careGiverPreferences?: TCaregiverPreference[];
   careGiverSkills?: TCaregiverSkill[];
+  homeTypes?: THomeType[];
+  transportType?: TTransportType[];
 }
 
 export interface TCaregiverPreference {
@@ -52,4 +54,50 @@ export interface TCaregiverSkill {
   skill: string;
   image: string;
   order: number;
+}
+
+export interface TCaregiverProfileCompletion {
+  percentage: number;
+  isProfileImageAdded: boolean;
+  isEmergencyDetailsAdded: boolean;
+  isCaregiverPreferencesAdded: boolean;
+  isCaregiverSkillsAdded: boolean;
+  isGalleryAdded: boolean;
+  isPriceAdded: boolean;
+  isBackgroundVerifyStatus: boolean;
+  isAddress: boolean;
+}
+
+export interface THomeType {
+  deletedAt: Date;
+  id: number;
+  type: string;
+  display: string;
+  order: number;
+}
+
+export interface TDocument {
+  deletedAt: Date;
+  id: number;
+  type: string;
+  display: string;
+  image: string;
+  order: number;
+}
+
+export interface TTransportType {
+  deletedAt: Date;
+  id: number;
+  type: string;
+  display: string;
+}
+
+export interface TCaregiverGallery {
+  id: string;
+  url: string;
+  caregiverId: string;
+  updatedAt: Date;
+  createdAt: Date;
+  deletedId: Date | null;
+  isDeleted: boolean;
 }

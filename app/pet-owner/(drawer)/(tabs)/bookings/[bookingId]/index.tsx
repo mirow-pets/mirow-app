@@ -37,7 +37,7 @@ export default function BookingScreen() {
   };
 
   return (
-    <ScrollView nestedScrollEnabled={true}>
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
         <View style={styles.banner}>
           <PetAvatar src={pet.profileImage} />

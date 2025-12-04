@@ -38,7 +38,7 @@ const request = async (
 ) => {
   const url = `${ENV.API_BASE_URL}${path}`;
   const options = await requestOptions(method, body, contentType);
-  console.log("Requesting to:", method, url, options.headers);
+  console.log("Requesting to:", method, url, options.headers, body);
 
   const result = await fetch(url, options);
 
@@ -49,7 +49,7 @@ const request = async (
     return result.json();
   } else {
     const data = await result.json();
-    console.log("Error body:", data.error);
+    console.log(`Error body on ${url}:`, data.error);
     if (data.error) throw data.error;
     throw data;
   }
@@ -57,14 +57,14 @@ const request = async (
 
 export const Get = (endpoint: string) => request(endpoint, "GET");
 
-export const Post = (endpoint: string, body: unknown, contentType?: string) =>
+export const Post = (endpoint: string, body?: unknown, contentType?: string) =>
   request(endpoint, "POST", body, contentType);
 
-export const Put = (endpoint: string, body: unknown) =>
+export const Put = (endpoint: string, body?: unknown) =>
   request(endpoint, "PUT", body);
 
-export const Patch = (endpoint: string, body: unknown) =>
+export const Patch = (endpoint: string, body?: unknown) =>
   request(endpoint, "PATCH", body);
 
-export const Delete = (endpoint: string, body: unknown) =>
+export const Delete = (endpoint: string, body?: unknown) =>
   request(endpoint, "DELETE", body);

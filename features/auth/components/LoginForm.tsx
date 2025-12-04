@@ -10,6 +10,7 @@ import Toast from "react-native-toast-message";
 
 import { Button } from "@/components/button/Button";
 import { Input } from "@/components/form/Input";
+import { PasswordInput } from "@/components/form/PasswordInput";
 import { TLogin, loginSchema } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { Post } from "@/services/http-service";
@@ -70,7 +71,7 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
     <FormProvider {...form}>
       <View style={styles.container}>
         <Input name="username" placeholder="Username" autoCapitalize="none" />
-        <Input name="password" placeholder="Password" secureTextEntry />
+        <PasswordInput name="password" placeholder="Password" />
         <Button
           title="Login"
           onPress={form.handleSubmit(submit)}

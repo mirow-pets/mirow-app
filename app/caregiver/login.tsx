@@ -31,8 +31,9 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
       }
+      showSwitchRole
     >
-      <LoginForm path="/users/login" redirect="/caregiver" />
+      <LoginForm path="/caregivers/login" redirect="/caregiver" />
     </AuthScreenLayout>
   );
 }

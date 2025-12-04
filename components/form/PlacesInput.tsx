@@ -4,7 +4,7 @@ import { StyleSheet, TextInputProps, View } from "react-native";
 import { Controller, useFormContext, useFormState } from "react-hook-form";
 
 import { ThemedText } from "@/components/themed-text";
-import { whiteColor } from "@/constants/theme";
+import { redColor, whiteColor } from "@/constants/theme";
 
 import { PlaceAutoComplete } from "./PlaceAutoComplete";
 
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   errorText: {
-    color: "red",
+    color: redColor,
     fontSize: 12,
     height: 16,
   },

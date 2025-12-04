@@ -26,7 +26,7 @@ export default function MyBookingsScreen() {
     return <ThemedText style={{ marginBottom: 8 }}>No booking yet.</ThemedText>;
 
   return (
-    <ScrollView nestedScrollEnabled>
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <ThemedView style={styles.container}>
         <FlatList
           scrollEnabled={false}

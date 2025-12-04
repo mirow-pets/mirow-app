@@ -17,7 +17,11 @@ export const SignUpStepTwo = ({ onNext, onPrev }: SignUpStepTwoProps) => {
     <FormStepsLayout {...{ onNext, onPrev }}>
       <Input name="address" placeholder="Address" />
       <View
-        style={{ backgroundColor: primaryColor, padding: 16, borderRadius: 6 }}
+        style={{
+          backgroundColor: primaryColor,
+          padding: 16,
+          borderRadius: 6,
+        }}
       >
         <Text>
           We are currently provide services only in the state of Florida, US. We

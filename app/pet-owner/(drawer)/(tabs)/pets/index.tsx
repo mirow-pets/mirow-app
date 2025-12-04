@@ -27,7 +27,7 @@ export default function PetsScreen() {
   };
 
   return (
-    <ScrollView nestedScrollEnabled>
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <ThemedView style={styles.container}>
         <Button onPress={handleAdd} title="Add Pet" size="sm" />
         {isLoadingPets ? (

@@ -9,6 +9,10 @@ export const tertiary = "#8c222c";
 export const whiteColor = "#ffffff";
 export const blackColor = "#000000";
 export const grayColor = "#808080";
+export const lightGrayColor = "#D3D3D3";
+export const redColor = "#ff0000";
+export const blueColor = "#0000ff";
+export const greenColor = "#00ff00";
 
 export const Colors = {
   light: {

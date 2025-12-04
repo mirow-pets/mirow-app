@@ -7,6 +7,7 @@ import Toast from "react-native-toast-message";
 import { TAddBooking, TCancelBooking } from "@/features/bookings/validations";
 import { Get, Patch, Post } from "@/services/http-service";
 import { TBooking } from "@/types";
+import { UserRole } from "@/types/users";
 
 import { useAuth } from "./use-auth";
 import { useModal } from "./use-modal";
@@ -21,6 +22,8 @@ export interface BookingContextValues {
   getBooking: (_bookingId: string) => void;
   booking: TBooking;
   isLoadingBooking: boolean;
+  completeBooking: (_bookingId: TBooking["id"]) => void;
+  isCompletingBooking: boolean;
 }
 
 export const BookingContext = createContext<BookingContextValues | null>(null);
@@ -31,9 +34,10 @@ export interface BookingProviderProps {
 
 const BookingProvider = ({ children }: BookingProviderProps) => {
   const { setOpenId } = useModal();
-  const { currUser } = useAuth();
+  const { currUser, userRole } = useAuth();
   const router = useRouter();
   const [bookingId, setBookingId] = useState<TBooking["id"]>();
+  const isPetOwner = userRole === UserRole.PetOwner;
 
   const onError = (err: Error) => {
     console.log(err);
@@ -49,7 +53,8 @@ const BookingProvider = ({ children }: BookingProviderProps) => {
     refetch: refetchBookings,
   } = useQuery<TBooking[]>({
     queryKey: ["bookings"],
-    queryFn: () => Get("/users/bookings"),
+    queryFn: () =>
+      Get(isPetOwner ? "/users/bookings" : "/care-givers/bookings"),
     enabled: !!currUser,
   });
 
@@ -106,9 +111,31 @@ const BookingProvider = ({ children }: BookingProviderProps) => {
     onError,
   });
 
+  const { mutate: complete, isPending: isCompletingBooking } = useMutation<
+    TBooking,
+    Error,
+    TBooking["id"]
+  >({
+    mutationFn: (bookingId: TBooking["id"]) =>
+      Patch(`/care-givers/bookings/${bookingId}/complete`),
+    onSuccess: async () => {
+      await refetchBookings();
+      await refetchBooking();
+      setOpenId("");
+
+      Toast.show({
+        type: "success",
+        text1: "Booking cancelled successfully!",
+      });
+    },
+    onError,
+  });
+
   const addBooking = (input: TAddBooking) => add(input);
 
   const cancelBooking = (input: TCancelBooking) => cancel(input);
+
+  const completeBooking = (bookingId: TBooking["id"]) => complete(bookingId);
 
   const getBooking = (bookingId: string) => {
     setBookingId(bookingId);
@@ -126,6 +153,8 @@ const BookingProvider = ({ children }: BookingProviderProps) => {
         getBooking,
         booking,
         isLoadingBooking,
+        completeBooking,
+        isCompletingBooking,
       }}
     >
       {children}

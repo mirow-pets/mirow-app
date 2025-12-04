@@ -7,7 +7,7 @@ import SelectDropdown from "react-native-select-dropdown";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { whiteColor } from "@/constants/theme";
+import { redColor, whiteColor } from "@/constants/theme";
 
 interface DropdownInputProps {
   label?: string;
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   errorText: {
-    color: "red",
+    color: redColor,
     fontSize: 12,
     height: 16,
   },

@@ -36,7 +36,7 @@ export interface PetContextValues {
   isDeletingPet: boolean;
   pet: TPet;
   isLoadingPet: boolean;
-  typeOptions: Option[];
+  petTypeOptions: Option[];
   genderOptions: Option[];
   weightOptions: Option[];
   spayedOrNeuteredOptions: Option[];
@@ -61,17 +61,12 @@ const PetProvider = ({ children }: PetProviderProps) => {
     });
   };
 
-  const {
-    data: petFormFields = {
-      petTypes: [],
-      petWeights: [],
-    },
-    isLoading: isLoadingPetFormFields,
-  } = useQuery<TPetFormFields>({
-    queryKey: ["pet-fields"],
-    queryFn: () => Get("/fields/users/pets"),
-    enabled: !!currUser,
-  });
+  const { data: petFormFields, isLoading: isLoadingPetFormFields } =
+    useQuery<TPetFormFields>({
+      queryKey: ["pet-fields"],
+      queryFn: () => Get("/fields/users/pets"),
+      enabled: !!currUser,
+    });
 
   const {
     data: pets = [],
@@ -129,7 +124,7 @@ const PetProvider = ({ children }: PetProviderProps) => {
   });
 
   const { mutate: del, isPending: isDeletingPet } = useMutation({
-    mutationFn: (petId: TPet["id"]) => Delete(`/users/pets/${petId}`, {}),
+    mutationFn: (petId: TPet["id"]) => Delete(`/users/pets/${petId}`),
     onSuccess: () => {
       refetchPets();
       router.replace("/pet-owner/pets");
@@ -137,10 +132,11 @@ const PetProvider = ({ children }: PetProviderProps) => {
     onError,
   });
 
-  const typeOptions = petFormFields.petTypes.map(({ display, id }) => ({
-    label: display,
-    value: id,
-  }));
+  const petTypeOptions =
+    petFormFields?.petTypes?.map(({ display, id }) => ({
+      label: display,
+      value: id,
+    })) ?? [];
 
   const genderOptions = [
     {
@@ -157,12 +153,11 @@ const PetProvider = ({ children }: PetProviderProps) => {
     },
   ];
 
-  const weightOptions = petFormFields.petWeights.map(
-    ({ weightType, weightRange, id }) => ({
+  const weightOptions =
+    petFormFields?.petWeights?.map(({ weightType, weightRange, id }) => ({
       label: `${weightType} (${weightRange})`,
       value: id,
-    })
-  );
+    })) ?? [];
 
   const spayedOrNeuteredOptions = [
     {
@@ -189,7 +184,7 @@ const PetProvider = ({ children }: PetProviderProps) => {
     setPetId(petId);
   };
   const getPetType = (petTypeId: number) =>
-    petFormFields.petTypes.find(({ id }) => id === petTypeId);
+    petFormFields?.petTypes.find(({ id }) => id === petTypeId);
 
   pet = pet && {
     ...pet,
@@ -203,7 +198,7 @@ const PetProvider = ({ children }: PetProviderProps) => {
   return (
     <PetContext.Provider
       value={{
-        typeOptions,
+        petTypeOptions,
         genderOptions,
         weightOptions,
         spayedOrNeuteredOptions,

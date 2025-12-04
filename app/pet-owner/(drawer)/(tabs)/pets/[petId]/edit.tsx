@@ -19,7 +19,7 @@ export default function EditPetScreen() {
   if (!pet) return <Text>Pet Not Found</Text>;
 
   return (
-    <ScrollView nestedScrollEnabled={true}>
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <EditPetForm defaultValues={{ petId, petVaccinations: [], ...pet }} />
     </ScrollView>
   );

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, type TextProps } from "react-native";
 
+import { redColor } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 export type ThemedTextProps = TextProps & {
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
   },
   error: {
-    color: "red",
+    color: redColor,
     fontSize: 12,
     height: 16,
   },

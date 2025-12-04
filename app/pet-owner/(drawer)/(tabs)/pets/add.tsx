@@ -4,7 +4,7 @@ import { AddPetForm } from "@/features/pets/components/AddPetForm";
 
 export default function AddPetScreen() {
   return (
-    <ScrollView nestedScrollEnabled={true}>
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <AddPetForm />
     </ScrollView>
   );

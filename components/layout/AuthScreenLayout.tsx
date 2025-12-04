@@ -1,11 +1,5 @@
 import { ReactNode } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image, ImageBackground, ImageSource } from "expo-image";
@@ -48,41 +42,39 @@ export default function AuthScreenLayout({
       contentFit="cover"
     >
       <View style={styles.container}>
-        <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
-          {showSwitchRole && (
-            <TouchableOpacity
-              onPress={handleSwitchRole}
-              style={{ position: "absolute", top: 32 }}
-            >
-              <Text>Switch role</Text>
-            </TouchableOpacity>
-          )}
-          <View style={styles.topSection}>
-            <Image
-              source={require("@/assets/images/mirow-text-logo.png")}
-              style={{ width: 250, height: 80, objectFit: "fill" }}
-            />
-            <Image
-              source={image}
-              style={{ width: 250, height: 300, objectFit: "fill" }}
-            />
-          </View>
-          <View style={styles.bottomSection}>
-            <ThemedText type="title" style={styles.title}>
-              {title}
+        {showSwitchRole && (
+          <TouchableOpacity
+            onPress={handleSwitchRole}
+            style={{ position: "absolute", top: 32 }}
+          >
+            <Text>Switch role</Text>
+          </TouchableOpacity>
+        )}
+        <View style={styles.topSection}>
+          <Image
+            source={require("@/assets/images/mirow-text-logo.png")}
+            style={{ width: 250, height: 80, objectFit: "fill" }}
+          />
+          <Image
+            source={image}
+            style={{ width: 250, height: 300, objectFit: "fill" }}
+          />
+        </View>
+        <View style={styles.bottomSection}>
+          <ThemedText type="title" style={styles.title}>
+            {title}
+          </ThemedText>
+          <View style={{ marginVertical: 4 }} />
+          {typeof subTitle === "string" ? (
+            <ThemedText type="subtitle" style={styles.subTitle}>
+              {subTitle}
             </ThemedText>
-            <View style={{ marginVertical: 4 }} />
-            {typeof subTitle === "string" ? (
-              <ThemedText type="subtitle" style={styles.subTitle}>
-                {subTitle}
-              </ThemedText>
-            ) : (
-              subTitle
-            )}
-            <View style={{ marginVertical: 4 }} />
-            <View style={{ width: "100%" }}>{children}</View>
-          </View>
-        </ScrollView>
+          ) : (
+            subTitle
+          )}
+          <View style={{ marginVertical: 4 }} />
+          <View style={{ width: "100%" }}>{children}</View>
+        </View>
       </View>
     </ImageBackground>
   );

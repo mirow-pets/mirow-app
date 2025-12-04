@@ -2,6 +2,7 @@ import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
 import { useRouter } from "expo-router";
+import { ScrollView } from "react-native-gesture-handler";
 
 import AuthScreenLayout from "@/components/layout/AuthScreenLayout";
 import { ThemedText } from "@/components/themed-text";
@@ -16,23 +17,26 @@ export default function SignUpScreen() {
   };
 
   return (
-    <AuthScreenLayout
-      image={require("@/assets/images/react-logo.png")}
-      title="PET CAREGIVER"
-      subTitle={
-        <View style={{ flexDirection: "row" }}>
-          <ThemedText type="subtitle" style={{ color: whiteColor }}>
-            Already a member?{" "}
-          </ThemedText>
-          <TouchableOpacity onPress={handleSignIn}>
-            <ThemedText type="subtitle" style={{ color: secondaryColor }}>
-              Sign in
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+      <AuthScreenLayout
+        image={require("@/assets/images/react-logo.png")}
+        title="PET CAREGIVER"
+        subTitle={
+          <View style={{ flexDirection: "row" }}>
+            <ThemedText type="subtitle" style={{ color: whiteColor }}>
+              Already a member?{" "}
             </ThemedText>
-          </TouchableOpacity>
-        </View>
-      }
-    >
-      <SignUpForm path="/users/signup" redirect="/caregiver" />
-    </AuthScreenLayout>
+            <TouchableOpacity onPress={handleSignIn}>
+              <ThemedText type="subtitle" style={{ color: secondaryColor }}>
+                Sign in
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        }
+        showSwitchRole
+      >
+        <SignUpForm path="/caregivers/signup" redirect="/caregiver" />
+      </AuthScreenLayout>
+    </ScrollView>
   );
 }

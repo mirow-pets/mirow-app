@@ -36,7 +36,7 @@ export default function PetScreen() {
   };
 
   return (
-    <ScrollView nestedScrollEnabled={true}>
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
         <View style={styles.banner}>
           <PetAvatar src={pet.profileImage} />

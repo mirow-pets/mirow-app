@@ -28,7 +28,7 @@ export default function CaregiverScreen() {
   if (!caregiver) return <Text>Caregiver Not Found</Text>;
 
   return (
-    <ScrollView nestedScrollEnabled={true}>
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
         <View style={styles.banner}>
           <PetAvatar src={caregiver.users.profileImage} />

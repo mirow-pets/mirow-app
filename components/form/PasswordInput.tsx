@@ -13,7 +13,7 @@ import { Controller, useFormContext, useFormState } from "react-hook-form";
 // e.g., using Expo: expo install @expo/vector-icons
 
 import { ThemedText } from "@/components/themed-text";
-import { whiteColor } from "@/constants/theme";
+import { redColor, whiteColor } from "@/constants/theme";
 
 interface PasswordInputProps extends Omit<TextInputProps, "secureTextEntry"> {
   label?: string;
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   errorText: {
-    color: "red",
+    color: redColor,
     fontSize: 12,
     height: 16,
   },

@@ -14,10 +14,8 @@ import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
 import AuthProvider, { useAuth } from "@/hooks/use-auth";
-import BookingProvider from "@/hooks/use-booking";
-import CaregiverProvider from "@/hooks/use-caregiver";
 import ModalProvider from "@/hooks/use-modal";
-import PetProvider from "@/hooks/use-pet";
+import ProfileProvider from "@/hooks/use-profile";
 import { UserRole } from "@/types/users";
 
 const queryClient = new QueryClient();
@@ -27,14 +25,10 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <ModalProvider>
         <AuthProvider>
-          <PetProvider>
-            <CaregiverProvider>
-              <BookingProvider>
-                <RootLayoutNav />
-                <StatusBar style="auto" />
-              </BookingProvider>
-            </CaregiverProvider>
-          </PetProvider>
+          <ProfileProvider>
+            <RootLayoutNav />
+            <StatusBar style="auto" />
+          </ProfileProvider>
         </AuthProvider>
       </ModalProvider>
     </QueryClientProvider>

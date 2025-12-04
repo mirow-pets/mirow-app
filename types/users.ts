@@ -11,4 +11,11 @@ export interface TUser {
   isEnableTwoStepAuthentication: boolean;
   role: UserRole;
   profileImage: string;
+  email: string;
+  eFirstName: string;
+  eLastName: string;
+  ePhone: string;
+  relationshipName: string;
+  phone: string;
+  bioDescription?: string;
 }

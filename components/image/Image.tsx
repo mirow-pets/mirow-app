@@ -5,20 +5,18 @@ import {
   ImageProps as BaseImageProps,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
-import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
-import * as ImagePicker from "expo-image-picker";
+import * as BaseImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
 
-import { Modal } from "@/components/modal/Modal";
-import { ThemedView } from "@/components/themed-view";
-import { useModal } from "@/hooks/use-modal";
+import { primaryColor } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Post } from "@/services/http-service";
+
+import { ImagePicker } from "./ImagePicker";
 
 export interface ImageProps extends BaseImageProps {
   isEditable?: boolean;
@@ -35,24 +33,38 @@ export const Image = ({
   const primaryColor = useThemeColor({}, "primary");
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<string | null>(null);
-  const { setOpenId } = useModal();
 
   const imageComponent = (
-    <View>
-      {isLoading ? (
-        <View style={[styles.loaderStyle, style]}>
-          <ActivityIndicator size={20} color={primaryColor} />
-          <Text style={styles.textStyle}>Loading..</Text>
-        </View>
-      ) : (
+    <View style={styles.container}>
+      {source ? (
         <BaseImage
           source={image ? { uri: image } : source}
-          style={style}
+          style={[styles.image, style]}
           onLoad={() => setIsLoading(false)}
           onLoadStart={() => setIsLoading(true)}
           onLoadEnd={() => setIsLoading(false)}
           {...rest}
         />
+      ) : (
+        <View style={[styles.image, style]}>
+          <View
+            style={{
+              backgroundColor: "#aaaaaa",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              width: "100%",
+            }}
+          >
+            <Feather name="camera" size={32} color="black" />
+          </View>
+        </View>
+      )}
+      {isLoading && (
+        <View style={[styles.loaderStyle, style]}>
+          <ActivityIndicator size={20} color={primaryColor} />
+          <Text style={styles.textStyle}>Loading..</Text>
+        </View>
       )}
       {isEditable && (
         <Feather
@@ -67,9 +79,8 @@ export const Image = ({
 
   if (!isEditable) return imageComponent;
 
-  const handleProfileFromDevice = async (
-    image: ImagePicker.ImagePickerAsset
-  ) => {
+  const handleSelect = async (image: BaseImagePicker.ImagePickerAsset) => {
+    setImage(image.uri);
     const formdata = new FormData();
 
     const splitFileName = image.fileName?.split(".") ?? [];
@@ -100,94 +111,9 @@ export const Image = ({
     }
   };
 
-  const pickImage = async (type: "camera" | "gallery") => {
-    setOpenId("");
-
-    if (type === "camera") {
-      const permissionResult =
-        await ImagePicker.requestCameraPermissionsAsync();
-
-      if (!permissionResult.granted) {
-        Toast.show({
-          type: "error",
-          text1: "Permission required",
-          text2: "Permission to access the camera is required.",
-        });
-        return;
-      }
-
-      const result = await ImagePicker.launchCameraAsync({
-        cameraType: ImagePicker.CameraType.back,
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        const asset = result.assets[0];
-        setImage(asset.uri);
-        setOpenId("");
-        await handleProfileFromDevice(asset);
-      }
-    } else {
-      const permissionResult =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-      if (!permissionResult.granted) {
-        Toast.show({
-          type: "error",
-          text1: "Permission required",
-          text2: "Permission to access the media library is required.",
-        });
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        const asset = result.assets[0];
-        setImage(asset.uri);
-        await handleProfileFromDevice(asset);
-      }
-    }
-  };
-
   return (
     <View style={styles.container}>
-      <Modal
-        id="select-source"
-        title="Select source"
-        trigger={imageComponent}
-        style={{ width: 300 }}
-      >
-        <ThemedView
-          style={{
-            flexDirection: "row",
-            gap: 32,
-            justifyContent: "center",
-            alignItems: "flex-end",
-          }}
-        >
-          <TouchableOpacity
-            style={{ alignItems: "center", gap: 8 }}
-            onPress={() => pickImage("camera")}
-          >
-            <Feather name="camera" size={48} color="black" />
-            <Text>Camera</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ alignItems: "center", gap: 8 }}
-            onPress={() => pickImage("gallery")}
-          >
-            <Entypo name="images" size={48} color="black" />
-            <Text>Gallery</Text>
-          </TouchableOpacity>
-        </ThemedView>
-      </Modal>
+      <ImagePicker trigger={imageComponent} onSelect={handleSelect} />
     </View>
   );
 };
@@ -195,17 +121,23 @@ export const Image = ({
 const styles = StyleSheet.create({
   container: {
     position: "relative",
+    flexDirection: "row",
   },
   textStyle: {
     fontSize: 10,
-    color: "#949494",
+    color: primaryColor,
     textAlign: "center",
   },
   loaderStyle: {
     borderWidth: 1,
-    borderColor: "#0d99ff",
+    borderColor: primaryColor,
     alignItems: "center",
     justifyContent: "center",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
   },
   editIcon: {
     position: "absolute",
@@ -216,5 +148,8 @@ const styles = StyleSheet.create({
     padding: 4,
     borderWidth: 1,
     borderColor: "gray",
+  },
+  image: {
+    backgroundColor: "gray",
   },
 });

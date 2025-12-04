@@ -8,7 +8,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/hooks/use-auth";
 
-export default function PetOwnerLayout() {
+export default function PetOwnerDrawerLayout() {
   const router = useRouter();
   const { logout } = useAuth();
 

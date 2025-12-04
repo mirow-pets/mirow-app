@@ -4,6 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "@/components/form/Input";
 import { Modal } from "@/components/modal/Modal";
 import { ThemedText } from "@/components/themed-text";
+import { redColor } from "@/constants/theme";
 import { cancelBookingSchema } from "@/features/bookings/validations";
 import { useBooking } from "@/hooks/use-booking";
 import { TBooking } from "@/types";
@@ -29,7 +30,7 @@ export const CancelBookingButton = ({
       <Modal
         id="cancel-booking"
         title="Cancel booking"
-        trigger={<ThemedText>Cancel</ThemedText>}
+        trigger={<ThemedText style={{ color: redColor }}>Cancel</ThemedText>}
         onConfirm={form.handleSubmit(cancelBooking)}
         loading={isCancellingBooking}
       >

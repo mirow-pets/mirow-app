@@ -4,7 +4,7 @@ import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
 import { Controller, useFormContext, useFormState } from "react-hook-form";
 
 import { ThemedText } from "@/components/themed-text";
-import { whiteColor } from "@/constants/theme";
+import { redColor, whiteColor } from "@/constants/theme";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
   },
   errorText: {
-    color: "red",
+    color: redColor,
     fontSize: 12,
     height: 16,
   },

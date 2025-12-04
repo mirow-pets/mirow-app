@@ -18,7 +18,7 @@ export const AddPetForm = () => {
   const {
     addPet,
     isAddingPet,
-    typeOptions,
+    petTypeOptions,
     genderOptions,
     weightOptions,
     spayedOrNeuteredOptions,
@@ -30,6 +30,8 @@ export const AddPetForm = () => {
       petVaccinations: [],
     },
   });
+
+  const petVaccinations = form.watch("petVaccinations");
 
   return (
     <FormProvider {...form}>
@@ -45,7 +47,7 @@ export const AddPetForm = () => {
         <DropdownInput
           name="petTypesId"
           placeholder="Select Pet Type"
-          options={typeOptions}
+          options={petTypeOptions}
         />
         <Input name="breed" placeholder="Breed" />
         <Input name="age" placeholder="Age" keyboardType="number-pad" />
@@ -68,7 +70,12 @@ export const AddPetForm = () => {
           name="careGiverNotes"
           placeholder="Special Instructions / Notes"
         />
-        <PetVaccinationsForm />
+        <PetVaccinationsForm
+          value={petVaccinations}
+          onChange={(petVaccinations) =>
+            form.setValue("petVaccinations", petVaccinations)
+          }
+        />
         <Button
           title="Add"
           onPress={form.handleSubmit(addPet)}

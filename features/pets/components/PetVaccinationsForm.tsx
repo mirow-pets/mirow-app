@@ -2,35 +2,34 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useFormContext } from "react-hook-form";
 
 import { whiteColor } from "@/constants/theme";
 import { TPetVaccination } from "@/types/pets";
 
 import { AddVaccineModal } from "./AddVaccineModal";
 
-export const PetVaccinationsForm = () => {
-  const form = useFormContext<{ petVaccinations: TPetVaccination[] }>();
+export interface PetVaccinationsFormProps {
+  value: TPetVaccination[];
+  onChange: (_value: TPetVaccination[]) => void;
+}
 
-  const petVaccinations = form.watch("petVaccinations");
-
+export const PetVaccinationsForm = ({
+  value,
+  onChange,
+}: PetVaccinationsFormProps) => {
   const handleRemoveVaccine = (index: number) => {
-    const vaccinations = petVaccinations.filter((_, i) => i !== index);
-    form.setValue("petVaccinations", vaccinations);
+    const vaccinations = value.filter((_, i) => i !== index);
+    onChange(vaccinations);
   };
 
   return (
     <>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Text>Vaccines</Text>
-        <AddVaccineModal
-          onAdded={(vaccine) =>
-            form.setValue("petVaccinations", [...petVaccinations, vaccine])
-          }
-        />
+        <AddVaccineModal onAdded={(vaccine) => onChange([...value, vaccine])} />
       </View>
       <View style={{ gap: 8 }}>
-        {petVaccinations.map((vaccine, i) => (
+        {value.map((vaccine, i) => (
           <View
             key={i}
             style={{

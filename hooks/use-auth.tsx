@@ -10,7 +10,6 @@ import {
 } from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { TUser } from "@/types";
@@ -40,7 +39,6 @@ export interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const router = useRouter();
   const [userRole, setUserRole] = useState<UserRole>();
   const [token, setToken] = useState<string>();
   const [currUser, setCurrUser] = useState<TUser>();

@@ -23,6 +23,7 @@ export interface ModalProps {
   cancelText?: string;
   confirmText?: string;
   loading?: boolean;
+  disabled?: boolean;
 }
 
 export const Modal = ({
@@ -35,12 +36,13 @@ export const Modal = ({
   cancelText,
   confirmText,
   loading,
+  disabled,
 }: ModalProps) => {
   const { openId, setOpenId } = useModal();
 
   return (
     <>
-      <TouchableOpacity onPress={() => setOpenId(id)}>
+      <TouchableOpacity onPress={() => setOpenId(id)} disabled={disabled}>
         {trigger}
       </TouchableOpacity>
       <BaseModal

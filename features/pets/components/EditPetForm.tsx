@@ -22,7 +22,7 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
   const {
     editPet,
     isEditingPet,
-    typeOptions,
+    petTypeOptions,
     genderOptions,
     weightOptions,
     spayedOrNeuteredOptions,
@@ -34,6 +34,7 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
   });
 
   const profileImage = form.watch("profileImage");
+  const petVaccinations = form.watch("petVaccinations");
 
   return (
     <FormProvider {...form}>
@@ -52,7 +53,7 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
         <DropdownInput
           name="petTypesId"
           placeholder="Select Pet Type"
-          options={typeOptions}
+          options={petTypeOptions}
         />
         <Input name="breed" placeholder="Breed" />
         <Input name="age" placeholder="Age" keyboardType="number-pad" />
@@ -75,7 +76,12 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
           name="careGiverNotes"
           placeholder="Special Instructions / Notes"
         />
-        <PetVaccinationsForm />
+        <PetVaccinationsForm
+          value={petVaccinations}
+          onChange={(petVaccinations) =>
+            form.setValue("petVaccinations", petVaccinations)
+          }
+        />
         <Button
           title="Edit"
           onPress={form.handleSubmit(editPet)}

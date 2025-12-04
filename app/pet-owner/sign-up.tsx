@@ -2,6 +2,7 @@ import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
 import { useRouter } from "expo-router";
+import { ScrollView } from "react-native-gesture-handler";
 
 import AuthScreenLayout from "@/components/layout/AuthScreenLayout";
 import { ThemedText } from "@/components/themed-text";
@@ -16,25 +17,27 @@ export default function SignUpScreen() {
   };
 
   return (
-    <AuthScreenLayout
-      image={require("@/assets/images/login-signup-image.png")}
-      bgImage={require("@/assets/images/login-signup-bg.png")}
-      title="PET OWNER"
-      showSwitchRole
-      subTitle={
-        <View style={{ flexDirection: "row" }}>
-          <ThemedText type="subtitle" style={{ color: whiteColor }}>
-            Already a member?{" "}
-          </ThemedText>
-          <TouchableOpacity onPress={handleSignIn}>
-            <ThemedText type="subtitle" style={{ color: secondaryColor }}>
-              Sign in
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+      <AuthScreenLayout
+        image={require("@/assets/images/login-signup-image.png")}
+        bgImage={require("@/assets/images/login-signup-bg.png")}
+        title="PET OWNER"
+        showSwitchRole
+        subTitle={
+          <View style={{ flexDirection: "row" }}>
+            <ThemedText type="subtitle" style={{ color: whiteColor }}>
+              Already a member?{" "}
             </ThemedText>
-          </TouchableOpacity>
-        </View>
-      }
-    >
-      <SignUpForm path="/users/signup" redirect="/pet-owner" />
-    </AuthScreenLayout>
+            <TouchableOpacity onPress={handleSignIn}>
+              <ThemedText type="subtitle" style={{ color: secondaryColor }}>
+                Sign in
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        }
+      >
+        <SignUpForm path="/users/signup" redirect="/pet-owner" />
+      </AuthScreenLayout>
+    </ScrollView>
   );
 }
