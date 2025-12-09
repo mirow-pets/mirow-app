@@ -5,14 +5,14 @@ import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 
 import { TAddBooking, TCancelBooking } from "@/features/bookings/validations";
+import { useAuth } from "@/hooks/use-auth";
+import { useModal } from "@/hooks/use-modal";
 import { Get, Patch, Post } from "@/services/http-service";
 import { TBooking } from "@/types";
-import { UserRole } from "@/types/users";
 
-import { useAuth } from "./use-auth";
-import { useModal } from "./use-modal";
+import { usePetOwnerProfile } from "./use-pet-owner-profile";
 
-export interface BookingContextValues {
+export interface PetOwnerBookingContextValues {
   bookings: TBooking[];
   isLoadingBookings: boolean;
   addBooking: (_input: TAddBooking) => void;
@@ -22,28 +22,35 @@ export interface BookingContextValues {
   getBooking: (_bookingId: string) => void;
   booking: TBooking;
   isLoadingBooking: boolean;
-  completeBooking: (_bookingId: TBooking["id"]) => void;
-  isCompletingBooking: boolean;
 }
 
-export const BookingContext = createContext<BookingContextValues | null>(null);
+export const PetOwnerBookingContext =
+  createContext<PetOwnerBookingContextValues | null>(null);
 
-export interface BookingProviderProps {
+export interface PetOwnerBookingProviderProps {
   children: ReactNode;
 }
 
-const BookingProvider = ({ children }: BookingProviderProps) => {
+const PetOwnerBookingProvider = ({
+  children,
+}: PetOwnerBookingProviderProps) => {
   const { setOpenId } = useModal();
-  const { currUser, userRole } = useAuth();
+  const { currUser } = useAuth();
+  const { profileCompletion } = usePetOwnerProfile();
   const router = useRouter();
   const [bookingId, setBookingId] = useState<TBooking["id"]>();
-  const isPetOwner = userRole === UserRole.PetOwner;
 
   const onError = (err: Error) => {
     console.log(err);
+    let message = "An unexpected error occurred. Please try again.";
+
+    if ("statusCode" in err && Number(err.statusCode) < 500) {
+      message = err.message;
+    }
+
     Toast.show({
       type: "error",
-      text1: "An unexpected error occurred. Please try again.",
+      text1: message,
     });
   };
 
@@ -53,12 +60,11 @@ const BookingProvider = ({ children }: BookingProviderProps) => {
     refetch: refetchBookings,
   } = useQuery<TBooking[]>({
     queryKey: ["bookings"],
-    queryFn: () =>
-      Get(isPetOwner ? "/users/bookings" : "/care-givers/bookings"),
-    enabled: !!currUser,
+    queryFn: () => Get("/users/bookings"),
+    enabled: !!currUser && profileCompletion?.percentage === 100,
   });
 
-  let {
+  const {
     data: booking,
     isLoading: isLoadingBooking,
     refetch: refetchBooking,
@@ -73,11 +79,8 @@ const BookingProvider = ({ children }: BookingProviderProps) => {
     Error,
     TAddBooking
   >({
-    mutationFn: (input: TAddBooking) => {
-      console.log("input", input);
-
-      return Post("/users/bookings/meal-service", input);
-    },
+    mutationFn: ({ serviceTypesId, ...input }: TAddBooking) =>
+      Post("/users/bookings/meal-service", input),
     onSuccess: async () => {
       await refetchBookings();
 
@@ -111,38 +114,16 @@ const BookingProvider = ({ children }: BookingProviderProps) => {
     onError,
   });
 
-  const { mutate: complete, isPending: isCompletingBooking } = useMutation<
-    TBooking,
-    Error,
-    TBooking["id"]
-  >({
-    mutationFn: (bookingId: TBooking["id"]) =>
-      Patch(`/care-givers/bookings/${bookingId}/complete`),
-    onSuccess: async () => {
-      await refetchBookings();
-      await refetchBooking();
-      setOpenId("");
-
-      Toast.show({
-        type: "success",
-        text1: "Booking cancelled successfully!",
-      });
-    },
-    onError,
-  });
-
   const addBooking = (input: TAddBooking) => add(input);
 
   const cancelBooking = (input: TCancelBooking) => cancel(input);
-
-  const completeBooking = (bookingId: TBooking["id"]) => complete(bookingId);
 
   const getBooking = (bookingId: string) => {
     setBookingId(bookingId);
   };
 
   return (
-    <BookingContext.Provider
+    <PetOwnerBookingContext.Provider
       value={{
         bookings,
         isLoadingBookings,
@@ -153,22 +134,22 @@ const BookingProvider = ({ children }: BookingProviderProps) => {
         getBooking,
         booking,
         isLoadingBooking,
-        completeBooking,
-        isCompletingBooking,
       }}
     >
       {children}
-    </BookingContext.Provider>
+    </PetOwnerBookingContext.Provider>
   );
 };
 
-export default BookingProvider;
+export default PetOwnerBookingProvider;
 
-export const useBooking = () => {
-  const booking = useContext(BookingContext);
+export const usePetOwnerBooking = () => {
+  const booking = useContext(PetOwnerBookingContext);
 
   if (!booking) {
-    throw new Error("Cannot access useBooking outside BookingProvider");
+    throw new Error(
+      "Cannot access usePetOwnerBooking outside PetOwnerBookingProvider"
+    );
   }
   return booking;
 };

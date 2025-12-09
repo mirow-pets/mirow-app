@@ -7,12 +7,14 @@ import GooglePlacesTextInput, {
 import { ENV } from "@/env";
 
 export interface PlaceAutoCompleteProps {
+  value?: string;
   onChange: (_value: { city: string; state: string; country: string }) => void;
   style?: StyleProp<TextStyle>;
   placeholder?: string;
 }
 
 export const PlaceAutoComplete = ({
+  value,
   style,
   placeholder,
   onChange,
@@ -49,6 +51,7 @@ export const PlaceAutoComplete = ({
   return (
     <View style={{ width: "100%" }}>
       <GooglePlacesTextInput
+        value={value}
         showClearButton={false}
         placeHolderText={placeholder}
         detailsFields={["addressComponents", "formattedAddress", "location"]}

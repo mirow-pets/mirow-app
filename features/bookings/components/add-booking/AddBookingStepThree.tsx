@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
@@ -15,7 +16,7 @@ import {
   whiteColor,
 } from "@/constants/theme";
 import { TAddBooking } from "@/features/bookings/validations";
-import { useCaregiver } from "@/hooks/use-caregiver";
+import { usePetOwnerCaregiver } from "@/hooks/pet-owner/use-pet-owner-caregiver";
 import { TUser } from "@/types";
 
 export interface AddBookingStepThreeProps {
@@ -29,12 +30,20 @@ export const AddBookingStepThree = ({
   onPrev,
   loading,
 }: AddBookingStepThreeProps) => {
-  const { caregivers, isLoadingCaregivers } = useCaregiver();
+  const { caregivers, isLoadingCaregivers, getCaregivers } =
+    usePetOwnerCaregiver();
   const form = useFormContext<TAddBooking>();
 
   const router = useRouter();
 
   const caregiversIds = form.watch("caregiversIds");
+  const serviceTypesId = form.watch("serviceTypesId");
+
+  useEffect(() => {
+    getCaregivers({
+      serviceTypes: [serviceTypesId],
+    });
+  }, [serviceTypesId, getCaregivers]);
 
   if (isLoadingCaregivers)
     return <ThemedText>Loading caregivers...</ThemedText>;

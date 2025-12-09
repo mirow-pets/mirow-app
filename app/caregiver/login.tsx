@@ -17,7 +17,8 @@ export default function LoginScreen() {
 
   return (
     <AuthScreenLayout
-      image={require("@/assets/images/react-logo.png")}
+      image={require("@/assets/images/login-signup-image.png")}
+      bgImage={require("@/assets/images/login-signup-bg.png")}
       title="PET CAREGIVER"
       subTitle={
         <View style={{ flexDirection: "row" }}>

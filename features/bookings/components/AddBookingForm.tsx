@@ -6,14 +6,14 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import { primaryColor, secondaryColor, whiteColor } from "@/constants/theme";
 import { addBookingSchema, TAddBooking } from "@/features/bookings/validations";
-import { useBooking } from "@/hooks/use-booking";
+import { usePetOwnerBooking } from "@/hooks/pet-owner/use-pet-owner-booking";
 
 import { AddBookingStepOne } from "./add-booking/AddBookingStepOne";
 import { AddBookingStepThree } from "./add-booking/AddBookingStepThree";
 import { AddBookingStepTwo } from "./add-booking/AddBookingStepTwo";
 
 export const AddBookingForm = () => {
-  const { isAddingBooking, addBooking } = useBooking();
+  const { isAddingBooking, addBooking } = usePetOwnerBooking();
   const [step, setStep] = useState(1);
 
   const form = useForm({
@@ -21,6 +21,7 @@ export const AddBookingForm = () => {
     defaultValues: {
       pets: [],
       petTypes: [],
+      serviceTypesId: 6,
     },
   });
 

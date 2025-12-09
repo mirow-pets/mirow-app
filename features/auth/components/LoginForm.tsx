@@ -14,7 +14,7 @@ import { PasswordInput } from "@/components/form/PasswordInput";
 import { TLogin, loginSchema } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { Post } from "@/services/http-service";
-import { TUser } from "@/types";
+import { TCurrentUser } from "@/types/users";
 
 export interface LoginFormProps {
   path: string;
@@ -26,7 +26,7 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
   const { setCurrUser, userRole } = useAuth();
 
   const { mutate, isPending } = useMutation<
-    TUser & { token: string },
+    TCurrentUser & { token: string },
     Error,
     TLogin
   >({
@@ -75,9 +75,9 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
         <Button
           title="Login"
           onPress={form.handleSubmit(submit)}
-          style={{ width: "100%" }}
           loading={isPending}
           color="secondary"
+          style={{ minWidth: "70%" }}
         />
       </View>
     </FormProvider>

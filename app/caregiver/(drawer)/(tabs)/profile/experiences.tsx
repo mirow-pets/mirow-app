@@ -11,25 +11,21 @@ import { NumberInput } from "@/components/form/NumberInput";
 import { ThemedText } from "@/components/themed-text";
 import { primaryColor, secondaryColor } from "@/constants/theme";
 import { updateCaregiverProfileSchema } from "@/features/profile/validations";
-import { useCaregiver } from "@/hooks/use-caregiver";
+import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { useProfile } from "@/hooks/use-profile";
 import { TCaregiverPreference } from "@/types";
 
 export default function ExperiencesScreen() {
   const router = useRouter();
-  const {
-    caregiverProfile,
-    updateCaregiverProfile,
-    isUpdatingCaregiverProfile,
-  } = useProfile();
-  const { petTypeOptions } = useCaregiver();
+  const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
+  const { petTypeOptions } = useCaregiverCaregiver();
 
   const form = useForm({
     resolver: zodResolver(updateCaregiverProfileSchema),
     defaultValues: {
-      experience: caregiverProfile?.experience,
-      petTypes: caregiverProfile?.petTypes?.map(({ id }) => id) ?? [],
+      experience: profile?.experience,
+      petTypes: profile?.petTypes?.map(({ id }) => id) ?? [],
     },
   });
 
@@ -48,7 +44,7 @@ export default function ExperiencesScreen() {
     const result = await form.trigger("petTypes");
     if (!result) return;
 
-    updateCaregiverProfile(
+    updateProfile(
       {
         ...values,
         experience: Number(values.experience),
@@ -100,7 +96,7 @@ export default function ExperiencesScreen() {
         <Button
           title="Save"
           onPress={handleSubmit}
-          loading={isUpdatingCaregiverProfile}
+          loading={isUpdatingProfile}
           color="secondary"
         />
       </View>

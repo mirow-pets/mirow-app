@@ -5,28 +5,50 @@ import { useRouter } from "expo-router";
 import { FlatList } from "react-native-gesture-handler";
 
 import { ThemedText } from "@/components/themed-text";
-import { grayColor, primaryColor, whiteColor } from "@/constants/theme";
-import { useBooking } from "@/hooks/use-booking";
-import { useProfile } from "@/hooks/use-profile";
+import { grayColor, redColor } from "@/constants/theme";
+import { CaregiverProfileDetailsCard } from "@/features/profile/components/CaregiverProfileDetails";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
-export default function MyBookingsScreen() {
-  const { bookings, isLoadingBookings } = useBooking();
+export default function ProfileScreen() {
+  const primaryColor = useThemeColor({}, "primary");
   const router = useRouter();
 
-  const { caregiverProfile, caregiverProfileCompletion } = useProfile();
+  const { profile, profileCompletion } = useCaregiverProfile();
 
-  const isBackgroundVerificationLeft =
-    caregiverProfileCompletion.percentage === 80;
+  const isBackgroundVerificationLeft = profileCompletion.percentage === 80;
 
   const menu = [
     {
       icon: (
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
-      label: "Background Verification",
-      isDone: caregiverProfileCompletion.isBackgroundVerifyStatus,
-      isDisabled: !isBackgroundVerificationLeft,
+      label: `${"Background Verification"} ${
+        profile.backgroundVerifyStatus
+          ? `(${profile.backgroundVerifyStatus})`
+          : ""
+      }`,
+      isDone: profileCompletion.isBackgroundVerifyStatus,
+      isDisabled:
+        !isBackgroundVerificationLeft ||
+        ["pending", "cleared"].includes(profile.backgroundVerifyStatus),
       onPress: () => router.push("/caregiver/profile/background-verification"),
+    },
+    {
+      icon: (
+        <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
+      ),
+      label: "Fullname",
+      isDone: true,
+      onPress: () => router.push("/caregiver/profile/fullname"),
+    },
+    {
+      icon: (
+        <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
+      ),
+      label: "Phone",
+      isDone: true,
+      onPress: () => router.push("/caregiver/profile/phone"),
     },
     {
       icon: (
@@ -40,18 +62,33 @@ export default function MyBookingsScreen() {
       icon: (
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
+      label: "Address",
+      isDone: true,
+      onPress: () => router.push("/caregiver/profile/address"),
+    },
+    {
+      icon: (
+        <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
+      ),
       label: "Emergency Contact",
-      isDone: caregiverProfileCompletion.isBackgroundVerifyStatus,
-      isDisabled: !isBackgroundVerificationLeft,
+      isDone: profileCompletion.isEmergencyDetailsAdded,
       onPress: () => router.push("/caregiver/profile/emergency-contact"),
     },
     {
       icon: (
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
+      label: "Payment Information",
+      isDone: true,
+      isDisabled: profileCompletion.percentage !== 100,
+      onPress: () => router.push("/caregiver/profile/banks"),
+    },
+    {
+      icon: (
+        <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
+      ),
       label: "Caregiver Preferences",
-      isDone: caregiverProfileCompletion.isBackgroundVerifyStatus,
-      isDisabled: !isBackgroundVerificationLeft,
+      isDone: profileCompletion.isCaregiverPreferencesAdded,
       onPress: () => router.push("/caregiver/profile/preferences"),
     },
     {
@@ -59,8 +96,7 @@ export default function MyBookingsScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Unique Skills",
-      isDone: caregiverProfileCompletion.isBackgroundVerifyStatus,
-      isDisabled: !isBackgroundVerificationLeft,
+      isDone: profileCompletion.isCaregiverSkillsAdded,
       onPress: () => router.push("/caregiver/profile/skills"),
     },
     {
@@ -68,26 +104,23 @@ export default function MyBookingsScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Experience with Pet Care",
-      isDone: caregiverProfileCompletion.isBackgroundVerifyStatus,
-      isDisabled: !isBackgroundVerificationLeft,
+      isDone: true,
       onPress: () => router.push("/caregiver/profile/experiences"),
     },
     {
       icon: (
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
-      label: "Price & Service Type",
-      isDone: caregiverProfileCompletion.isBackgroundVerifyStatus,
-      isDisabled: !isBackgroundVerificationLeft,
+      label: "Rates & Services",
+      isDone: profileCompletion.isPriceAdded,
       onPress: () => router.push("/caregiver/profile/service-types"),
     },
     {
       icon: (
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
-      label: "Your Gallery",
-      isDone: caregiverProfileCompletion.isBackgroundVerifyStatus,
-      isDisabled: !isBackgroundVerificationLeft,
+      label: "Gallery",
+      isDone: profileCompletion.isGalleryAdded,
       onPress: () => router.push("/caregiver/profile/gallery"),
     },
   ];
@@ -95,37 +128,14 @@ export default function MyBookingsScreen() {
   return (
     <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
-        <View
-          style={{
-            padding: 16,
-            backgroundColor: primaryColor,
-            borderRadius: 8,
-          }}
-        >
-          <ThemedText
-            type="title"
-            style={{
-              color: whiteColor,
-              fontSize: 32,
-            }}
-          >
-            {caregiverProfile.users.firstName} {caregiverProfile.users.lastName}
-          </ThemedText>
-          <ThemedText style={{ fontSize: 16, color: whiteColor }}>
-            {caregiverProfile.users.email}
-          </ThemedText>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <ThemedText>Profile progress</ThemedText>
-          <ThemedText>{caregiverProfileCompletion.percentage}%</ThemedText>
-        </View>
+        <CaregiverProfileDetailsCard />
         <View
           style={{ height: 8, backgroundColor: grayColor, borderRadius: 4 }}
         >
           <View
             style={{
               height: 8,
-              width: `${caregiverProfileCompletion.percentage}%`,
+              width: `${profileCompletion.percentage}%`,
               backgroundColor: primaryColor,
               borderRadius: 4,
             }}
@@ -139,8 +149,13 @@ export default function MyBookingsScreen() {
             return (
               <TouchableOpacity
                 key={index}
-                style={styles.itemContainer}
+                style={[
+                  styles.itemContainer,
+                  item.isDisabled ? styles.disabled : {},
+                  item.isDone ? {} : styles.notDone,
+                ]}
                 onPress={item.onPress}
+                disabled={item.isDisabled}
               >
                 {item.icon}
                 <ThemedText>{item.label}</ThemedText>
@@ -166,5 +181,11 @@ const styles = StyleSheet.create({
     gap: 16,
     borderWidth: 1,
     borderRadius: 8,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  notDone: {
+    borderColor: redColor,
   },
 });

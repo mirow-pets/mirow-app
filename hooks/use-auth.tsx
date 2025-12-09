@@ -12,8 +12,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ThemedText } from "@/components/themed-text";
-import { TUser } from "@/types";
-import { UserRole } from "@/types/users";
+import { TCurrentUser, UserRole } from "@/types/users";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 // import { postLogout } from "../Service/authSvc";
@@ -21,8 +20,8 @@ import { UserRole } from "@/types/users";
 
 export interface AuthContextValue {
   token?: string;
-  currUser?: TUser;
-  setCurrUser: Dispatch<SetStateAction<TUser | undefined>>;
+  currUser?: TCurrentUser;
+  setCurrUser: Dispatch<SetStateAction<TCurrentUser | undefined>>;
   setToken: Dispatch<SetStateAction<string | undefined>>;
   isInitializing: boolean;
   logout: () => void;
@@ -41,7 +40,7 @@ export interface AuthProviderProps {
 const AuthProvider = ({ children }: AuthProviderProps) => {
   const [userRole, setUserRole] = useState<UserRole>();
   const [token, setToken] = useState<string>();
-  const [currUser, setCurrUser] = useState<TUser>();
+  const [currUser, setCurrUser] = useState<TCurrentUser>();
   const [isInitializing, setIsInitializing] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -66,7 +65,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       const accessToken = await AsyncStorage.getItem("accessToken");
       const currUserString = await AsyncStorage.getItem("currUser");
       const userRole = await AsyncStorage.getItem("userRole");
-      const currUser = currUserString && (JSON.parse(currUserString) as TUser);
+      const currUser =
+        currUserString && (JSON.parse(currUserString) as TCurrentUser);
       const is2FAuthVerified = await AsyncStorage.getItem("is2FAuthVerified");
 
       if (is2FAuthVerified) {

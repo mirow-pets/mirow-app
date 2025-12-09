@@ -8,26 +8,23 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/button/Button";
 import { Input } from "@/components/form/Input";
 import { PhoneNumberInput } from "@/components/form/PhoneNumberInput";
-import { primaryColor } from "@/constants/theme";
 import { updateCaregiverProfileSchema } from "@/features/profile/validations";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { useProfile } from "@/hooks/use-profile";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function EmergencyContactScreen() {
   const router = useRouter();
-  const {
-    caregiverProfile,
-    updateCaregiverProfile,
-    isUpdatingCaregiverProfile,
-  } = useProfile();
+  const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
+  const primaryColor = useThemeColor({}, "primary");
 
   const form = useForm({
     resolver: zodResolver(updateCaregiverProfileSchema),
     defaultValues: {
-      eFirstName: caregiverProfile?.users?.eFirstName,
-      eLastName: caregiverProfile?.users?.eLastName,
-      ePhone: caregiverProfile?.users?.ePhone,
-      relationshipName: caregiverProfile?.users?.relationshipName,
+      eFirstName: profile?.users?.eFirstName,
+      eLastName: profile?.users?.eLastName,
+      ePhone: profile?.users?.ePhone,
+      relationshipName: profile?.users?.relationshipName,
     },
   });
 
@@ -47,7 +44,7 @@ export default function EmergencyContactScreen() {
     ]);
     if (!result) return;
 
-    updateCaregiverProfile(form.getValues(), () => {
+    updateProfile(form.getValues(), () => {
       form.reset();
       router.replace("/caregiver/profile");
     });
@@ -55,7 +52,7 @@ export default function EmergencyContactScreen() {
 
   return (
     <FormProvider {...form}>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: primaryColor }]}>
         <Input name="eFirstName" placeholder="First name" />
         <Input name="eLastName" placeholder="Last name" />
         <PhoneNumberInput name="ePhone" placeholder="Phone number" />
@@ -66,7 +63,7 @@ export default function EmergencyContactScreen() {
         <Button
           title="Save"
           onPress={handleSubmit}
-          loading={isUpdatingCaregiverProfile}
+          loading={isUpdatingProfile}
           color="secondary"
         />
       </View>
@@ -80,6 +77,5 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "100%",
     gap: 16,
-    backgroundColor: primaryColor,
   },
 });

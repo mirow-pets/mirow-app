@@ -6,13 +6,14 @@ import { FlatList } from "react-native-gesture-handler";
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { primaryColor } from "@/constants/theme";
-import { useBooking } from "@/hooks/use-booking";
+import { useCaregiverBooking } from "@/hooks/caregiver/use-caregiver-booking";
+import { useThemeColor } from "@/hooks/use-theme-color";
 import { formatDateToMDY } from "@/utils";
 
 export default function MyBookingsScreen() {
-  const { bookings, isLoadingBookings } = useBooking();
+  const { bookings, isLoadingBookings } = useCaregiverBooking();
   const router = useRouter();
+  const primaryColor = useThemeColor({}, "primary");
 
   const handleView = (bookingId: string) => {
     router.push(`/caregiver/bookings/${bookingId}`, {

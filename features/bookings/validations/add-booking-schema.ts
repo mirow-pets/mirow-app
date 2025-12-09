@@ -14,6 +14,7 @@ export const addBookingSchema = z.object({
   notes: z.string().optional(),
   isOpenShift: z.boolean({ message: "Shift type is required" }),
   caregiversIds: z.string().uuid().array(),
+  serviceTypesId: z.number(),
 });
 
 export type TAddBooking = z.infer<typeof addBookingSchema>;

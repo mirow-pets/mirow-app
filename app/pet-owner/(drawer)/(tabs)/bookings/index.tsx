@@ -7,11 +7,11 @@ import { PetAvatar } from "@/components/image/PetAvatar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { primaryColor } from "@/constants/theme";
-import { useBooking } from "@/hooks/use-booking";
+import { usePetOwnerBooking } from "@/hooks/pet-owner/use-pet-owner-booking";
 import { formatDateToMDY } from "@/utils";
 
 export default function MyBookingsScreen() {
-  const { bookings, isLoadingBookings } = useBooking();
+  const { bookings, isLoadingBookings } = usePetOwnerBooking();
   const router = useRouter();
 
   const handleView = (petId: string) => {

@@ -10,7 +10,7 @@ import { Input } from "@/components/form/Input";
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { primaryColor } from "@/constants/theme";
 import { addPetSchema } from "@/features/pets/validations";
-import { usePet } from "@/hooks/use-pet";
+import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
 
 import { PetVaccinationsForm } from "./PetVaccinationsForm";
 
@@ -22,7 +22,7 @@ export const AddPetForm = () => {
     genderOptions,
     weightOptions,
     spayedOrNeuteredOptions,
-  } = usePet();
+  } = usePetOwnerPet();
 
   const form = useForm({
     resolver: zodResolver(addPetSchema),

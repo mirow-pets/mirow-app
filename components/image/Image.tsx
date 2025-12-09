@@ -36,7 +36,7 @@ export const Image = ({
 
   const imageComponent = (
     <View style={styles.container}>
-      {source ? (
+      {source || image ? (
         <BaseImage
           source={image ? { uri: image } : source}
           style={[styles.image, style]}

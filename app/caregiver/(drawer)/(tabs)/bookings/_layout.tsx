@@ -35,12 +35,6 @@ export default function MyBookingsLayout() {
         }}
       />
       <Stack.Screen
-        name="add"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
         name="[bookingId]/index"
         options={{ presentation: "modal", title: "View Booking" }}
       />

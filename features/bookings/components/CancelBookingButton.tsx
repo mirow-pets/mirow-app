@@ -6,7 +6,7 @@ import { Modal } from "@/components/modal/Modal";
 import { ThemedText } from "@/components/themed-text";
 import { redColor } from "@/constants/theme";
 import { cancelBookingSchema } from "@/features/bookings/validations";
-import { useBooking } from "@/hooks/use-booking";
+import { usePetOwnerBooking } from "@/hooks/pet-owner/use-pet-owner-booking";
 import { TBooking } from "@/types";
 
 export interface CancelBookingButtonProps {
@@ -16,7 +16,7 @@ export interface CancelBookingButtonProps {
 export const CancelBookingButton = ({
   bookingId,
 }: CancelBookingButtonProps) => {
-  const { cancelBooking, isCancellingBooking } = useBooking();
+  const { cancelBooking, isCancellingBooking } = usePetOwnerBooking();
 
   const form = useForm({
     resolver: zodResolver(cancelBookingSchema),

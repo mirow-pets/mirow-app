@@ -7,23 +7,20 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/button/Button";
 import { Input } from "@/components/form/Input";
-import { primaryColor } from "@/constants/theme";
 import { updateCaregiverProfileSchema } from "@/features/profile/validations";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { useProfile } from "@/hooks/use-profile";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function BioDescriptionScreen() {
   const router = useRouter();
-  const {
-    caregiverProfile,
-    updateCaregiverProfile,
-    isUpdatingCaregiverProfile,
-  } = useProfile();
+  const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
+  const primaryColor = useThemeColor({}, "primary");
 
   const form = useForm({
     resolver: zodResolver(updateCaregiverProfileSchema),
     defaultValues: {
-      bioDescription: caregiverProfile?.users?.bioDescription,
+      bioDescription: profile?.users?.bioDescription,
     },
   });
 
@@ -40,7 +37,7 @@ export default function BioDescriptionScreen() {
     const result = await form.trigger("bioDescription");
     if (!result) return;
 
-    updateCaregiverProfile(
+    updateProfile(
       {
         ...values,
         bioDescription: values.bioDescription,
@@ -54,7 +51,14 @@ export default function BioDescriptionScreen() {
 
   return (
     <FormProvider {...form}>
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: primaryColor,
+          },
+        ]}
+      >
         <Input
           label="Bio description"
           name="bioDescription"
@@ -65,7 +69,7 @@ export default function BioDescriptionScreen() {
         <Button
           title="Save"
           onPress={handleSubmit}
-          loading={isUpdatingCaregiverProfile}
+          loading={isUpdatingProfile}
           color="secondary"
         />
       </View>
@@ -79,6 +83,5 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "100%",
     gap: 16,
-    backgroundColor: primaryColor,
   },
 });

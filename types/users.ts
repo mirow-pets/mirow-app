@@ -18,4 +18,21 @@ export interface TUser {
   relationshipName: string;
   phone: string;
   bioDescription?: string;
+  address: TAddress[];
+}
+
+export interface TCurrentUser {
+  firstName: string;
+  lastName: string;
+  activated: boolean;
+  sessionId: string;
+}
+
+export interface TAddress {
+  address: string;
+  addressTypesId: string;
+  city: string;
+  country: string;
+  postalCode: string;
+  state: string;
 }

@@ -5,6 +5,7 @@ import { Image } from "./Image";
 const placeholderImage = require("@/assets/images/placeholder-avatar.png");
 
 export interface UserAvatarProps {
+  borderColor?: string;
   src?: string;
   size?: number;
   isEditable?: boolean;
@@ -12,6 +13,7 @@ export interface UserAvatarProps {
 }
 
 export const UserAvatar = ({
+  borderColor,
   src,
   size = 40,
   isEditable,
@@ -26,7 +28,13 @@ export const UserAvatar = ({
   return (
     <Image
       source={imagePath ? { uri: imagePath } : placeholderImage}
-      style={{ width: size, height: size, borderRadius: size / 2 }}
+      style={{
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        borderWidth: 1,
+        borderColor,
+      }}
       isEditable={isEditable}
       onChange={onChange}
     />

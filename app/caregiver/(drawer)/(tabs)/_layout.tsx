@@ -1,23 +1,17 @@
 import React from "react";
-import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { useColorScheme } from "react-native";
 
 import AntDesign from "@expo/vector-icons/AntDesign";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { DrawerActions } from "@react-navigation/native";
-import { router, Tabs, useNavigation } from "expo-router";
+import { Tabs } from "expo-router";
 
 import { HapticTab } from "@/components/haptic-tab";
+import { TabsHeader } from "@/components/layout/TabsHeader";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { blackColor, Colors, primaryColor } from "@/constants/theme";
-import { useAuth } from "@/hooks/use-auth";
+import { blackColor, Colors } from "@/constants/theme";
 
-export default function PetOwnerTabsNavigation() {
+export default function CaregiverTabsNavigation() {
   const colorScheme = useColorScheme();
-  const navigation = useNavigation();
-  const { currUser } = useAuth();
 
   return (
     <Tabs
@@ -32,93 +26,7 @@ export default function PetOwnerTabsNavigation() {
         headerTitleStyle: {
           display: "none",
         },
-        header: () => (
-          <View
-            style={{
-              marginTop: 48,
-              flexDirection: "row",
-              padding: 24,
-              gap: 12,
-              alignItems: "center",
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-              style={{
-                paddingVertical: 2,
-                paddingHorizontal: 2,
-                borderWidth: 1,
-                borderColor: "black",
-                borderRadius: 8,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.12,
-                shadowRadius: 4,
-                elevation: 3,
-                backgroundColor: "white",
-              }}
-            >
-              <MaterialCommunityIcons name="account" size={32} color="black" />
-            </TouchableOpacity>
-            <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontWeight: 600,
-                  fontSize: 10,
-                }}
-              >
-                Welcome!
-              </Text>
-              <Text
-                style={{
-                  color: primaryColor,
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                }}
-              >
-                {currUser?.firstName} {currUser?.lastName}
-              </Text>
-            </View>
-            <View style={{ flexDirection: "row", gap: 4 }}>
-              <TouchableOpacity
-                onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-                style={{
-                  paddingVertical: 4,
-                  paddingHorizontal: 4,
-                  borderWidth: 1,
-                  borderColor: "black",
-                  borderRadius: 8,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.12,
-                  shadowRadius: 4,
-                  elevation: 3,
-                  backgroundColor: "white",
-                }}
-              >
-                <Ionicons name="search" size={16} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => router.push("/caregiver/notifications")}
-                style={{
-                  paddingVertical: 4,
-                  paddingHorizontal: 4,
-                  borderWidth: 1,
-                  borderColor: "black",
-                  borderRadius: 8,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.12,
-                  shadowRadius: 4,
-                  elevation: 3,
-                  backgroundColor: "white",
-                }}
-              >
-                <FontAwesome name="bell" size={16} color="black" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        ),
+        header: () => <TabsHeader />,
         tabBarShowLabel: false,
         tabBarStyle: {
           margin: 16,

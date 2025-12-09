@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Controller, useFormContext, useFormState } from "react-hook-form";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DateTimePickerModal, {
+  DateTimePickerProps,
+} from "react-native-modal-datetime-picker";
 
 import { ThemedText } from "@/components/themed-text";
 import { redColor, whiteColor } from "@/constants/theme";
 
-interface DateInputProps {
+interface DateInputProps
+  extends Omit<DateTimePickerProps, "onConfirm" | "onCancel"> {
   label?: string;
   name: string;
 }
 
-export const DateInput = ({ label, name }: DateInputProps) => {
+export const DateInput = ({ label, name, ...props }: DateInputProps) => {
   const form = useFormContext();
   const { errors } = useFormState({ control: form.control, name });
   const [open, setOpen] = useState(false);
@@ -31,6 +34,7 @@ export const DateInput = ({ label, name }: DateInputProps) => {
               <View style={styles.input}>
                 <ThemedText>{value?.toDateString() || "-"}</ThemedText>
                 <DateTimePickerModal
+                  {...props}
                   isVisible={open}
                   mode="date"
                   onConfirm={(date) => {

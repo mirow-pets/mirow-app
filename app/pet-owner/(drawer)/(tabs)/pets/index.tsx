@@ -8,11 +8,11 @@ import { Button } from "@/components/button/Button";
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { usePet } from "@/hooks/use-pet";
+import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
 
 export default function PetsScreen() {
   const router = useRouter();
-  const { pets, isLoadingPets, getPetType } = usePet();
+  const { pets, isLoadingPets, getPetType } = usePetOwnerPet();
 
   const handleAdd = () => {
     router.push("/pet-owner/pets/add", {

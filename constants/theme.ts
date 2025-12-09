@@ -4,7 +4,7 @@
  */
 
 export const primaryColor = "#37b2ff";
-export const secondaryColor = "#ffd700";
+export const secondaryColor = "#ffe604";
 export const tertiary = "#8c222c";
 export const whiteColor = "#ffffff";
 export const blackColor = "#000000";
@@ -36,7 +36,7 @@ export const roleColors = {
   caregiver: {
     light: {
       ...Colors.light,
-      primary: primaryColor,
+      primary: "#6dcc78",
     },
     dark: {
       ...Colors.dark,

@@ -11,6 +11,7 @@ export {
 export { TOption } from "./common";
 export { TNotification } from "./notifications";
 export { TBankAccount } from "./payments";
+export { TPetOwnerProfileCompletion } from "./pet-owners";
 export { TPet } from "./pets";
 export { TServiceType } from "./services";
-export { TUser } from "./users";
+export { TUser, UserRole } from "./users";

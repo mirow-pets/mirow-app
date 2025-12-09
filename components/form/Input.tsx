@@ -9,9 +9,10 @@ import { redColor, whiteColor } from "@/constants/theme";
 interface InputProps extends TextInputProps {
   label?: string;
   name: string;
+  formatter?: (_value: string) => string;
 }
 
-export const Input = ({ label, name, ...props }: InputProps) => {
+export const Input = ({ label, name, formatter, ...props }: InputProps) => {
   const form = useFormContext();
   const { errors } = useFormState({ control: form.control, name });
 
@@ -27,7 +28,9 @@ export const Input = ({ label, name, ...props }: InputProps) => {
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChangeText={(value) =>
+                onChange(formatter ? formatter(value) : value)
+              }
               value={value?.toString()}
               {...props}
               style={[styles.input, props.style]}

@@ -28,3 +28,10 @@ export interface TBankAccount {
   routing_number: string;
   status: string;
 }
+
+export interface TInitialPay {
+  clientSecret: string;
+  message: string;
+  paymentIntentId: string;
+  customerId: string;
+}

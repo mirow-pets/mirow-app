@@ -14,52 +14,58 @@ import {
 } from "@/types";
 import { UserRole } from "@/types/users";
 
-import { useAuth } from "./use-auth";
+import { useAuth } from "../use-auth";
 
 interface TCaregiverProfileFormFields {
   careGiverPreferences: TCaregiverPreference[];
   careGiverSkills: TCaregiverSkill[];
 }
 
-export interface ProfileContextValues {
+export interface CaregiverProfileContextValues {
   isLoadingCaregiverProfileFormFields: boolean;
-  caregiverProfile: TCaregiver;
-  isLoadingCaregiverProfile: boolean;
-  caregiverProfileCompletion: TCaregiverProfileCompletion;
-  isLoadingCaregiverProfileCompletion: boolean;
-  updateCaregiverProfile: (
+  profile: TCaregiver;
+  isLoadingProfile: boolean;
+  profileCompletion: TCaregiverProfileCompletion;
+  isLoadingProfileCompletion: boolean;
+  updateProfile: (
     _input: TUpdateCaregiverProfile,
     _onSuccess?: () => void
   ) => void;
-  isUpdatingCaregiverProfile: boolean;
+  isUpdatingProfile: boolean;
   caregiverPreferenceOptions: TOption[];
-  careGiverSkillOptions: TOption[];
+  caregiverSkillOptions: TOption[];
 }
 
-export const ProfileContext = createContext<ProfileContextValues | null>(null);
+export const CaregiverProfileContext =
+  createContext<CaregiverProfileContextValues | null>(null);
 
-export interface ProfileProviderProps {
+export interface CaregiverProfileProviderProps {
   children: ReactNode;
 }
 
-const ProfileProvider = ({ children }: ProfileProviderProps) => {
+const CaregiverProfileProvider = ({
+  children,
+}: CaregiverProfileProviderProps) => {
   const { currUser, userRole } = useAuth();
   const isPetOwner = userRole === UserRole.PetOwner;
   const queryClient = useQueryClient();
 
   const onError = (err: Error) => {
     console.log(err);
+    let message = "An unexpected error occurred. Please try again.";
+
+    if ("statusCode" in err && Number(err.statusCode) < 500) {
+      message = err.message;
+    }
+
     Toast.show({
       type: "error",
-      text1: "An unexpected error occurred. Please try again.",
+      text1: message,
     });
   };
 
   const {
     data: caregiverProfileFormFields = {
-      serviceTypes: [],
-      petTypes: [],
-      homeTypes: [],
       careGiverPreferences: [],
       careGiverSkills: [],
     },
@@ -70,33 +76,26 @@ const ProfileProvider = ({ children }: ProfileProviderProps) => {
     enabled: !!currUser && !isPetOwner,
   });
 
-  const { data: caregiverProfile, isLoading: isLoadingCaregiverProfile } =
-    useQuery({
-      queryKey: ["caregiver-profile"],
-      queryFn: () => Get(`/caregivers`),
-      enabled: !!currUser && !isPetOwner,
-    });
-
-  const {
-    data: caregiverProfileCompletion,
-    isLoading: isLoadingCaregiverProfileCompletion,
-  } = useQuery({
-    queryKey: ["caregiver-profile-completion"],
-    queryFn: () => Get(`/care-givers/profile-completion`),
+  const { data: profile, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ["caregiver-profile", currUser?.sessionId],
+    queryFn: () => Get(`/caregivers`),
     enabled: !!currUser && !isPetOwner,
   });
 
-  const {
-    mutate: _updateCaregiverProfile,
-    isPending: isUpdatingCaregiverProfile,
-  } = useMutation({
+  const { data: profileCompletion, isLoading: isLoadingProfileCompletion } =
+    useQuery({
+      queryKey: ["caregiver-profile-completion", currUser?.sessionId],
+      queryFn: () => Get(`/care-givers/profile-completion`),
+      enabled: !!currUser && !isPetOwner,
+    });
+
+  const { mutate: _updateProfile, isPending: isUpdatingProfile } = useMutation({
     mutationFn: (input: TUpdateCaregiverProfile) =>
       Patch(`/care-givers`, input),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["caregiver-profile"],
       });
-
       await queryClient.invalidateQueries({
         queryKey: ["caregiver-profile-completion"],
       });
@@ -109,10 +108,10 @@ const ProfileProvider = ({ children }: ProfileProviderProps) => {
     onError,
   });
 
-  const updateCaregiverProfile = (
+  const updateProfile = (
     input: TUpdateCaregiverProfile,
     onSuccess?: () => void
-  ) => _updateCaregiverProfile(input, { onSuccess });
+  ) => _updateProfile(input, { onSuccess });
 
   const caregiverPreferenceOptions =
     caregiverProfileFormFields.careGiverPreferences.map(
@@ -122,7 +121,7 @@ const ProfileProvider = ({ children }: ProfileProviderProps) => {
       })
     );
 
-  const careGiverSkillOptions = caregiverProfileFormFields.careGiverSkills.map(
+  const caregiverSkillOptions = caregiverProfileFormFields.careGiverSkills.map(
     ({ skill, id }) => ({
       label: skill,
       value: id,
@@ -130,31 +129,33 @@ const ProfileProvider = ({ children }: ProfileProviderProps) => {
   );
 
   return (
-    <ProfileContext.Provider
+    <CaregiverProfileContext.Provider
       value={{
-        caregiverProfile,
-        isLoadingCaregiverProfile,
-        caregiverProfileCompletion,
-        isLoadingCaregiverProfileCompletion,
-        updateCaregiverProfile,
-        isUpdatingCaregiverProfile,
+        profile,
+        isLoadingProfile,
+        profileCompletion,
+        isLoadingProfileCompletion,
+        updateProfile,
+        isUpdatingProfile,
         caregiverPreferenceOptions,
-        careGiverSkillOptions,
+        caregiverSkillOptions,
         isLoadingCaregiverProfileFormFields,
       }}
     >
       {children}
-    </ProfileContext.Provider>
+    </CaregiverProfileContext.Provider>
   );
 };
 
-export default ProfileProvider;
+export default CaregiverProfileProvider;
 
-export const useProfile = () => {
-  const profile = useContext(ProfileContext);
+export const useCaregiverProfile = () => {
+  const profile = useContext(CaregiverProfileContext);
 
   if (!profile) {
-    throw new Error("Cannot access useProfile outside ProfileProvider");
+    throw new Error(
+      "Cannot access useCaregiverProfile outside CaregiverProfileProvider"
+    );
   }
   return profile;
 };

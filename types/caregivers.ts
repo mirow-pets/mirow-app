@@ -101,3 +101,10 @@ export interface TCaregiverGallery {
   deletedId: Date | null;
   isDeleted: boolean;
 }
+
+export interface TCaregiverQueue {
+  deletedAt: Date | null;
+  id: number;
+  bookingsId: string;
+  careGiversId: string;
+}

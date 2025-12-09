@@ -19,7 +19,7 @@ export const PlacesInput = ({ label, ...props }: PlacesInputProps) => {
   const error = errors["city"];
 
   return (
-    <View style={{ width: "100%" }}>
+    <View style={{ width: "100%", minHeight: 56 }}>
       {label && <ThemedText style={styles.label}>{label}</ThemedText>}
       <View>
         <Controller
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
     borderWidth: 0,
+    minHeight: 56,
   },
   errorText: {
     color: redColor,

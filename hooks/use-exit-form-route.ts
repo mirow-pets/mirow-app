@@ -5,11 +5,13 @@ import { useNavigation } from "expo-router";
 import { confirm } from "@/utils";
 
 export interface UseExitFormRouteWarningProps {
+  disableNavigation?: boolean;
   isDirty: boolean;
   onExit?: () => void;
 }
 
 export const useExitFormRouteWarning = ({
+  disableNavigation,
   isDirty,
   onExit,
 }: UseExitFormRouteWarningProps) => {
@@ -18,6 +20,8 @@ export const useExitFormRouteWarning = ({
   useEffect(() => {
     // BLOCK NAVIGATION IF FORM IS DIRTY
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (disableNavigation) e.preventDefault();
+
       if (!isDirty) return;
 
       // Prevent default behavior of leaving the screen
@@ -36,5 +40,5 @@ export const useExitFormRouteWarning = ({
     });
 
     return unsubscribe;
-  }, [navigation, isDirty, onExit]);
+  }, [navigation, disableNavigation, isDirty, onExit]);
 };

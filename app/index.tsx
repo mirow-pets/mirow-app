@@ -28,6 +28,7 @@ export default function SelectRoleScreen() {
             setUserRole(UserRole.PetOwner);
             router.push("/pet-owner/sign-up");
           }}
+          style={{ minWidth: "80%" }}
           title="Pet owner"
           color="secondary"
         />
@@ -37,6 +38,7 @@ export default function SelectRoleScreen() {
             setUserRole(UserRole.CareGiver);
             router.push("/caregiver/sign-up");
           }}
+          style={{ minWidth: "80%" }}
           title="Pet Caregiver"
           color="secondary"
           variant="reversed"

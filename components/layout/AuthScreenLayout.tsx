@@ -32,7 +32,7 @@ export default function AuthScreenLayout({
   const handleSwitchRole = async () => {
     await AsyncStorage.removeItem("userRole");
     setUserRole(undefined);
-    router.push("/select-role");
+    router.push("/");
   };
 
   return (

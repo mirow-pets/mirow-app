@@ -10,24 +10,24 @@ import { Button } from "@/components/button/Button";
 import { ThemedText } from "@/components/themed-text";
 import { primaryColor, secondaryColor } from "@/constants/theme";
 import { updateCaregiverProfileSchema } from "@/features/profile/validations";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { useProfile } from "@/hooks/use-profile";
 import { TCaregiverPreference } from "@/types";
 
 export default function PreferencesScreen() {
   const router = useRouter();
   const {
     caregiverPreferenceOptions,
-    caregiverProfile,
-    updateCaregiverProfile,
-    isUpdatingCaregiverProfile,
-  } = useProfile();
+    profile,
+    updateProfile,
+    isUpdatingProfile,
+  } = useCaregiverProfile();
 
   const form = useForm({
     resolver: zodResolver(updateCaregiverProfileSchema),
     defaultValues: {
       careGiverPreferences:
-        caregiverProfile?.careGiverPreferences?.map(({ id }) => id) ?? [],
+        profile?.careGiverPreferences?.map(({ id }) => id) ?? [],
     },
   });
 
@@ -46,7 +46,7 @@ export default function PreferencesScreen() {
     const result = await form.trigger("careGiverPreferences");
     if (!result) return;
 
-    updateCaregiverProfile(values, () => {
+    updateProfile(values, () => {
       form.reset();
       router.replace("/caregiver/profile");
     });
@@ -86,7 +86,7 @@ export default function PreferencesScreen() {
         <Button
           title="Save"
           onPress={handleSubmit}
-          loading={isUpdatingCaregiverProfile}
+          loading={isUpdatingProfile}
           color="secondary"
         />
       </View>

@@ -5,6 +5,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { StripeProvider } from "@stripe/stripe-react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -13,25 +14,32 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
+import { ENV } from "@/env";
 import AuthProvider, { useAuth } from "@/hooks/use-auth";
 import ModalProvider from "@/hooks/use-modal";
-import ProfileProvider from "@/hooks/use-profile";
+import PaymentProvider from "@/hooks/use-payment";
 import { UserRole } from "@/types/users";
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ModalProvider>
-        <AuthProvider>
-          <ProfileProvider>
-            <RootLayoutNav />
-            <StatusBar style="auto" />
-          </ProfileProvider>
-        </AuthProvider>
-      </ModalProvider>
-    </QueryClientProvider>
+    <StripeProvider
+      publishableKey={ENV.STRIPE_PUBLISHABLE_KEY}
+      merchantIdentifier={ENV.MERCHANT_NAME}
+      urlScheme={ENV.URL_SCHEME}
+    >
+      <QueryClientProvider client={queryClient}>
+        <ModalProvider>
+          <AuthProvider>
+            <PaymentProvider>
+              <RootLayoutNav />
+              <StatusBar style="auto" />
+            </PaymentProvider>
+          </AuthProvider>
+        </ModalProvider>
+      </QueryClientProvider>
+    </StripeProvider>
   );
 }
 
@@ -49,8 +57,8 @@ const RootLayoutNav = () => {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <GestureHandlerRootView>
-        <Stack initialRouteName="select-role">
-          <Stack.Screen name="select-role" options={{ headerShown: false }} />
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Protected guard={!!userRole}>
             {userRole === UserRole.PetOwner ? (
               <Stack.Screen

@@ -12,30 +12,26 @@ import { NumberInput } from "@/components/form/NumberInput";
 import { ThemedText } from "@/components/themed-text";
 import { primaryColor, secondaryColor } from "@/constants/theme";
 import { updateCaregiverProfileSchema } from "@/features/profile/validations";
-import { useCaregiver } from "@/hooks/use-caregiver";
+import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { useProfile } from "@/hooks/use-profile";
 import { TCaregiverPreference, THomeType, TTransportType } from "@/types";
 
 export default function ServiceTypesScreen() {
   const router = useRouter();
   const { serviceTypeOptions, homeTypeOptions, transportTypeOptions } =
-    useCaregiver();
-  const {
-    caregiverProfile,
-    updateCaregiverProfile,
-    isUpdatingCaregiverProfile,
-  } = useProfile();
+    useCaregiverCaregiver();
+  const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
 
   const form = useForm({
     resolver: zodResolver(updateCaregiverProfileSchema),
     defaultValues: {
-      services: caregiverProfile?.serviceTypes?.map(({ id }) => id) ?? [],
-      homeTypesIds: caregiverProfile?.homeTypes?.map(({ id }) => id) ?? [],
-      transportIds: caregiverProfile?.transportType?.map(({ id }) => id) ?? [],
-      pricePerHour: caregiverProfile?.pricePerHour,
-      pricePerMile: caregiverProfile?.pricePerMile,
-      pricePerService: caregiverProfile?.pricePerService,
+      services: profile?.serviceTypes?.map(({ id }) => id) ?? [],
+      homeTypesIds: profile?.homeTypes?.map(({ id }) => id) ?? [],
+      transportIds: profile?.transportType?.map(({ id }) => id) ?? [],
+      pricePerHour: profile?.pricePerHour,
+      pricePerMile: profile?.pricePerMile,
+      pricePerService: profile?.pricePerService,
     },
   });
 
@@ -68,7 +64,7 @@ export default function ServiceTypesScreen() {
     ]);
     if (!result) return;
 
-    updateCaregiverProfile(
+    updateProfile(
       {
         ...values,
         pricePerHour: pricePerHour && +pricePerHour,
@@ -189,7 +185,7 @@ export default function ServiceTypesScreen() {
           <Button
             title="Save"
             onPress={handleSubmit}
-            loading={isUpdatingCaregiverProfile}
+            loading={isUpdatingProfile}
             color="secondary"
           />
         </View>

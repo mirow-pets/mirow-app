@@ -10,7 +10,7 @@ import { TPet } from "@/types";
 import { TPetType, TPetVaccination, TPetWeight } from "@/types/pets";
 import { replaceNullWithUndefined } from "@/utils";
 
-import { useAuth } from "./use-auth";
+import { useAuth } from "../use-auth";
 
 interface Option {
   label: string;
@@ -22,7 +22,7 @@ interface TPetFormFields {
   petWeights: TPetWeight[];
 }
 
-export interface PetContextValues {
+export interface PetOwnerPetContextValues {
   pets: TPet[];
   isLoadingPets: boolean;
   isLoadingPetFormFields: boolean;
@@ -42,13 +42,14 @@ export interface PetContextValues {
   spayedOrNeuteredOptions: Option[];
 }
 
-export const PetContext = createContext<PetContextValues | null>(null);
+export const PetOwnerPetContext =
+  createContext<PetOwnerPetContextValues | null>(null);
 
-export interface PetProviderProps {
+export interface PetOwnerPetProviderProps {
   children: ReactNode;
 }
 
-const PetProvider = ({ children }: PetProviderProps) => {
+const PetOwnerPetProvider = ({ children }: PetOwnerPetProviderProps) => {
   const { currUser } = useAuth();
   const router = useRouter();
   const [petId, setPetId] = useState<TPet["id"]>();
@@ -78,7 +79,11 @@ const PetProvider = ({ children }: PetProviderProps) => {
     enabled: !!currUser,
   });
 
-  let { data: pet, isLoading: isLoadingPet } = useQuery({
+  let {
+    data: pet,
+    isLoading: isLoadingPet,
+    refetch: refetchPet,
+  } = useQuery({
     queryKey: ["pet", petId],
     queryFn: () => Get(`/users/pets/${petId}`),
     enabled: !!petId,
@@ -112,8 +117,9 @@ const PetProvider = ({ children }: PetProviderProps) => {
       Patch(`/users/pets/${petId}`, input),
     onSuccess: async () => {
       await refetchPets();
+      await refetchPet();
 
-      router.replace("/pet-owner/pets");
+      router.back();
 
       Toast.show({
         type: "success",
@@ -196,7 +202,7 @@ const PetProvider = ({ children }: PetProviderProps) => {
   };
 
   return (
-    <PetContext.Provider
+    <PetOwnerPetContext.Provider
       value={{
         petTypeOptions,
         genderOptions,
@@ -218,17 +224,17 @@ const PetProvider = ({ children }: PetProviderProps) => {
       }}
     >
       {children}
-    </PetContext.Provider>
+    </PetOwnerPetContext.Provider>
   );
 };
 
-export default PetProvider;
+export default PetOwnerPetProvider;
 
-export const usePet = () => {
-  const pet = useContext(PetContext);
+export const usePetOwnerPet = () => {
+  const pet = useContext(PetOwnerPetContext);
 
   if (!pet) {
-    throw new Error("Cannot access usePet outside PetProvider");
+    throw new Error("Cannot access usePetOwnerPet outside PetOwnerPetProvider");
   }
   return pet;
 };

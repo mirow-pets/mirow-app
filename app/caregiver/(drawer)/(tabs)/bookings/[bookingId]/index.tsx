@@ -1,123 +1,59 @@
-import { useEffect } from "react";
-import {
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useMemo } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { PetAvatar } from "@/components/image/PetAvatar";
-import { UserAvatar } from "@/components/image/UserAvatar";
 import { ThemedText } from "@/components/themed-text";
-import {
-  blueColor,
-  greenColor,
-  lightGrayColor,
-  primaryColor,
-  whiteColor,
-} from "@/constants/theme";
-import { CancelBookingButton } from "@/features/bookings/components/CancelBookingButton";
-import { useAuth } from "@/hooks/use-auth";
-import { useBooking } from "@/hooks/use-booking";
-import { UserRole } from "@/types/users";
+import { greenColor, lightGrayColor } from "@/constants/theme";
+import BookingDetails from "@/features/bookings/components/BookingDetails";
+import { RejectBookingButton } from "@/features/bookings/components/RejectBookingButton";
+import { useCaregiverBooking } from "@/hooks/caregiver/use-caregiver-booking";
 import { confirm } from "@/utils";
-import { formatTimeToAmPm, formatToDateTextMDY } from "@/utils/date";
 
 export default function BookingScreen() {
   const { bookingId } = useLocalSearchParams();
-  const { userRole } = useAuth();
   const {
-    booking,
-    isLoadingBooking,
-    getBooking,
+    bookings,
+    acceptBooking,
+    isAcceptingBooking,
+    startBooking,
+    isStartingBooking,
     completeBooking,
     isCompletingBooking,
-  } = useBooking();
+  } = useCaregiverBooking();
 
-  const isPetOwner = userRole === UserRole.PetOwner;
+  const booking = useMemo(() => {
+    return bookings.find(({ id }) => id === bookingId);
+  }, [bookings, bookingId]);
 
-  useEffect(() => getBooking(bookingId as string), [bookingId, getBooking]);
-
-  if (isLoadingBooking) return <Text>Loading booking...</Text>;
+  const queue = booking?.caregiversQueues?.find(
+    ({ bookingsId }) => bookingsId === booking?.id
+  );
 
   if (!booking?.pets?.length) return <Text>Booking Not Found</Text>;
-
-  const pet = booking.pets[0];
 
   return (
     <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
-        <View style={styles.bookingDetails}>
-          <PetAvatar src={pet.profileImage} size={100} />
-          <View style={{ flex: 1 }}>
-            <ThemedText type="defaultSemiBold" style={{ color: whiteColor }}>
-              Name: {pet.name}
-            </ThemedText>
-            <ThemedText style={{ fontSize: 12, color: whiteColor }}>
-              Type: {pet.petTypes?.display}
-            </ThemedText>
-            <ThemedText style={{ fontSize: 12, color: whiteColor }}>
-              Service: {booking.serviceTypes?.display}
-            </ThemedText>
-            <ThemedText style={{ fontSize: 12, color: whiteColor }}>
-              Gender: {pet.gender ? "Male" : "Female"}
-            </ThemedText>
-            <ThemedText style={{ fontSize: 12, color: whiteColor }}>
-              Start: {formatToDateTextMDY(booking.startDate)}{" "}
-              {formatTimeToAmPm(booking.startDate)}
-            </ThemedText>
-            <ThemedText style={{ fontSize: 12, color: whiteColor }}>
-              Status: {booking?.bookingStatus?.display}
-            </ThemedText>
-          </View>
-        </View>
-        <View style={styles.ownerDetails}>
-          <ThemedText type="defaultSemiBold" style={{ marginBottom: 8 }}>
-            Pet owner
-          </ThemedText>
-          <View style={{ flexDirection: "row", gap: 16 }}>
-            <UserAvatar src={booking?.users?.profileImage} size={64} />
-            <View>
-              <ThemedText>
-                {booking?.users?.firstName} {booking?.users?.lastName}
-              </ThemedText>
-              <View style={{ flexDirection: "row", gap: 4 }}>
-                <ThemedText
-                  style={{
-                    fontSize: 12,
-                  }}
-                >
-                  Phone:
-                </ThemedText>
-                <ThemedText
-                  style={{
-                    fontSize: 12,
-                    textDecorationLine: "underline",
-                    color: blueColor,
-                  }}
-                  onPress={() =>
-                    Linking.openURL(`tel:${booking?.users?.phone}`)
-                  }
-                >
-                  {booking?.users?.phone}
-                </ThemedText>
-              </View>
-            </View>
-          </View>
-        </View>
-        {isPetOwner ? (
-          <View>
-            {["booked", "accepted"].includes(
-              booking.bookingStatus?.status ?? ""
-            ) && <CancelBookingButton bookingId={booking.id} />}
-          </View>
-        ) : (
+        <BookingDetails booking={booking} />
+        {!!queue && (
           <View>
             {booking.bookingStatus?.status === "accepted" && (
+              <TouchableOpacity
+                disabled={isStartingBooking}
+                onPress={() =>
+                  confirm({
+                    title: "Service delivered",
+                    description: "Are you sure to start the booking?",
+                    onConfirm: () => startBooking(booking.id),
+                  })
+                }
+              >
+                <ThemedText style={{ color: greenColor }}>Start</ThemedText>
+              </TouchableOpacity>
+            )}
+            {booking.bookingStatus?.status === "inprogress" && (
               <TouchableOpacity
                 disabled={isCompletingBooking}
                 onPress={() =>
@@ -130,6 +66,32 @@ export default function BookingScreen() {
               >
                 <ThemedText style={{ color: greenColor }}>Delivered</ThemedText>
               </TouchableOpacity>
+            )}
+            {booking.bookingStatus?.status === "booked" && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  gap: 16,
+                }}
+              >
+                <TouchableOpacity
+                  disabled={isAcceptingBooking}
+                  onPress={() =>
+                    confirm({
+                      title: "Confirmation",
+                      description: "Are you sure to accept the booking?",
+                      onConfirm: () => acceptBooking(booking.id),
+                    })
+                  }
+                >
+                  <ThemedText style={{ color: greenColor }}>Accept</ThemedText>
+                </TouchableOpacity>
+                <RejectBookingButton
+                  bookingId={booking.id}
+                  careGiverQeueuId={queue.id}
+                />
+              </View>
             )}
           </View>
         )}
@@ -147,7 +109,6 @@ const styles = StyleSheet.create({
   bookingDetails: {
     flexDirection: "row",
     gap: 16,
-    backgroundColor: primaryColor,
     padding: 16,
     borderRadius: 8,
   },

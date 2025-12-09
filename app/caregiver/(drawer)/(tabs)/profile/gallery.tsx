@@ -6,17 +6,17 @@ import Feather from "@expo/vector-icons/Feather";
 import { CaregiverImage } from "@/components/image/CaregiverImage";
 import { ImagePicker } from "@/components/image/ImagePicker";
 import { ThemedText } from "@/components/themed-text";
-import { useCaregiver } from "@/hooks/use-caregiver";
-import { useProfile } from "@/hooks/use-profile";
+import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 
 export default function GalleryScreen() {
-  const { caregiverProfile } = useProfile();
+  const { profile } = useCaregiverProfile();
   const { caregiverGalleries, getCaregiver, uploadImage, isUploadingImage } =
-    useCaregiver();
+    useCaregiverCaregiver();
 
   useEffect(() => {
-    getCaregiver(caregiverProfile.usersId);
-  }, [caregiverProfile.usersId, getCaregiver]);
+    getCaregiver(profile.usersId);
+  }, [profile.usersId, getCaregiver]);
 
   return (
     <View style={styles.container}>

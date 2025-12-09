@@ -11,8 +11,8 @@ import { PetAvatar } from "@/components/image/PetAvatar";
 import { Modal } from "@/components/modal/Modal";
 import { ThemedText } from "@/components/themed-text";
 import { primaryColor } from "@/constants/theme";
+import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
 import { useModal } from "@/hooks/use-modal";
-import { usePet } from "@/hooks/use-pet";
 import { TPet } from "@/types";
 
 const petSchema = z.object({
@@ -28,7 +28,7 @@ export interface AddPetModalProps {
 
 export const AddPetModal = ({ trigger, onAdded }: AddPetModalProps) => {
   const { setOpenId } = useModal();
-  const { pets, getPetType } = usePet();
+  const { pets, getPetType } = usePetOwnerPet();
 
   const form = useForm({
     resolver: zodResolver(petSchema),

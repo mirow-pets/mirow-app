@@ -48,6 +48,7 @@ export const Button = ({
     variant === "reversed" && {
       backgroundColor: whiteColor,
     },
+    style,
   ];
 
   const textStyle = [
@@ -104,7 +105,6 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     lineHeight: 32,
     textAlign: "center",
-    width: "100%",
   },
   sm: {
     minWidth: 110,

@@ -1,10 +1,13 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as BaseImagePicker from "expo-image-picker";
+import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 
+import { TCreateCheckrCandidate } from "@/features/profile/validations";
 import { TBackgroundVerification } from "@/features/profile/validations/background-verification-schema";
+import { useAuth } from "@/hooks/use-auth";
 import { Get, Patch, Post } from "@/services/http-service";
 import {
   TCaregiver,
@@ -17,9 +20,7 @@ import {
 } from "@/types";
 import { TCaregiverGallery } from "@/types/caregivers";
 import { TPetType } from "@/types/pets";
-import { UserRole } from "@/types/users";
-
-import { useAuth } from "./use-auth";
+import { TSetting } from "@/types/settings";
 
 interface TCaregiverSignupFormFields {
   documentTypes: TDocument[];
@@ -27,14 +28,11 @@ interface TCaregiverSignupFormFields {
   petTypes: TPetType[];
   homeTypes: THomeType[];
   transportTypes: TTransportType[];
+  settings: TSetting[];
 }
 
-export interface CaregiverContextValues {
-  caregivers: TCaregiver[];
-  isLoadingCaregivers: boolean;
+export interface CaregiverCaregiverContextValues {
   getCaregiver: (_caregiverId: string) => void;
-  caregiver: TCaregiver;
-  isLoadingCaregiver: boolean;
   isLoadingCaregiverSignupFormFields: boolean;
   petTypeOptions: TOption[];
   documentTypeOptions: TOption[];
@@ -45,29 +43,41 @@ export interface CaregiverContextValues {
   isLoadingCaregiverGalleries: boolean;
   uploadImage: (_image: BaseImagePicker.ImagePickerAsset) => void;
   isUploadingImage: boolean;
-  initiateBackgroungVerification: (_input: TBackgroundVerification) => void;
+  initiateBackgroundVerification: (
+    _input: TBackgroundVerification,
+    _onSuccess: () => void
+  ) => void;
   isInitiatingBackgroundVerification: boolean;
+  createCheckrCandidate: (_input: TCreateCheckrCandidate) => void;
+  isCreatingCheckrCandidate: boolean;
+  settings: Record<string, string>;
 }
 
-export const CaregiverContext = createContext<CaregiverContextValues | null>(
-  null
-);
+export const CaregiverCaregiverContext =
+  createContext<CaregiverCaregiverContextValues | null>(null);
 
-export interface CaregiverProviderProps {
+export interface CaregiverCaregiverProviderProps {
   children: ReactNode;
 }
 
-const CaregiverProvider = ({ children }: CaregiverProviderProps) => {
-  const { currUser, userRole } = useAuth();
+const CaregiverCaregiverProvider = ({
+  children,
+}: CaregiverCaregiverProviderProps) => {
+  const { currUser } = useAuth();
   const [userId, setUserId] = useState<TCaregiver["usersId"]>();
-  const isPetOwner = userRole === UserRole.PetOwner;
   const queryClient = useQueryClient();
 
   const onError = (err: Error) => {
     console.log(err);
+    let message = "An unexpected error occurred. Please try again.";
+
+    if ("statusCode" in err && Number(err.statusCode) < 500) {
+      message = err.message;
+    }
+
     Toast.show({
       type: "error",
-      text1: "An unexpected error occurred. Please try again.",
+      text1: message,
     });
   };
 
@@ -75,9 +85,9 @@ const CaregiverProvider = ({ children }: CaregiverProviderProps) => {
     data: caregiverSignupFormFields,
     isLoading: isLoadingCaregiverSignupFormFields,
   } = useQuery<TCaregiverSignupFormFields>({
-    queryKey: ["pet-fields"],
+    queryKey: ["caregiver-signup-fields"],
     queryFn: () => Get("/fields/caregivers/signup"),
-    enabled: !!currUser && !isPetOwner,
+    enabled: !!currUser,
   });
 
   const petTypeOptions =
@@ -110,19 +120,14 @@ const CaregiverProvider = ({ children }: CaregiverProviderProps) => {
       value: id,
     })) ?? [];
 
-  const { data: caregivers = [], isLoading: isLoadingCaregivers } = useQuery<
-    TCaregiver[]
-  >({
-    queryKey: ["caregivers"],
-    queryFn: () => Post("/users/care-givers"),
-    enabled: !!currUser && isPetOwner,
-  });
-
-  const { data: caregiver, isLoading: isLoadingCaregiver } = useQuery({
-    queryKey: ["caregiver", userId, isPetOwner],
-    queryFn: () => Get(`/users/care-givers/${userId}`),
-    enabled: !!currUser && isPetOwner,
-  });
+  const settings = useMemo(() => {
+    const mapper: Record<string, string> = {};
+    if (!caregiverSignupFormFields?.settings) return {};
+    caregiverSignupFormFields.settings.forEach(({ settings, value }) => {
+      mapper[settings] = value;
+    });
+    return mapper;
+  }, [caregiverSignupFormFields?.settings]);
 
   const {
     data: caregiverGalleries = [],
@@ -141,13 +146,71 @@ const CaregiverProvider = ({ children }: CaregiverProviderProps) => {
     mutationFn: (input: FormData) =>
       Post("/care-givers/galleries", input, "multipart/form-data"),
     onSuccess: async () => {
-      await queryClient.refetchQueries({
-        queryKey: ["caregiver-galleries", userId],
-      });
+      await Promise.all([
+        queryClient.refetchQueries({
+          queryKey: ["caregiver-galleries", userId],
+        }),
+        queryClient.refetchQueries({
+          queryKey: ["caregiver-profile"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["caregiver-profile-completion"],
+        }),
+      ]);
 
       Toast.show({
         type: "success",
         text1: "Image uploaded successfully!",
+      });
+    },
+    onError,
+  });
+
+  const {
+    mutate: _initiateBackgroungVerification,
+    isPending: isInitiatingBackgroundVerification,
+  } = useMutation<unknown, Error, TBackgroundVerification>({
+    mutationFn: ({ dateOfBirth, ...input }) => {
+      return Patch("/initiate-background-check", {
+        ...input,
+        day: dateOfBirth.getDate(),
+        month: dateOfBirth.getMonth() + 1,
+        year: dateOfBirth.getFullYear(),
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["caregiver-profile", currUser?.sessionId],
+      });
+    },
+    onError,
+  });
+
+  const {
+    mutate: createCheckrCandidate,
+    isPending: isCreatingCheckrCandidate,
+  } = useMutation<unknown, Error, TCreateCheckrCandidate>({
+    mutationFn: ({ dateOfBirth, ...input }: TCreateCheckrCandidate) => {
+      return Post("/checkr/create-candidate", {
+        ...input,
+        day: dateOfBirth.getDate(),
+        month: dateOfBirth.getMonth() + 1,
+        year: dateOfBirth.getFullYear(),
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["caregiver-profile"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["caregiver-profile-completion"],
+      });
+
+      router.push("/caregiver/profile");
+
+      Toast.show({
+        type: "success",
+        text1: "Background check started successfully!",
       });
     },
     onError,
@@ -171,24 +234,15 @@ const CaregiverProvider = ({ children }: CaregiverProviderProps) => {
     _uploadImage(formdata);
   };
 
-  const {
-    mutate: _initiateBackgroungVerification,
-    isPending: isInitiatingBackgroundVerification,
-  } = useMutation<unknown, Error, TBackgroundVerification>({
-    mutationFn: () => Patch("/initiate-background-check"),
-  });
-
-  const initiateBackgroungVerification = (input: TBackgroundVerification) =>
-    _initiateBackgroungVerification(input);
+  const initiateBackgroundVerification = (
+    input: TBackgroundVerification,
+    onSuccess: () => void
+  ) => _initiateBackgroungVerification(input, { onSuccess });
 
   return (
-    <CaregiverContext.Provider
+    <CaregiverCaregiverContext.Provider
       value={{
-        caregivers,
-        isLoadingCaregivers,
         getCaregiver,
-        caregiver,
-        isLoadingCaregiver,
         petTypeOptions,
         isLoadingCaregiverSignupFormFields,
         documentTypeOptions,
@@ -199,22 +253,27 @@ const CaregiverProvider = ({ children }: CaregiverProviderProps) => {
         isLoadingCaregiverGalleries,
         uploadImage,
         isUploadingImage,
-        initiateBackgroungVerification,
+        initiateBackgroundVerification,
         isInitiatingBackgroundVerification,
+        createCheckrCandidate,
+        isCreatingCheckrCandidate,
+        settings,
       }}
     >
       {children}
-    </CaregiverContext.Provider>
+    </CaregiverCaregiverContext.Provider>
   );
 };
 
-export default CaregiverProvider;
+export default CaregiverCaregiverProvider;
 
-export const useCaregiver = () => {
-  const caregiver = useContext(CaregiverContext);
+export const useCaregiverCaregiver = () => {
+  const caregiver = useContext(CaregiverCaregiverContext);
 
   if (!caregiver) {
-    throw new Error("Cannot access useCaregiver outside CaregiverProvider");
+    throw new Error(
+      "Cannot access useCaregiverCaregiver outside CaregiverCaregiverProvider"
+    );
   }
   return caregiver;
 };

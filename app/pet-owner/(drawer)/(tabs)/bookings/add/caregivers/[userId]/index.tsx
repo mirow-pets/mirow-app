@@ -6,11 +6,12 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { ThemedText } from "@/components/themed-text";
-import { useCaregiver } from "@/hooks/use-caregiver";
+import { usePetOwnerCaregiver } from "@/hooks/pet-owner/use-pet-owner-caregiver";
 
 export default function CaregiverScreen() {
   const { userId } = useLocalSearchParams();
-  const { caregiver, isLoadingCaregiver, getCaregiver } = useCaregiver();
+  const { caregiver, isLoadingCaregiver, getCaregiver } =
+    usePetOwnerCaregiver();
   const router = useRouter();
 
   useEffect(() => getCaregiver(userId as string), [userId, getCaregiver]);

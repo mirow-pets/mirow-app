@@ -10,7 +10,7 @@ import { Input } from "@/components/form/Input";
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { primaryColor } from "@/constants/theme";
 import { editPetSchema, TEditPet } from "@/features/pets/validations";
-import { usePet } from "@/hooks/use-pet";
+import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
 
 import { PetVaccinationsForm } from "./PetVaccinationsForm";
 
@@ -26,7 +26,7 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
     genderOptions,
     weightOptions,
     spayedOrNeuteredOptions,
-  } = usePet();
+  } = usePetOwnerPet();
 
   const form = useForm({
     resolver: zodResolver(editPetSchema),
@@ -43,9 +43,7 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
           <PetAvatar
             size={80}
             isEditable
-            onChange={(value) => {
-              form.setValue("profileImage", value);
-            }}
+            onChange={(value) => form.setValue("profileImage", value)}
             src={profileImage || undefined}
           />
         </View>
@@ -77,7 +75,7 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
           placeholder="Special Instructions / Notes"
         />
         <PetVaccinationsForm
-          value={petVaccinations}
+          value={petVaccinations ?? []}
           onChange={(petVaccinations) =>
             form.setValue("petVaccinations", petVaccinations)
           }

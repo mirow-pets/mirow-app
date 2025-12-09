@@ -5,11 +5,11 @@ import { useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { EditPetForm } from "@/features/pets/components/EditPetForm";
-import { usePet } from "@/hooks/use-pet";
+import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
 
 export default function EditPetScreen() {
   const searchParams = useLocalSearchParams();
-  const { pet, isLoadingPet, getPet } = usePet();
+  const { pet, isLoadingPet, getPet } = usePetOwnerPet();
   const petId = searchParams.petId as string;
 
   useEffect(() => getPet(petId), [petId, getPet]);

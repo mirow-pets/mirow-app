@@ -1,8 +1,8 @@
 import { createContext, ReactNode, useContext } from "react";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Get } from "@/services/http-service";
+import { Get, Patch } from "@/services/http-service";
 import { TNotification } from "@/types";
 
 import { useAuth } from "./use-auth";
@@ -10,6 +10,7 @@ import { useAuth } from "./use-auth";
 export interface NotificationContextValues {
   notifications: TNotification[];
   isLoadingNotifications: boolean;
+  setNotificationAsRead: (_notificationId: TNotification["id"]) => void;
 }
 
 export const NotificationContext =
@@ -21,19 +22,34 @@ export interface NotificationProviderProps {
 
 const NotificationProvider = ({ children }: NotificationProviderProps) => {
   const { currUser } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: notifications = [], isLoading: isLoadingNotifications } =
     useQuery<TNotification[], Error>({
-      queryKey: ["notifications"],
+      queryKey: ["notifications", currUser?.sessionId],
       queryFn: () => Get(`/notifications`),
       enabled: !!currUser,
     });
+
+  const { mutate: read } = useMutation<void, Error, TNotification["id"]>({
+    mutationFn: (notificationId: TNotification["id"]) =>
+      Patch(`/notifications/${notificationId}`, { read: true }),
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["notifications", currUser?.sessionId],
+      });
+    },
+  });
+
+  const setNotificationAsRead = (notificationId: TNotification["id"]) =>
+    read(notificationId);
 
   return (
     <NotificationContext.Provider
       value={{
         notifications,
         isLoadingNotifications,
+        setNotificationAsRead,
       }}
     >
       {children}

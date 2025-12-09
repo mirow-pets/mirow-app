@@ -1,3 +1,4 @@
+import { TCaregiverQueue } from "./caregivers";
 import { TPet } from "./pets";
 import { TServiceType } from "./services";
 import { TUser } from "./users";
@@ -40,6 +41,7 @@ export interface TBooking {
   users?: TUser;
   pets?: TPet[];
   bookingStatus?: TBookingStatus;
+  caregiversQueues: TCaregiverQueue[];
 }
 
 export interface TBookingStatus {

@@ -10,7 +10,7 @@ import { ThemedText } from "@/components/themed-text";
 import { primaryColor, secondaryColor, whiteColor } from "@/constants/theme";
 import { AddPetModal } from "@/features/bookings/components/AddPetModal";
 import { TAddBooking } from "@/features/bookings/validations";
-import { usePet } from "@/hooks/use-pet";
+import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
 import { TPet } from "@/types";
 
 export interface AddBookingStepOneProps {
@@ -22,7 +22,7 @@ export const AddBookingStepOne = ({
   onNext,
   onPrev,
 }: AddBookingStepOneProps) => {
-  const { pets, getPetType } = usePet();
+  const { pets, getPetType } = usePetOwnerPet();
   const form = useFormContext<TAddBooking>();
 
   const errors = form.formState.errors;
