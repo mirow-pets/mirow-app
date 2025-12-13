@@ -34,6 +34,7 @@ interface TCaregiverSignupFormFields {
 export interface CaregiverCaregiverContextValues {
   getCaregiver: (_caregiverId: string) => void;
   isLoadingCaregiverSignupFormFields: boolean;
+  serviceTypes: TServiceType[];
   petTypeOptions: TOption[];
   documentTypeOptions: TOption[];
   serviceTypeOptions: TOption[];
@@ -77,7 +78,8 @@ const CaregiverCaregiverProvider = ({
 
     Toast.show({
       type: "error",
-      text1: message,
+      text1: "Error",
+      text2: message,
     });
   };
 
@@ -167,7 +169,7 @@ const CaregiverCaregiverProvider = ({
   });
 
   const {
-    mutate: _initiateBackgroungVerification,
+    mutate: _initiateBackgroundVerification,
     isPending: isInitiatingBackgroundVerification,
   } = useMutation<unknown, Error, TBackgroundVerification>({
     mutationFn: ({ dateOfBirth, ...input }) => {
@@ -237,11 +239,12 @@ const CaregiverCaregiverProvider = ({
   const initiateBackgroundVerification = (
     input: TBackgroundVerification,
     onSuccess: () => void
-  ) => _initiateBackgroungVerification(input, { onSuccess });
+  ) => _initiateBackgroundVerification(input, { onSuccess });
 
   return (
     <CaregiverCaregiverContext.Provider
       value={{
+        serviceTypes: caregiverSignupFormFields?.serviceTypes ?? [],
         getCaregiver,
         petTypeOptions,
         isLoadingCaregiverSignupFormFields,

@@ -8,10 +8,10 @@ import {
   ViewStyle,
 } from "react-native";
 
+import { whiteColor } from "@/constants/theme";
 import { useModal } from "@/hooks/use-modal";
 
 import { ThemedText } from "../themed-text";
-import { ThemedView } from "../themed-view";
 
 export interface ModalProps {
   children: ReactNode;
@@ -54,7 +54,7 @@ export const Modal = ({
         style={styles.container}
       >
         <View style={styles.centeredView}>
-          <ThemedView style={[styles.modalView, style]}>
+          <View style={[styles.modalView, style]}>
             <ThemedText style={styles.modalTitle}>{title}</ThemedText>
             <View>{children}</View>
             <View style={styles.modalFooter}>
@@ -74,7 +74,7 @@ export const Modal = ({
                 </TouchableOpacity>
               )}
             </View>
-          </ThemedView>
+          </View>
         </View>
       </BaseModal>
     </>
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxHeight: 500,
     gap: 32,
+    backgroundColor: whiteColor,
   },
   modalTitle: {
     fontWeight: 600,

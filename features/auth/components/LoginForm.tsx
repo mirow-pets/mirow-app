@@ -54,7 +54,8 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
 
       Toast.show({
         type: "error",
-        text1: message,
+        text1: "Error",
+        text2: message,
       });
     },
   });

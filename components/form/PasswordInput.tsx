@@ -13,7 +13,7 @@ import { Controller, useFormContext, useFormState } from "react-hook-form";
 // e.g., using Expo: expo install @expo/vector-icons
 
 import { ThemedText } from "@/components/themed-text";
-import { redColor, whiteColor } from "@/constants/theme";
+import { blackColor, grayColor, redColor, whiteColor } from "@/constants/theme";
 
 interface PasswordInputProps extends Omit<TextInputProps, "secureTextEntry"> {
   label?: string;
@@ -54,6 +54,7 @@ export const PasswordInput = ({
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
+              placeholderTextColor={grayColor}
               {...props}
               // 4. Conditional secureTextEntry
               secureTextEntry={!isPasswordVisible}
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     flex: 1,
     fontSize: 16,
+    color: blackColor,
   },
   iconButton: {
     padding: 4,

@@ -11,17 +11,19 @@ const requestOptions = async (
 ) => {
   const accessToken = await AsyncStorage.getItem("accessToken");
 
+  const headers = {
+    ...(accessToken
+      ? {
+          Authorization: `Bearer ${accessToken}`,
+        }
+      : {}),
+    "Content-Type": contentType,
+    "Cache-Control": "no-cache",
+  };
+
   let options = {
     method: method,
-    headers: {
-      ...(accessToken
-        ? {
-            Authorization: `Bearer ${accessToken}`,
-          }
-        : {}),
-      "Content-Type": contentType,
-      "Cache-Control": "no-cache",
-    },
+    headers,
     body: (contentType === "application/json"
       ? JSON.stringify(body)
       : body) as string,
@@ -68,3 +70,27 @@ export const Patch = (endpoint: string, body?: unknown) =>
 
 export const Delete = (endpoint: string, body?: unknown) =>
   request(endpoint, "DELETE", body);
+
+export const addQueryParams = (
+  url: string,
+  queryParams: Record<string, string | string[] | number | number[] | undefined>
+) => {
+  const params = new URLSearchParams();
+
+  Object.entries(queryParams).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+
+    if (Array.isArray(value)) {
+      value.forEach((v) => {
+        if (v !== undefined && v !== null && v !== "") {
+          params.append(key, v.toString());
+        }
+      });
+    } else {
+      params.append(key, value.toString());
+    }
+  });
+
+  const queryString = params.toString();
+  return queryString ? `${url}?${queryString}` : url;
+};

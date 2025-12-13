@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -23,6 +23,9 @@ export interface CaregiverBookingContextValues {
   isStartingBooking: boolean;
   completeBooking: (_bookingId: TBooking["id"]) => void;
   isCompletingBooking: boolean;
+  getBooking: (_bookingId: string) => void;
+  booking: TBooking;
+  isLoadingBooking: boolean;
 }
 
 export const CaregiverBookingContext =
@@ -38,6 +41,8 @@ const CaregiverBookingProvider = ({
   const { setOpenId } = useModal();
   const { currUser } = useAuth();
   const { profileCompletion } = useCaregiverProfile();
+  const [bookingId, setBookingId] = useState<TBooking["id"]>();
+
   const router = useRouter();
 
   const onError = (err: Error) => {
@@ -50,9 +55,11 @@ const CaregiverBookingProvider = ({
 
     Toast.show({
       type: "error",
-      text1: message,
+      text1: "Error",
+      text2: message,
     });
   };
+
   const {
     data: bookings = [],
     isLoading: isLoadingBookings,
@@ -61,6 +68,16 @@ const CaregiverBookingProvider = ({
     queryKey: ["bookings"],
     queryFn: () => Get("/care-givers/bookings"),
     enabled: !!currUser && profileCompletion?.percentage === 100,
+  });
+
+  const {
+    data: booking,
+    isLoading: isLoadingBooking,
+    refetch: refetchBooking,
+  } = useQuery({
+    queryKey: ["booking", bookingId],
+    queryFn: () => Get(`/v2/users/bookings/${bookingId}`),
+    enabled: !!bookingId,
   });
 
   const { mutate: accept, isPending: isAcceptingBooking } = useMutation<
@@ -75,6 +92,7 @@ const CaregiverBookingProvider = ({
         return alert(message);
       }
       await refetchBookings();
+      await refetchBooking();
       setOpenId("");
 
       Toast.show({
@@ -100,6 +118,7 @@ const CaregiverBookingProvider = ({
       }),
     onSuccess: async () => {
       await refetchBookings();
+      await refetchBooking();
       setOpenId("");
 
       router.push("/caregiver/bookings");
@@ -121,6 +140,7 @@ const CaregiverBookingProvider = ({
       Patch(`/care-givers/bookings/${bookingId}/inprogress`),
     onSuccess: async () => {
       await refetchBookings();
+      await refetchBooking();
       setOpenId("");
 
       Toast.show({
@@ -140,6 +160,7 @@ const CaregiverBookingProvider = ({
       Patch(`/care-givers/bookings/${bookingId}/complete`),
     onSuccess: async () => {
       await refetchBookings();
+      await refetchBooking();
       setOpenId("");
 
       Toast.show({
@@ -149,6 +170,10 @@ const CaregiverBookingProvider = ({
     },
     onError,
   });
+
+  const getBooking = (bookingId: string) => {
+    setBookingId(bookingId);
+  };
 
   const acceptBooking = (bookingId: TBooking["id"]) => accept(bookingId);
 
@@ -171,6 +196,9 @@ const CaregiverBookingProvider = ({
         isStartingBooking,
         completeBooking,
         isCompletingBooking,
+        getBooking,
+        booking,
+        isLoadingBooking,
       }}
     >
       {children}

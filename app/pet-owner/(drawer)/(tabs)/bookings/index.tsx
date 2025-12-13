@@ -1,17 +1,15 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { useRouter } from "expo-router";
-import { FlatList } from "react-native-gesture-handler";
 
 import { PetAvatar } from "@/components/image/PetAvatar";
+import { InfiniteFlatList } from "@/components/list/InfiniteFlatList";
 import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
 import { primaryColor } from "@/constants/theme";
-import { usePetOwnerBooking } from "@/hooks/pet-owner/use-pet-owner-booking";
+import { TBooking } from "@/types";
 import { formatDateToMDY } from "@/utils";
 
 export default function MyBookingsScreen() {
-  const { bookings, isLoadingBookings } = usePetOwnerBooking();
   const router = useRouter();
 
   const handleView = (petId: string) => {
@@ -20,76 +18,71 @@ export default function MyBookingsScreen() {
     });
   };
 
-  if (isLoadingBookings) return <ThemedText>Loading my bookings…</ThemedText>;
-
-  if (!bookings.length)
-    return <ThemedText style={{ marginBottom: 8 }}>No booking yet.</ThemedText>;
-
   return (
-    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
-      <ThemedView style={styles.container}>
-        <FlatList
-          scrollEnabled={false}
-          data={bookings}
-          renderItem={({ item, index }) => {
-            const pet = item.pets?.[0];
+    <View style={styles.container}>
+      <InfiniteFlatList<TBooking>
+        url="/users/bookings"
+        perPage={5}
+        style={{ height: 400 }}
+        order="createdat DESC"
+        renderItem={({ item }) => {
+          const pet = item.pets?.[0];
 
-            if (!pet) return null;
+          if (!pet) return null;
 
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.itemContainer}
-                onPress={() => handleView(item.id)}
+          return (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.itemContainer}
+              onPress={() => handleView(item.id)}
+            >
+              <PetAvatar src={pet.profileImage} size={40} />
+              <View
+                style={{
+                  flex: 1,
+                }}
               >
-                <PetAvatar src={pet.profileImage} size={40} />
                 <View
                   style={{
+                    flexDirection: "row",
+                    gap: 8,
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <ThemedText type="defaultSemiBold">{pet.name}</ThemedText>
+                  <ThemedText style={{ color: primaryColor }}>
+                    {item.serviceTypes?.display}
+                  </ThemedText>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 8,
+                    justifyContent: "space-between",
                     flex: 1,
                   }}
                 >
-                  <View
+                  <ThemedText
                     style={{
-                      flexDirection: "row",
-                      gap: 8,
-                      justifyContent: "space-between",
+                      fontSize: 12,
+                      textAlign: "right",
+                      color: "#333333",
                     }}
                   >
-                    <ThemedText type="defaultSemiBold">{pet.name}</ThemedText>
-                    <ThemedText style={{ color: primaryColor }}>
-                      {item.serviceTypes?.display}
-                    </ThemedText>
-                  </View>
+                    {formatDateToMDY(item.startDate)}
+                  </ThemedText>
 
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      gap: 8,
-                      justifyContent: "space-between",
-                      flex: 1,
-                    }}
-                  >
-                    <ThemedText
-                      style={{
-                        fontSize: 12,
-                        textAlign: "right",
-                        color: "#333333",
-                      }}
-                    >
-                      {formatDateToMDY(item.startDate)}
-                    </ThemedText>
-
-                    <ThemedText type="defaultSemiBold" style={{}}>
-                      {item?.bookingStatus?.display}
-                    </ThemedText>
-                  </View>
+                  <ThemedText type="defaultSemiBold" style={{}}>
+                    {item?.bookingStatus?.display}
+                  </ThemedText>
                 </View>
-              </TouchableOpacity>
-            );
-          }}
-        />
-      </ThemedView>
-    </ScrollView>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </View>
   );
 }
 
@@ -98,6 +91,7 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "100%",
     gap: 8,
+    flex: 1,
   },
   itemContainer: {
     paddingVertical: 8,

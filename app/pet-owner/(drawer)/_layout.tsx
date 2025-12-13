@@ -1,13 +1,14 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 
 import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
+import { whiteColor } from "@/constants/theme";
 import PetOwnerBookingProvider from "@/hooks/pet-owner/use-pet-owner-booking";
 import PetOwnerCaregiverProvider from "@/hooks/pet-owner/use-pet-owner-caregiver";
+import PetOwnerPaymentProvider from "@/hooks/pet-owner/use-pet-owner-payment";
 import PetOwnerPetProvider from "@/hooks/pet-owner/use-pet-owner-pet";
 import { useAuth } from "@/hooks/use-auth";
 import NotificationProvider from "@/hooks/use-notifications";
@@ -22,7 +23,6 @@ export default function PetOwnerDrawerLayout() {
 
   const handleLogout = () => {
     logout();
-    router.replace("/");
   };
 
   const menu = [
@@ -41,37 +41,39 @@ export default function PetOwnerDrawerLayout() {
   return (
     <PetOwnerPetProvider>
       <NotificationProvider>
-        <PetOwnerCaregiverProvider>
-          <PetOwnerBookingProvider>
-            <Drawer
-              screenOptions={{ headerShown: false }}
-              drawerContent={() => (
-                <ThemedView>
-                  <ThemedText
-                    style={{
-                      paddingHorizontal: 16,
-                      paddingVertical: 24,
-                    }}
-                  >
-                    Mirow
-                  </ThemedText>
-                  {menu.map(({ label, onPress }, i) => (
-                    <TouchableOpacity
-                      key={i}
-                      style={{ paddingVertical: 16, paddingHorizontal: 16 }}
-                      onPress={onPress}
+        <PetOwnerPaymentProvider>
+          <PetOwnerCaregiverProvider>
+            <PetOwnerBookingProvider>
+              <Drawer
+                screenOptions={{ headerShown: false }}
+                drawerContent={() => (
+                  <View style={{ backgroundColor: whiteColor }}>
+                    <ThemedText
+                      style={{
+                        paddingHorizontal: 16,
+                        paddingVertical: 24,
+                      }}
                     >
-                      <ThemedText>{label}</ThemedText>
-                    </TouchableOpacity>
-                  ))}
-                </ThemedView>
-              )}
-              initialRouteName="(tabs)"
-            >
-              <Drawer.Screen name="(tabs)" />
-            </Drawer>
-          </PetOwnerBookingProvider>
-        </PetOwnerCaregiverProvider>
+                      Mirow
+                    </ThemedText>
+                    {menu.map(({ label, onPress }, i) => (
+                      <TouchableOpacity
+                        key={i}
+                        style={{ paddingVertical: 16, paddingHorizontal: 16 }}
+                        onPress={onPress}
+                      >
+                        <ThemedText>{label}</ThemedText>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+                initialRouteName="(tabs)"
+              >
+                <Drawer.Screen name="(tabs)" />
+              </Drawer>
+            </PetOwnerBookingProvider>
+          </PetOwnerCaregiverProvider>
+        </PetOwnerPaymentProvider>
       </NotificationProvider>
     </PetOwnerPetProvider>
   );

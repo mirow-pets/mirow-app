@@ -3,6 +3,10 @@ export {
   TAddBankAccount,
 } from "./add-bank-account-schema";
 export {
+  addPaymentMethodSchema,
+  TAddPaymentMethod,
+} from "./add-payment-method-schema";
+export {
   backgroundCheckBackgroundCheckInitialPaymentSchema,
   TBackgroundCheckInitialPayment,
 } from "./initial-payment-schema";

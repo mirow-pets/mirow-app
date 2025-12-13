@@ -13,11 +13,11 @@ import {
   addBankAccountSchema,
   TAddBankAccount,
 } from "@/features/payments/validations/add-bank-account-schema";
+import { useCaregiverPayment } from "@/hooks/caregiver/use-caregiver-payment";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { usePayment } from "@/hooks/use-payment";
 
 export default function AddBankScreen() {
-  const { addBankAccount, isAddingBankAccount } = usePayment();
+  const { addBankAccount, isAddingBankAccount } = useCaregiverPayment();
 
   const form = useForm({
     resolver: zodResolver(addBankAccountSchema),

@@ -2,6 +2,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
+
+import { whiteColor } from "@/constants/theme";
 import "react-native-reanimated";
 
 export default function ProfileLayout() {
@@ -9,7 +11,13 @@ export default function ProfileLayout() {
     <Stack
       screenOptions={{
         header: ({ options, navigation }) => (
-          <View style={{ padding: 8, flexDirection: "row" }}>
+          <View
+            style={{
+              padding: 8,
+              flexDirection: "row",
+              backgroundColor: whiteColor,
+            }}
+          >
             {options.presentation === "modal" && (
               <TouchableOpacity onPress={navigation.goBack}>
                 <MaterialIcons name="arrow-back" size={24} color="black" />
@@ -47,33 +55,8 @@ export default function ProfileLayout() {
         options={{ presentation: "modal", title: "Emergency Contact" }}
       />
       <Stack.Screen
-        name="preferences"
-        options={{ presentation: "modal", title: "Preferences" }}
-      />
-      <Stack.Screen
-        name="skills"
-        options={{ presentation: "modal", title: "Skills" }}
-      />
-      <Stack.Screen
-        name="experiences"
-        options={{ presentation: "modal", title: "Experiences" }}
-      />
-      <Stack.Screen
-        name="service-types"
-        options={{ presentation: "modal", title: "Service Types" }}
-      />
-      <Stack.Screen
-        name="gallery"
-        options={{ presentation: "modal", title: "Gallery" }}
-      />
-      <Stack.Screen name="banks" />
-      <Stack.Screen
-        name="background-verification"
-        options={{ presentation: "modal", title: "Background Verification" }}
-      />
-      <Stack.Screen
-        name="bio-description"
-        options={{ presentation: "modal", title: "Bio Description" }}
+        name="banks"
+        options={{ presentation: "modal", title: "Payment Methods" }}
       />
       <Stack.Screen
         name="address"

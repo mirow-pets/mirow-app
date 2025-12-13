@@ -10,7 +10,7 @@ export {
 } from "./caregivers";
 export { TOption } from "./common";
 export { TNotification } from "./notifications";
-export { TBankAccount } from "./payments";
+export { TBankAccount, TPaymentMethod } from "./payments";
 export { TPetOwnerProfileCompletion } from "./pet-owners";
 export { TPet } from "./pets";
 export { TServiceType } from "./services";

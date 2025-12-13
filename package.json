@@ -7,7 +7,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "android:build:dev": "dotenv -- eas build --platform android --local --profile development",
+    "android:build:prod": "dotenv -- eas build --platform android --local --profile production"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -23,6 +25,7 @@
     "expo": "~54.0.27",
     "expo-checkbox": "~5.0.8",
     "expo-constants": "~18.0.10",
+    "expo-dev-client": "~6.0.20",
     "expo-font": "~14.0.9",
     "expo-haptics": "~15.0.8",
     "expo-image": "~3.0.11",
@@ -54,6 +57,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "typescript": "~5.9.2"

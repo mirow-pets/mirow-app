@@ -1,11 +1,11 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
 
 import { useAuth } from "@/hooks/use-auth";
 import { Get, Post } from "@/services/http-service";
 import { TCaregiver, TUser } from "@/types";
-import { TCaregiverGallery } from "@/types/caregivers";
 
 export interface PetOwnerCaregiverContextValues {
   getCaregivers: (_filter: { serviceTypes: number[] }) => void;
@@ -14,8 +14,11 @@ export interface PetOwnerCaregiverContextValues {
   getCaregiver: (_caregiverId: string) => void;
   caregiver: TCaregiver;
   isLoadingCaregiver: boolean;
-  caregiverGalleries: TCaregiverGallery[];
-  isLoadingCaregiverGalleries: boolean;
+  setAsFavourite: (_input: {
+    userId: TCaregiver["usersId"];
+    isFavourite: boolean;
+  }) => void;
+  isSettingAsFavourite: boolean;
 }
 
 export const PetOwnerCaregiverContext =
@@ -30,6 +33,22 @@ const PetOwnerCaregiverProvider = ({
 }: PetOwnerCaregiverProviderProps) => {
   const { currUser } = useAuth();
   const [userId, setUserId] = useState<TCaregiver["usersId"]>();
+  const queryClient = useQueryClient();
+
+  const onError = (err: Error) => {
+    console.log(err);
+    let message = "An unexpected error occurred. Please try again.";
+
+    if ("statusCode" in err && Number(err.statusCode) < 500) {
+      message = err.message;
+    }
+
+    Toast.show({
+      type: "error",
+      text1: "Error",
+      text2: message,
+    });
+  };
 
   const {
     data: caregivers = [],
@@ -39,20 +58,39 @@ const PetOwnerCaregiverProvider = ({
     mutationFn: (filter) => Post("/users/care-givers", filter),
   });
 
-  const { data: caregiver, isLoading: isLoadingCaregiver } = useQuery({
+  const {
+    data: caregiver,
+    isLoading: isLoadingCaregiver,
+    refetch: refetchCaregiver,
+  } = useQuery({
     queryKey: ["caregiver", userId],
     queryFn: () => Get(`/users/care-givers/${userId}`),
     enabled: !!currUser && !!userId,
   });
 
-  const {
-    data: caregiverGalleries = [],
-    isLoading: isLoadingCaregiverGalleries,
-  } = useQuery<TCaregiverGallery[]>({
-    queryKey: ["caregiver-galleries", userId],
-    queryFn: () => Get(`/care-givers/${userId}/galleries`),
-    enabled: !!userId,
-  });
+  const { mutate: setAsFavourite, isPending: isSettingAsFavourite } =
+    useMutation({
+      mutationFn: ({
+        userId,
+        isFavourite,
+      }: {
+        userId: TCaregiver["usersId"];
+        isFavourite: boolean;
+      }) =>
+        Post(`/v2/users/caregivers/${userId}/favourites`, {
+          isFavourite,
+        }),
+      onSuccess: async () => {
+        await queryClient.refetchQueries({
+          queryKey: ["/users/favourites/care-givers"],
+        });
+        await queryClient.refetchQueries({
+          queryKey: ["booking"],
+        });
+        await refetchCaregiver();
+      },
+      onError,
+    });
 
   const getCaregiver = (userId: TUser["id"]) => {
     setUserId(userId);
@@ -67,8 +105,8 @@ const PetOwnerCaregiverProvider = ({
         getCaregiver,
         caregiver,
         isLoadingCaregiver,
-        caregiverGalleries,
-        isLoadingCaregiverGalleries,
+        setAsFavourite,
+        isSettingAsFavourite,
       }}
     >
       {children}

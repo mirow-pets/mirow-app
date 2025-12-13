@@ -25,9 +25,9 @@ export const backgroundVerificationSchema = z.object({
   dateOfBirth: z
     .date({ message: "Date of birth is required" })
     .refine((val) => {
-      const thirteenYearsAgo = new Date();
-      thirteenYearsAgo.setFullYear(thirteenYearsAgo.getFullYear() - 13);
-      return val <= thirteenYearsAgo;
+      const eighteenYearsAgo = new Date();
+      eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+      return val <= eighteenYearsAgo;
     }, "You must be at least 13 years old"),
   customerId: z.string(),
 });

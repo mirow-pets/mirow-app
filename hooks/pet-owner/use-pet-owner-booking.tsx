@@ -5,12 +5,9 @@ import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 
 import { TAddBooking, TCancelBooking } from "@/features/bookings/validations";
-import { useAuth } from "@/hooks/use-auth";
 import { useModal } from "@/hooks/use-modal";
 import { Get, Patch, Post } from "@/services/http-service";
 import { TBooking } from "@/types";
-
-import { usePetOwnerProfile } from "./use-pet-owner-profile";
 
 export interface PetOwnerBookingContextValues {
   bookings: TBooking[];
@@ -35,8 +32,6 @@ const PetOwnerBookingProvider = ({
   children,
 }: PetOwnerBookingProviderProps) => {
   const { setOpenId } = useModal();
-  const { currUser } = useAuth();
-  const { profileCompletion } = usePetOwnerProfile();
   const router = useRouter();
   const [bookingId, setBookingId] = useState<TBooking["id"]>();
 
@@ -50,7 +45,8 @@ const PetOwnerBookingProvider = ({
 
     Toast.show({
       type: "error",
-      text1: message,
+      text1: "Error",
+      text2: message,
     });
   };
 
@@ -61,7 +57,7 @@ const PetOwnerBookingProvider = ({
   } = useQuery<TBooking[]>({
     queryKey: ["bookings"],
     queryFn: () => Get("/users/bookings"),
-    enabled: !!currUser && profileCompletion?.percentage === 100,
+    enabled: false,
   });
 
   const {
@@ -70,7 +66,7 @@ const PetOwnerBookingProvider = ({
     refetch: refetchBooking,
   } = useQuery({
     queryKey: ["booking", bookingId],
-    queryFn: () => Get(`/users/bookings/${bookingId}`),
+    queryFn: () => Get(`/v2/users/bookings/${bookingId}`),
     enabled: !!bookingId,
   });
 
@@ -83,6 +79,7 @@ const PetOwnerBookingProvider = ({
       Post("/users/bookings/meal-service", input),
     onSuccess: async () => {
       await refetchBookings();
+      await refetchBooking();
 
       router.replace("/pet-owner/bookings");
 

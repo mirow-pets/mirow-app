@@ -15,9 +15,9 @@ export const BackgroungVerificationStepTwo = ({
   onPrev,
   onNext,
 }: BackgroungVerificationStepTwoProps) => {
-  const fourteenYearsAgo = new Date();
-  fourteenYearsAgo.setFullYear(fourteenYearsAgo.getFullYear() - 14);
-  fourteenYearsAgo.setDate(fourteenYearsAgo.getDate() - 1);
+  const eighteenYearsAgo = new Date();
+  eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+  eighteenYearsAgo.setDate(eighteenYearsAgo.getDate() - 1);
 
   return (
     <FormStepsLayout {...{ onPrev, onNext }}>
@@ -42,7 +42,11 @@ export const BackgroungVerificationStepTwo = ({
         placeholder="SSN Number"
         formatter={formatSsn}
       />
-      <DateInput name="dateOfBirth" maximumDate={fourteenYearsAgo} />
+      <DateInput
+        label="Birth of data"
+        name="dateOfBirth"
+        maximumDate={eighteenYearsAgo}
+      />
     </FormStepsLayout>
   );
 };

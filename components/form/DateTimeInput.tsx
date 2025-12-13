@@ -5,7 +5,7 @@ import { Controller, useFormContext, useFormState } from "react-hook-form";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import { ThemedText } from "@/components/themed-text";
-import { redColor, whiteColor } from "@/constants/theme";
+import { blackColor, redColor, whiteColor } from "@/constants/theme";
 
 interface DateTimeInputProps {
   label?: string;
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     fontSize: 16,
     boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
+    color: blackColor,
   },
   errorText: {
     color: redColor,

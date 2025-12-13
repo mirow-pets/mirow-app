@@ -16,17 +16,19 @@ export default function SelectRoleScreen() {
     if (userRole) router.push(`/${userRole}` as Href);
   }, [userRole, router]);
 
+  if (userRole) return null;
+
   return (
     <AuthScreenLayout
       image={require("@/assets/images/select-role-image.png")}
       title="LET'S GET YOU STARTED!"
-      subTitle="Create an account or sign in as"
+      subTitle="Hello there! Are you my"
     >
       <View style={styles.container}>
         <Button
           onPress={() => {
             setUserRole(UserRole.PetOwner);
-            router.push("/pet-owner/sign-up");
+            router.push("/pet-owner/login");
           }}
           style={{ minWidth: "80%" }}
           title="Pet owner"
@@ -36,7 +38,7 @@ export default function SelectRoleScreen() {
         <Button
           onPress={() => {
             setUserRole(UserRole.CareGiver);
-            router.push("/caregiver/sign-up");
+            router.push("/caregiver/login");
           }}
           style={{ minWidth: "80%" }}
           title="Pet Caregiver"

@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Get, Patch } from "@/services/http-service";
+import { addQueryParams, Get, Patch } from "@/services/http-service";
 import { TNotification } from "@/types";
 
 import { useAuth } from "./use-auth";
@@ -27,7 +27,14 @@ const NotificationProvider = ({ children }: NotificationProviderProps) => {
   const { data: notifications = [], isLoading: isLoadingNotifications } =
     useQuery<TNotification[], Error>({
       queryKey: ["notifications", currUser?.sessionId],
-      queryFn: () => Get(`/notifications`),
+      queryFn: () =>
+        Get(
+          addQueryParams("/notifications", {
+            filter: JSON.stringify({
+              order: "createdat DESC",
+            }),
+          })
+        ),
       enabled: !!currUser,
     });
 
@@ -37,6 +44,9 @@ const NotificationProvider = ({ children }: NotificationProviderProps) => {
     onSuccess: async () => {
       await queryClient.refetchQueries({
         queryKey: ["notifications", currUser?.sessionId],
+      });
+      await queryClient.refetchQueries({
+        queryKey: ["/notifications"],
       });
     },
   });

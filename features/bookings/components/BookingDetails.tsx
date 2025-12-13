@@ -1,31 +1,33 @@
-import { Linking, StyleSheet, View } from "react-native";
+import { ReactNode } from "react";
+import { StyleSheet, View } from "react-native";
 
-import { useQueryClient } from "@tanstack/react-query";
-
-import { Button } from "@/components/button/Button";
 import { PetAvatar } from "@/components/image/PetAvatar";
-import { UserAvatar } from "@/components/image/UserAvatar";
 import { ThemedText } from "@/components/themed-text";
 import { blueColor, lightGrayColor, whiteColor } from "@/constants/theme";
-import { usePayment } from "@/hooks/use-payment";
+import { SetAsFavoriteCaregiver } from "@/features/caregivers/components/SetAsFavoriteCaregiver";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { TBooking } from "@/types";
 import { formatTimeToAmPm, formatToDateTextMDY } from "@/utils/date";
 
+import { UserDetailsCard } from "./booking-details/UserDetailsCard";
+
 export interface BookingDetailsProps {
   booking: TBooking;
-  isOwner?: boolean;
+  paymentButton?: ReactNode;
 }
 
 export default function BookingDetails({
   booking,
-  isOwner,
+  paymentButton,
 }: BookingDetailsProps) {
   const primaryColor = useThemeColor({}, "primary");
-  const { payCaregiver } = usePayment();
-  const queryClient = useQueryClient();
 
   const pet = booking.pets![0]; // Assuming at least one pet for simplicity
+  const serviceStarted = booking.serviceStartedAt
+    ? formatToDateTextMDY(booking.serviceStartedAt) +
+      " " +
+      formatTimeToAmPm(booking.serviceStartedAt)
+    : "Not started yet";
 
   return (
     <View style={styles.container}>
@@ -81,62 +83,27 @@ export default function BookingDetails({
         {booking.tips > 0 && (
           <InfoRow label="Tips" value={`$${booking.tips.toFixed(2)}`} />
         )}
-        {/* Assuming paymentStatusId 1 means pending payment. This needs to be confirmed. */}
-        {isOwner && booking.amount && booking.paymentStatusId === 1 && (
-          <Button
-            title="Pay Now"
-            onPress={() =>
-              payCaregiver(
-                {
-                  amount: +(Number(booking.amount) * 100).toFixed(),
-                  caregiverId: booking.careGiversId,
-                  bookingId: booking.id,
-                },
-                () => {
-                  queryClient.refetchQueries({
-                    queryKey: ["booking", booking.id],
-                  });
-                }
-              )
-            }
-            size="sm"
-          />
-        )}
+        {paymentButton}
       </View>
 
       {/* Pet Owner Details Section */}
-      <View style={[styles.card, styles.ownerDetailsContainer]}>
-        <ThemedText type="defaultSemiBold" style={{ marginBottom: 8 }}>
-          Pet Owner
-        </ThemedText>
-        <View style={styles.ownerInfo}>
-          <UserAvatar src={booking?.users?.profileImage} size={64} />
-          <View>
-            <ThemedText>
-              {booking?.users?.firstName} {booking?.users?.lastName}
-            </ThemedText>
-            {booking?.users?.phone && (
-              <View style={styles.phoneContainer}>
-                <ThemedText style={styles.smallText}>Phone:</ThemedText>
-                <ThemedText
-                  style={[styles.smallText, styles.linkText]}
-                  onPress={() =>
-                    Linking.openURL(`tel:${booking?.users?.phone}`)
-                  }
-                >
-                  {booking?.users?.phone}
-                </ThemedText>
-              </View>
-            )}
-            {booking?.users?.address?.[0] && (
-              <ThemedText style={styles.smallText}>
-                Address: {booking.users.address[0].address},
-                {booking.users.address[0].city},{booking.users.address[0].state}
-              </ThemedText>
-            )}
-          </View>
-        </View>
-      </View>
+      {booking.users && (
+        <UserDetailsCard title="Pet Owner" user={booking.users} />
+      )}
+
+      {/* Caregiver Details Section */}
+      {booking.careGivers?.users && (
+        <UserDetailsCard
+          title="Caregiver"
+          user={booking.careGivers.users}
+          actions={
+            <SetAsFavoriteCaregiver
+              isFavourite={booking.careGivers.isFavourite}
+              userId={booking.careGivers.usersId}
+            />
+          }
+        />
+      )}
 
       {/* Service Details Section */}
       <View style={[styles.card, styles.serviceDetailsContainer]}>
@@ -148,16 +115,7 @@ export default function BookingDetails({
         {booking.dropupAddressText && (
           <InfoRow label="Dropoff Location" value={booking.dropupAddressText} />
         )} */}
-        <InfoRow
-          label="Service Started"
-          value={
-            booking.serviceStartedAt
-              ? formatToDateTextMDY(booking.serviceStartedAt) +
-                " " +
-                formatTimeToAmPm(booking.serviceStartedAt)
-              : "Not started yet"
-          }
-        />
+        <InfoRow label="Service Started" value={serviceStarted} />
         {booking.isFeeding && <InfoRow label="Feeding Required" value="Yes" />}
         {booking.notes && <InfoRow label="Notes" value={booking.notes} />}
       </View>
@@ -233,13 +191,6 @@ const styles = StyleSheet.create({
   whiteSmallText: {
     fontSize: 12,
     color: whiteColor,
-  },
-  ownerDetailsContainer: {
-    backgroundColor: lightGrayColor,
-  },
-  ownerInfo: {
-    flexDirection: "row",
-    gap: 16,
   },
   phoneContainer: {
     flexDirection: "row",

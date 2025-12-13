@@ -38,6 +38,8 @@ export interface TCaregiver {
   careGiverSkills?: TCaregiverSkill[];
   homeTypes?: THomeType[];
   transportType?: TTransportType[];
+  distance: { text?: string };
+  isFavourite: boolean;
 }
 
 export interface TCaregiverPreference {

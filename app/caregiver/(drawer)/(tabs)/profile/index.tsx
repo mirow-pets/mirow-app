@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { FlatList } from "react-native-gesture-handler";
 
 import { ThemedText } from "@/components/themed-text";
-import { grayColor, redColor } from "@/constants/theme";
+import { grayColor, redColor, whiteColor } from "@/constants/theme";
 import { CaregiverProfileDetailsCard } from "@/features/profile/components/CaregiverProfileDetails";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -16,7 +16,7 @@ export default function ProfileScreen() {
 
   const { profile, profileCompletion } = useCaregiverProfile();
 
-  const isBackgroundVerificationLeft = profileCompletion.percentage === 80;
+  const isBackgroundVerificationLeft = profileCompletion?.percentage === 80;
 
   const menu = [
     {
@@ -24,14 +24,16 @@ export default function ProfileScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: `${"Background Verification"} ${
-        profile.backgroundVerifyStatus
-          ? `(${profile.backgroundVerifyStatus})`
+        profile?.backgroundVerifyStatus
+          ? `(${profile?.backgroundVerifyStatus})`
           : ""
       }`,
-      isDone: profileCompletion.isBackgroundVerifyStatus,
+      isDone:
+        ["pending", "cleared"].includes(profile?.backgroundVerifyStatus) ||
+        profileCompletion?.isBackgroundVerifyStatus,
       isDisabled:
         !isBackgroundVerificationLeft ||
-        ["pending", "cleared"].includes(profile.backgroundVerifyStatus),
+        ["pending", "cleared"].includes(profile?.backgroundVerifyStatus),
       onPress: () => router.push("/caregiver/profile/background-verification"),
     },
     {
@@ -71,7 +73,7 @@ export default function ProfileScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Emergency Contact",
-      isDone: profileCompletion.isEmergencyDetailsAdded,
+      isDone: profileCompletion?.isEmergencyDetailsAdded,
       onPress: () => router.push("/caregiver/profile/emergency-contact"),
     },
     {
@@ -80,7 +82,7 @@ export default function ProfileScreen() {
       ),
       label: "Payment Information",
       isDone: true,
-      isDisabled: profileCompletion.percentage !== 100,
+      isDisabled: profileCompletion?.percentage !== 100,
       onPress: () => router.push("/caregiver/profile/banks"),
     },
     {
@@ -88,7 +90,7 @@ export default function ProfileScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Caregiver Preferences",
-      isDone: profileCompletion.isCaregiverPreferencesAdded,
+      isDone: profileCompletion?.isCaregiverPreferencesAdded,
       onPress: () => router.push("/caregiver/profile/preferences"),
     },
     {
@@ -96,7 +98,7 @@ export default function ProfileScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Unique Skills",
-      isDone: profileCompletion.isCaregiverSkillsAdded,
+      isDone: profileCompletion?.isCaregiverSkillsAdded,
       onPress: () => router.push("/caregiver/profile/skills"),
     },
     {
@@ -112,7 +114,7 @@ export default function ProfileScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Rates & Services",
-      isDone: profileCompletion.isPriceAdded,
+      isDone: profileCompletion?.isPriceAdded,
       onPress: () => router.push("/caregiver/profile/service-types"),
     },
     {
@@ -120,7 +122,7 @@ export default function ProfileScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Gallery",
-      isDone: profileCompletion.isGalleryAdded,
+      isDone: profileCompletion?.isGalleryAdded,
       onPress: () => router.push("/caregiver/profile/gallery"),
     },
   ];
@@ -135,7 +137,7 @@ export default function ProfileScreen() {
           <View
             style={{
               height: 8,
-              width: `${profileCompletion.percentage}%`,
+              width: `${profileCompletion?.percentage}%`,
               backgroundColor: primaryColor,
               borderRadius: 4,
             }}
@@ -164,6 +166,7 @@ export default function ProfileScreen() {
           }}
         />
       </View>
+      <View style={{ height: 100 }} />
     </ScrollView>
   );
 }
@@ -173,6 +176,7 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "100%",
     gap: 8,
+    backgroundColor: whiteColor,
   },
   itemContainer: {
     padding: 8,

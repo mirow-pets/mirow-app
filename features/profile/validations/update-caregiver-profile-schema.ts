@@ -15,11 +15,17 @@ export const updateCaregiverProfileSchema = z.object({
   services: z.number().array().min(1, "Service type is required"),
   transportIds: z.number().array().min(1, "Transport type is required"),
   homeTypesIds: z.number().array().min(1, "Home type is required"),
-  pricePerHour: z.coerce.number({ message: "Price per hour is required" }),
-  pricePerService: z.coerce.number({
-    message: "Price per service is required",
-  }),
-  pricePerMile: z.coerce.number({ message: "Price per mile is required" }),
+  pricePerHour: z.coerce
+    .number({ message: "Price per hour is required" })
+    .min(0.01, { message: "Price per service is required" }),
+  pricePerService: z.coerce
+    .number({
+      message: "Price per service is required",
+    })
+    .min(0.01, { message: "Price per service is required" }),
+  pricePerMile: z.coerce
+    .number({ message: "Price per mile is required" })
+    .min(0.01, { message: "Price per service is required" }),
   profileImage: z.string(),
   bioDescription: z.string().optional(),
   address: z.string({ message: "Address is required" }),

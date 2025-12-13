@@ -18,16 +18,16 @@ export default function LoginScreen() {
   return (
     <AuthScreenLayout
       image={require("@/assets/images/login-signup-image.png")}
-      bgImage={require("@/assets/images/login-signup-bg.png")}
+      bgImage={require("@/assets/images/caregiver-login-bg.png")}
       title="PET CAREGIVER"
       subTitle={
         <View style={{ flexDirection: "row" }}>
           <ThemedText type="subtitle" style={{ color: whiteColor }}>
-            Not a member?{" "}
+            Don’t have an account yet?{" "}
           </ThemedText>
           <TouchableOpacity onPress={handleSignIn}>
             <ThemedText type="subtitle" style={{ color: secondaryColor }}>
-              Sign up
+              Paws here!
             </ThemedText>
           </TouchableOpacity>
         </View>

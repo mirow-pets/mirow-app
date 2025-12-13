@@ -4,7 +4,7 @@ import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
 import { Controller, useFormContext, useFormState } from "react-hook-form";
 
 import { ThemedText } from "@/components/themed-text";
-import { redColor, whiteColor } from "@/constants/theme";
+import { blackColor, grayColor, redColor, whiteColor } from "@/constants/theme";
 import { formatPhoneNumber } from "@/utils";
 
 interface PhoneNumberInputProps extends Omit<TextInputProps, "keyboardType"> {
@@ -34,6 +34,7 @@ export const PhoneNumberInput = ({
               onBlur={onBlur}
               onChangeText={(value) => onChange(formatPhoneNumber(value))}
               value={value}
+              placeholderTextColor={grayColor}
               {...props}
               style={[styles.input, props.style]}
               keyboardType="number-pad"
@@ -59,6 +60,7 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     fontSize: 16,
     boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
+    color: blackColor,
   },
   errorText: {
     color: redColor,

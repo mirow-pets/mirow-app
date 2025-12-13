@@ -6,8 +6,7 @@ import { Controller, useFormContext, useFormState } from "react-hook-form";
 import SelectDropdown from "react-native-select-dropdown";
 
 import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { redColor, whiteColor } from "@/constants/theme";
+import { blackColor, grayColor, redColor, whiteColor } from "@/constants/theme";
 
 interface DropdownInputProps {
   label?: string;
@@ -36,12 +35,13 @@ export const DropdownInput = ({
           name={name}
           render={({ field: { onChange, onBlur, value } }) => (
             <SelectDropdown
+              searchPlaceHolderColor={grayColor}
               defaultValue={options.find((option) => option.value === value)}
               data={options}
               onBlur={onBlur}
               onSelect={(selectedItem) => onChange(selectedItem.value)}
               renderButton={(selectedItem, isOpened) => (
-                <ThemedView style={styles.input}>
+                <View style={styles.input}>
                   {selectedItem ? (
                     <Text style={styles.dropdownButtonTxtStyle}>
                       {selectedItem.label}
@@ -55,11 +55,11 @@ export const DropdownInput = ({
                     name={isOpened ? "chevron-up" : "chevron-down"}
                     style={styles.dropdownButtonArrowStyle}
                   />
-                </ThemedView>
+                </View>
               )}
               renderItem={(item, index, isSelected) => {
                 return (
-                  <ThemedView
+                  <View
                     style={{
                       ...styles.dropdownItemStyle,
                       ...(isSelected && { backgroundColor: "#D2D9DF" }),
@@ -68,7 +68,7 @@ export const DropdownInput = ({
                     <Text style={styles.dropdownItemTxtStyle}>
                       {item.label}
                     </Text>
-                  </ThemedView>
+                  </View>
                 );
               }}
               showsVerticalScrollIndicator={false}
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     fontFamily: "Poppins-Bold",
     alignItems: "center",
+    color: blackColor,
   },
   errorText: {
     color: redColor,

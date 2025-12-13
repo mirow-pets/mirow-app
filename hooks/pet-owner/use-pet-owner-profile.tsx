@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 
 import { TUpdatePetOwnerProfile } from "@/features/profile/validations";
@@ -31,7 +32,7 @@ export interface PetOwnerProfileProviderProps {
 const PetOwnerProfileProvider = ({
   children,
 }: PetOwnerProfileProviderProps) => {
-  const { currUser } = useAuth();
+  const { currUser, logout } = useAuth();
 
   const queryClient = useQueryClient();
 
@@ -45,7 +46,8 @@ const PetOwnerProfileProvider = ({
 
     Toast.show({
       type: "error",
-      text1: message,
+      text1: "Error",
+      text2: message,
     });
   };
 
@@ -53,11 +55,17 @@ const PetOwnerProfileProvider = ({
     queryKey: ["pet-owner-profile", currUser?.sessionId],
     queryFn: () => Get(`/users`),
     enabled: !!currUser,
+    meta: {
+      onError: () => {
+        logout();
+        router.replace("/");
+      },
+    },
   });
 
   const { data: profileCompletion, isLoading: isLoadingProfileCompletion } =
     useQuery({
-      queryKey: ["user-profile-completion", currUser?.sessionId],
+      queryKey: ["pet-owner-completion", currUser?.sessionId],
       queryFn: () => Get(`/users/profile-completion`),
       enabled: !!currUser,
     });
@@ -66,10 +74,10 @@ const PetOwnerProfileProvider = ({
     mutationFn: (input: TUpdatePetOwnerProfile) => Patch(`/users`, input),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ["pet-owner-profile"],
+        queryKey: ["pet-owner-profile", currUser?.sessionId],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["user-profile-completion"],
+        queryKey: ["pet-owner-completion", currUser?.sessionId],
       });
 
       Toast.show({

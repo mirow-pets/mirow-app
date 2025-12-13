@@ -40,7 +40,7 @@ export const roleColors = {
     },
     dark: {
       ...Colors.dark,
-      primary: primaryColor,
+      primary: "#6dcc78",
     },
   },
   "pet-owner": {

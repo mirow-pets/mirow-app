@@ -25,14 +25,14 @@ export const CaregiverProfileDetailsCard = () => {
         }}
       >
         <UserAvatar
-          src={profile.users.profileImage}
+          src={profile?.users?.profileImage}
           isEditable
           size={72}
           onChange={(profileImage) =>
             updateProfile({ profileImage } as TUpdateCaregiverProfile)
           }
           borderColor={
-            profileCompletion.isProfileImageAdded ? "unset" : redColor
+            profileCompletion?.isProfileImageAdded ? "unset" : redColor
           }
         />
         <View>
@@ -43,16 +43,16 @@ export const CaregiverProfileDetailsCard = () => {
               fontSize: 32,
             }}
           >
-            {profile.users.firstName} {profile.users.lastName}
+            {profile?.users.firstName} {profile?.users.lastName}
           </ThemedText>
           <ThemedText style={{ fontSize: 16, color: whiteColor }}>
-            {profile.users.email}
+            {profile?.users.email}
           </ThemedText>
         </View>
       </View>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <ThemedText>Profile progress</ThemedText>
-        <ThemedText>{profileCompletion.percentage}%</ThemedText>
+        <ThemedText>{profileCompletion?.percentage}%</ThemedText>
       </View>
     </View>
   );

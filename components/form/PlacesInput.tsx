@@ -4,7 +4,7 @@ import { StyleSheet, TextInputProps, View } from "react-native";
 import { Controller, useFormContext, useFormState } from "react-hook-form";
 
 import { ThemedText } from "@/components/themed-text";
-import { redColor, whiteColor } from "@/constants/theme";
+import { blackColor, grayColor, redColor, whiteColor } from "@/constants/theme";
 
 import { PlaceAutoComplete } from "./PlaceAutoComplete";
 
@@ -29,6 +29,7 @@ export const PlacesInput = ({ label, ...props }: PlacesInputProps) => {
             <PlaceAutoComplete
               onBlur={onBlur}
               value={value}
+              placeholderTextColor={grayColor}
               {...props}
               style={[styles.input, props.style]}
               onChange={({ city, state, country }) => {
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
     borderWidth: 0,
     minHeight: 56,
+    color: blackColor,
   },
   errorText: {
     color: redColor,

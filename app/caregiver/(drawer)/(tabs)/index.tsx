@@ -4,14 +4,10 @@ import { Image } from "expo-image";
 
 import { ThemedText } from "@/components/themed-text";
 import { secondaryColor, whiteColor } from "@/constants/theme";
-import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function HomeScreen() {
-  const { currUser } = useAuth();
   const primaryColor = useThemeColor({}, "primary");
-
-  console.log("currUser", currUser);
 
   return (
     <View style={styles.container}>

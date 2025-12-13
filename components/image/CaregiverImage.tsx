@@ -29,7 +29,7 @@ export const CaregiverImage = ({
     <Image
       source={imagePath ? { uri: imagePath } : placeholderImage}
       style={{
-        width: size,
+        minWidth: size,
         height: size,
       }}
       isEditable={isEditable}

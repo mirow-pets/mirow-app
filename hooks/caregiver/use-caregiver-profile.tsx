@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 
 import { TUpdateCaregiverProfile } from "@/features/profile/validations";
@@ -12,7 +13,6 @@ import {
   TCaregiverSkill,
   TOption,
 } from "@/types";
-import { UserRole } from "@/types/users";
 
 import { useAuth } from "../use-auth";
 
@@ -46,8 +46,7 @@ export interface CaregiverProfileProviderProps {
 const CaregiverProfileProvider = ({
   children,
 }: CaregiverProfileProviderProps) => {
-  const { currUser, userRole } = useAuth();
-  const isPetOwner = userRole === UserRole.PetOwner;
+  const { currUser, logout } = useAuth();
   const queryClient = useQueryClient();
 
   const onError = (err: Error) => {
@@ -60,7 +59,8 @@ const CaregiverProfileProvider = ({
 
     Toast.show({
       type: "error",
-      text1: message,
+      text1: "Error",
+      text2: message,
     });
   };
 
@@ -73,20 +73,26 @@ const CaregiverProfileProvider = ({
   } = useQuery<TCaregiverProfileFormFields>({
     queryKey: ["caregiver-profile-fields"],
     queryFn: () => Get("/fields/care-givers/profile"),
-    enabled: !!currUser && !isPetOwner,
+    enabled: !!currUser,
   });
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["caregiver-profile", currUser?.sessionId],
     queryFn: () => Get(`/caregivers`),
-    enabled: !!currUser && !isPetOwner,
+    enabled: !!currUser,
+    meta: {
+      onError: () => {
+        logout();
+        router.replace("/");
+      },
+    },
   });
 
   const { data: profileCompletion, isLoading: isLoadingProfileCompletion } =
     useQuery({
       queryKey: ["caregiver-profile-completion", currUser?.sessionId],
       queryFn: () => Get(`/care-givers/profile-completion`),
-      enabled: !!currUser && !isPetOwner,
+      enabled: !!currUser,
     });
 
   const { mutate: _updateProfile, isPending: isUpdatingProfile } = useMutation({
@@ -94,10 +100,10 @@ const CaregiverProfileProvider = ({
       Patch(`/care-givers`, input),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ["caregiver-profile"],
+        queryKey: ["caregiver-profile", currUser?.sessionId],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["caregiver-profile-completion"],
+        queryKey: ["caregiver-profile-completion", currUser?.sessionId],
       });
 
       Toast.show({

@@ -37,7 +37,7 @@ export default function PhoneScreen() {
 
     updateProfile(form.getValues(), () => {
       form.reset();
-      router.replace("/pet-owner/profile");
+      router.replace("/caregiver/profile");
     });
   };
 

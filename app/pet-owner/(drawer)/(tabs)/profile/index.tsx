@@ -1,11 +1,11 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { FlatList } from "react-native-gesture-handler";
 
 import { ThemedText } from "@/components/themed-text";
-import { grayColor, redColor } from "@/constants/theme";
+import { grayColor, redColor, whiteColor } from "@/constants/theme";
 import { PetOwnerProfileDetailsCard } from "@/features/profile/components/PetOwnerProfileDetails";
 import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -46,7 +46,7 @@ export default function ProfileScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Emergency Contact",
-      isDone: profileCompletion.eDetails,
+      isDone: profileCompletion?.eDetails,
       onPress: () => router.push("/pet-owner/profile/emergency-contact"),
     },
     {
@@ -54,49 +54,50 @@ export default function ProfileScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Payment Information",
-      isDone: profileCompletion.isCardAdded,
+      isDone: profileCompletion?.isCardAdded,
       onPress: () => router.push("/pet-owner/profile/banks"),
+    },
+    {
+      icon: (
+        <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
+      ),
+      label: "Pets",
+      isDone: profileCompletion?.isPetsAdded,
+      onPress: () => router.push("/pet-owner/pets"),
     },
   ];
 
   return (
-    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
-      <View style={styles.container}>
-        <PetOwnerProfileDetailsCard />
+    <View style={styles.container}>
+      <PetOwnerProfileDetailsCard />
+      <View style={{ height: 8, backgroundColor: grayColor, borderRadius: 4 }}>
         <View
-          style={{ height: 8, backgroundColor: grayColor, borderRadius: 4 }}
-        >
-          <View
-            style={{
-              height: 8,
-              width: `${profileCompletion.percentage}%`,
-              backgroundColor: primaryColor,
-              borderRadius: 4,
-            }}
-          ></View>
-        </View>
-        <FlatList
-          scrollEnabled={false}
-          data={menu}
-          contentContainerStyle={{ gap: 8 }}
-          renderItem={({ item, index }) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.itemContainer,
-                  item.isDone ? {} : styles.notDone,
-                ]}
-                onPress={item.onPress}
-              >
-                {item.icon}
-                <ThemedText>{item.label}</ThemedText>
-              </TouchableOpacity>
-            );
+          style={{
+            height: 8,
+            width: `${profileCompletion?.percentage}%`,
+            backgroundColor: primaryColor,
+            borderRadius: 4,
           }}
-        />
+        ></View>
       </View>
-    </ScrollView>
+      <FlatList
+        scrollEnabled={true}
+        data={menu}
+        contentContainerStyle={{ gap: 8 }}
+        renderItem={({ item, index }) => {
+          return (
+            <TouchableOpacity
+              key={index}
+              style={[styles.itemContainer, item.isDone ? {} : styles.notDone]}
+              onPress={item.onPress}
+            >
+              {item.icon}
+              <ThemedText>{item.label}</ThemedText>
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </View>
   );
 }
 
@@ -105,6 +106,8 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "100%",
     gap: 8,
+    backgroundColor: whiteColor,
+    flex: 1,
   },
   itemContainer: {
     padding: 8,
@@ -113,6 +116,9 @@ const styles = StyleSheet.create({
     gap: 16,
     borderWidth: 1,
     borderRadius: 8,
+  },
+  disabled: {
+    opacity: 0.5,
   },
   notDone: {
     borderColor: redColor,

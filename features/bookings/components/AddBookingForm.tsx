@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { primaryColor, secondaryColor, whiteColor } from "@/constants/theme";
+import { primaryColor } from "@/constants/theme";
 import { addBookingSchema, TAddBooking } from "@/features/bookings/validations";
 import { usePetOwnerBooking } from "@/hooks/pet-owner/use-pet-owner-booking";
 
@@ -71,6 +71,7 @@ export const AddBookingForm = () => {
           />
         )} */}
       </View>
+      <View style={{ height: 100 }} />
     </FormProvider>
   );
 };
@@ -78,27 +79,8 @@ export const AddBookingForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     padding: 20,
-    width: "100%",
-    gap: 16,
     backgroundColor: primaryColor,
-  },
-  selectPetContainer: {
-    padding: 8,
-    backgroundColor: secondaryColor,
-    borderRadius: 32,
-  },
-  selectPetText: {
-    textAlign: "center",
-    color: whiteColor,
-  },
-  selectedPetContainer: {
-    flexDirection: "row",
-    gap: 8,
-    alignItems: "center",
-  },
-  selectedPetChangeText: {
-    color: secondaryColor,
+    gap: 16,
   },
 });

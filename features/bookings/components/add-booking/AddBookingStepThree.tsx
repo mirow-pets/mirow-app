@@ -1,13 +1,12 @@
-import { useEffect } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useFormContext } from "react-hook-form";
-import { FlatList } from "react-native-gesture-handler";
 
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
+import { InfiniteFlatList } from "@/components/list/InfiniteFlatList";
 import { ThemedText } from "@/components/themed-text";
 import {
   grayColor,
@@ -16,8 +15,7 @@ import {
   whiteColor,
 } from "@/constants/theme";
 import { TAddBooking } from "@/features/bookings/validations";
-import { usePetOwnerCaregiver } from "@/hooks/pet-owner/use-pet-owner-caregiver";
-import { TUser } from "@/types";
+import { TCaregiver, TUser } from "@/types";
 
 export interface AddBookingStepThreeProps {
   onPrev?: () => void;
@@ -30,25 +28,11 @@ export const AddBookingStepThree = ({
   onPrev,
   loading,
 }: AddBookingStepThreeProps) => {
-  const { caregivers, isLoadingCaregivers, getCaregivers } =
-    usePetOwnerCaregiver();
   const form = useFormContext<TAddBooking>();
 
+  const values = form.watch();
+
   const router = useRouter();
-
-  const caregiversIds = form.watch("caregiversIds");
-  const serviceTypesId = form.watch("serviceTypesId");
-
-  useEffect(() => {
-    getCaregivers({
-      serviceTypes: [serviceTypesId],
-    });
-  }, [serviceTypesId, getCaregivers]);
-
-  if (isLoadingCaregivers)
-    return <ThemedText>Loading caregivers...</ThemedText>;
-
-  if (!caregivers.length) return <ThemedText>No caregiver</ThemedText>;
 
   const handleViewCaregiver = (userId: TUser["id"]) => {
     router.push(`/pet-owner/bookings/add/caregivers/${userId}`);
@@ -57,16 +41,21 @@ export const AddBookingStepThree = ({
   return (
     <FormStepsLayout {...{ onNext, onPrev, loading }}>
       <ThemedText type="defaultSemiBold">Pick your caregiver</ThemedText>
-      <View style={{ gap: 8 }}>
-        <FlatList
-          scrollEnabled={true}
-          data={caregivers}
+      <View style={{ gap: 8, flex: 1 }}>
+        <InfiniteFlatList<TCaregiver>
+          url="/v2/users/caregivers"
+          queryParams={{
+            "serviceTypes[]": values.serviceTypesId.toString(),
+          }}
+          perPage={10}
+          style={{ height: 400 }}
+          contentContainerStyle={{ gap: 8 }}
           renderItem={({ item, index }) => (
             <TouchableOpacity
               key={index}
               style={[
                 styles.optionContainer,
-                caregiversIds?.includes(item.usersId)
+                values.caregiversIds?.includes(item.usersId)
                   ? styles.optionContainerActive
                   : {},
               ]}
@@ -75,7 +64,10 @@ export const AddBookingStepThree = ({
               <PetAvatar src={item.users.profileImage} size={40} />
               <View style={{ flex: 1 }}>
                 <ThemedText type="defaultSemiBold">
-                  {item.users.firstName}
+                  {item.users.firstName} {item.users.lastName}
+                </ThemedText>
+                <ThemedText>
+                  Distance: {item?.distance?.text ?? `0 mi`}
                 </ThemedText>
               </View>
               <TouchableOpacity
@@ -85,7 +77,7 @@ export const AddBookingStepThree = ({
                   name="check"
                   size={24}
                   color={
-                    caregiversIds?.includes(item.usersId)
+                    values.caregiversIds?.includes(item.usersId)
                       ? primaryColor
                       : grayColor
                   }

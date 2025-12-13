@@ -5,7 +5,6 @@ import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 import { Colors, tertiary } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme.web";
 import { useNotification } from "@/hooks/use-notifications";
 import { UserRole } from "@/types";
 
@@ -15,7 +14,7 @@ interface NotificationButtonProps {
 
 export const NotificationButton = ({ userRole }: NotificationButtonProps) => {
   const { notifications } = useNotification();
-  const colorScheme = useColorScheme();
+  const colorScheme = "light";
 
   const count = useMemo(
     () => notifications.filter((notification) => !notification.read).length,

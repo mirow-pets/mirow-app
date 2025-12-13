@@ -9,7 +9,7 @@ import { Button } from "@/components/button/Button";
 import { Loader } from "@/components/loader";
 import { Menu } from "@/components/menu/Menu";
 import { ThemedText } from "@/components/themed-text";
-import { usePayment } from "@/hooks/use-payment";
+import { useCaregiverPayment } from "@/hooks/caregiver/use-caregiver-payment";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { TBankAccount } from "@/types";
 import { confirm } from "@/utils";
@@ -17,7 +17,7 @@ import { confirm } from "@/utils";
 const Item = ({ bank }: { bank: TBankAccount }) => {
   const primaryColor = useThemeColor({}, "primary");
   const [showMenu, setShowMenu] = useState(false);
-  const { setAsDefault, deleteBankAccount } = usePayment();
+  const { setAsDefault, deleteBankAccount } = useCaregiverPayment();
 
   return (
     <View style={styles.itemContainer}>
@@ -84,7 +84,7 @@ const Item = ({ bank }: { bank: TBankAccount }) => {
 };
 
 export default function BanksScreen() {
-  const { bankAccounts, isLoadingBankAccounts } = usePayment();
+  const { bankAccounts, isLoadingBankAccounts } = useCaregiverPayment();
 
   if (isLoadingBankAccounts) return <Loader />;
 

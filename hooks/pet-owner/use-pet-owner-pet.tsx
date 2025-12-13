@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 
@@ -40,6 +40,7 @@ export interface PetOwnerPetContextValues {
   genderOptions: Option[];
   weightOptions: Option[];
   spayedOrNeuteredOptions: Option[];
+  petTypes: TPetType[];
 }
 
 export const PetOwnerPetContext =
@@ -53,12 +54,14 @@ const PetOwnerPetProvider = ({ children }: PetOwnerPetProviderProps) => {
   const { currUser } = useAuth();
   const router = useRouter();
   const [petId, setPetId] = useState<TPet["id"]>();
+  const queryClient = useQueryClient();
 
   const onError = (err: Error) => {
     console.log(err);
     Toast.show({
       type: "error",
-      text1: "An unexpected error occurred. Please try again.",
+      text1: "Error",
+      text2: "An unexpected error occurred. Please try again.",
     });
   };
 
@@ -74,7 +77,7 @@ const PetOwnerPetProvider = ({ children }: PetOwnerPetProviderProps) => {
     isLoading: isLoadingPets,
     refetch: refetchPets,
   } = useQuery<TPet[]>({
-    queryKey: ["pets"],
+    queryKey: ["pets", currUser?.sessionId],
     queryFn: () => Get("/users/pets"),
     enabled: !!currUser,
   });
@@ -96,7 +99,12 @@ const PetOwnerPetProvider = ({ children }: PetOwnerPetProviderProps) => {
   >({
     mutationFn: (input: TAddPet) => Post("/users/pets", input),
     onSuccess: async () => {
-      await refetchPets();
+      await Promise.all([
+        refetchPets(),
+        queryClient.refetchQueries({
+          queryKey: ["pet-owner-completion", currUser?.sessionId],
+        }),
+      ]);
 
       router.replace("/pet-owner/pets");
 
@@ -118,6 +126,7 @@ const PetOwnerPetProvider = ({ children }: PetOwnerPetProviderProps) => {
     onSuccess: async () => {
       await refetchPets();
       await refetchPet();
+      await queryClient.refetchQueries({ queryKey: ["/v2/users/pets"] });
 
       router.back();
 
@@ -205,6 +214,7 @@ const PetOwnerPetProvider = ({ children }: PetOwnerPetProviderProps) => {
     <PetOwnerPetContext.Provider
       value={{
         petTypeOptions,
+        petTypes: petFormFields?.petTypes ?? [],
         genderOptions,
         weightOptions,
         spayedOrNeuteredOptions,

@@ -1,3 +1,7 @@
+import { StyleProp } from "react-native";
+
+import { ImageStyle } from "expo-image";
+
 import { ENV } from "@/env";
 
 import { Image } from "./Image";
@@ -9,6 +13,7 @@ export interface PetAvatarProps {
   size?: number;
   isEditable?: boolean;
   onChange?: (_filePath: string) => void;
+  style?: StyleProp<ImageStyle>;
 }
 
 export const PetAvatar = ({
@@ -16,6 +21,7 @@ export const PetAvatar = ({
   size = 40,
   isEditable,
   onChange,
+  style,
 }: PetAvatarProps) => {
   let imagePath = src;
 
@@ -26,7 +32,14 @@ export const PetAvatar = ({
   return (
     <Image
       source={imagePath ? { uri: imagePath } : placeholderImage}
-      style={{ width: size, height: size, borderRadius: size / 2 }}
+      style={[
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+        },
+        style,
+      ]}
       isEditable={isEditable}
       onChange={onChange}
     />

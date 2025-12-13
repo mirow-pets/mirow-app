@@ -30,7 +30,10 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
 
   const form = useForm({
     resolver: zodResolver(editPetSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      petVaccinations: defaultValues.petVaccinations ?? [],
+    },
   });
 
   const profileImage = form.watch("profileImage");

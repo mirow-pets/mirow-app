@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
@@ -7,8 +7,40 @@ import * as BaseImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
 
 import { Modal } from "@/components/modal/Modal";
-import { ThemedView } from "@/components/themed-view";
 import { useModal } from "@/hooks/use-modal";
+
+import type { PermissionResponse } from "expo-modules-core";
+
+const requestPermission = async (
+  getPermission: () => Promise<PermissionResponse>,
+  requestPermissionFunc: () => Promise<PermissionResponse>,
+  permissionType: string
+) => {
+  let permissionResult = await getPermission();
+
+  if (!permissionResult.granted) {
+    // if (permissionResult.canAskAgain) {
+    permissionResult = await requestPermissionFunc();
+
+    if (!permissionResult.granted) {
+      Toast.show({
+        type: "error",
+        text1: "Permission required",
+        text2: `Permission to access the ${permissionType} is required.`,
+      });
+      return false;
+    }
+    // } else {
+    //   Toast.show({
+    //     type: "error",
+    //     text1: "Permission required",
+    //     text2: `Permission to access the ${permissionType} is required. Please enable it in your device settings.`,
+    //   });
+    //   return false;
+    // }
+  }
+  return true;
+};
 
 export interface ImagePickerProps {
   trigger: ReactNode;
@@ -27,15 +59,13 @@ export const ImagePicker = ({
     setOpenId("");
 
     if (type === "camera") {
-      const permissionResult =
-        await BaseImagePicker.requestCameraPermissionsAsync();
-
-      if (!permissionResult.granted) {
-        Toast.show({
-          type: "error",
-          text1: "Permission required",
-          text2: "Permission to access the camera is required.",
-        });
+      const hasPermission = await requestPermission(
+        BaseImagePicker.getCameraPermissionsAsync,
+        BaseImagePicker.requestCameraPermissionsAsync,
+        "camera"
+      );
+      console.log("Camera Permission Result:", hasPermission); // Added log
+      if (!hasPermission) {
         return;
       }
 
@@ -46,29 +76,35 @@ export const ImagePicker = ({
         quality: 1,
       });
 
+      console.log("Camera Launch Result:", result); // Added log
+
       if (!result.canceled) {
         const asset = result.assets[0];
         setOpenId("");
         onSelect(asset);
       }
     } else {
-      const permissionResult =
-        await BaseImagePicker.requestMediaLibraryPermissionsAsync();
+      const hasPermission = await requestPermission(
+        BaseImagePicker.getMediaLibraryPermissionsAsync,
+        BaseImagePicker.requestMediaLibraryPermissionsAsync,
+        "media library"
+      );
+      console.log("Media Library Permission Result:", hasPermission); // Added log
 
-      if (!permissionResult.granted) {
-        Toast.show({
-          type: "error",
-          text1: "Permission required",
-          text2: "Permission to access the media library is required.",
-        });
+      if (!hasPermission) {
         return;
       }
+
+      // Temporarily remove setOpenId("") here for testing on iOS
+      // setOpenId("");
 
       const result = await BaseImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
         allowsEditing: true,
         quality: 1,
       });
+
+      console.log("Media Library Launch Result:", result); // Added log
 
       if (!result.canceled) {
         const asset = result.assets[0];
@@ -85,7 +121,7 @@ export const ImagePicker = ({
       style={{ width: 300 }}
       disabled={disabled}
     >
-      <ThemedView
+      <View
         style={{
           flexDirection: "row",
           gap: 32,
@@ -107,7 +143,7 @@ export const ImagePicker = ({
           <Entypo name="images" size={48} color="black" />
           <Text>Gallery</Text>
         </TouchableOpacity>
-      </ThemedView>
+      </View>
     </Modal>
   );
 };

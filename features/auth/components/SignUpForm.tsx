@@ -59,7 +59,8 @@ export const SignUpForm = ({ path, redirect }: SignUpFormProps) => {
 
       Toast.show({
         type: "error",
-        text1: message,
+        text1: "Error",
+        text2: message,
       });
     },
   });

@@ -35,37 +35,39 @@ export const Image = ({
   const [image, setImage] = useState<string | null>(null);
 
   const imageComponent = (
-    <View style={styles.container}>
-      {source || image ? (
-        <BaseImage
-          source={image ? { uri: image } : source}
-          style={[styles.image, style]}
-          onLoad={() => setIsLoading(false)}
-          onLoadStart={() => setIsLoading(true)}
-          onLoadEnd={() => setIsLoading(false)}
-          {...rest}
-        />
-      ) : (
-        <View style={[styles.image, style]}>
-          <View
-            style={{
-              backgroundColor: "#aaaaaa",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
-              width: "100%",
-            }}
-          >
-            <Feather name="camera" size={32} color="black" />
+    <View style={{ flexShrink: 1, position: "relative" }}>
+      <View style={[styles.container, style]}>
+        {source || image ? (
+          <BaseImage
+            source={image ? { uri: image } : source}
+            style={[styles.image]}
+            onLoad={image ? undefined : () => setIsLoading(false)}
+            onLoadStart={() => setIsLoading(true)}
+            onLoadEnd={image ? undefined : () => setIsLoading(false)}
+            {...rest}
+          />
+        ) : (
+          <View style={[styles.image, style]}>
+            <View
+              style={{
+                backgroundColor: "#aaaaaa",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+                width: "100%",
+              }}
+            >
+              <Feather name="camera" size={32} color="black" />
+            </View>
           </View>
-        </View>
-      )}
-      {isLoading && (
-        <View style={[styles.loaderStyle, style]}>
-          <ActivityIndicator size={20} color={primaryColor} />
-          <Text style={styles.textStyle}>Loading..</Text>
-        </View>
-      )}
+        )}
+        {isLoading && (
+          <View style={[styles.loaderStyle]}>
+            <ActivityIndicator size={20} color={primaryColor} />
+            <Text style={styles.textStyle}>Loading..</Text>
+          </View>
+        )}
+      </View>
       {isEditable && (
         <Feather
           name="camera"
@@ -81,6 +83,7 @@ export const Image = ({
 
   const handleSelect = async (image: BaseImagePicker.ImagePickerAsset) => {
     setImage(image.uri);
+
     const formdata = new FormData();
 
     const splitFileName = image.fileName?.split(".") ?? [];
@@ -100,6 +103,7 @@ export const Image = ({
       );
       if (result?.image) onChange?.(result.image);
     } catch (error) {
+      setImage(null);
       console.log("uploadImage error", error);
       Toast.show({
         type: "error",
@@ -121,7 +125,7 @@ export const Image = ({
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    flexDirection: "row",
+    overflow: "hidden",
   },
   textStyle: {
     fontSize: 10,
@@ -136,7 +140,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-    height: "100%",
+    minHeight: "100%",
+    maxHeight: "100%",
+    minWidth: "100%",
+    maxWidth: "100%",
     width: "100%",
   },
   editIcon: {
@@ -151,5 +158,7 @@ const styles = StyleSheet.create({
   },
   image: {
     backgroundColor: "gray",
+    width: "100%",
+    height: "100%",
   },
 });

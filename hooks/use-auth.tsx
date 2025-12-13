@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { TCurrentUser, UserRole } from "@/types/users";
@@ -89,12 +90,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const removeInformationsForLogout = async () => {
     setToken(undefined);
     setCurrUser(undefined);
-    setUserRole(undefined);
     await AsyncStorage.removeItem("accessToken");
     await AsyncStorage.removeItem("currUser");
     await AsyncStorage.removeItem("is2FAuthVerified");
     // await GoogleSignin?.signOut();
     // await GoogleSignin.revokeAccess();
+    router.replace("/");
   };
 
   useEffect(() => {

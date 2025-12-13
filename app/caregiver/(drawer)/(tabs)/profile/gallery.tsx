@@ -55,13 +55,12 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-around",
     width: "100%",
-    gap: 8,
+    gap: "2%",
   },
   gridItem: {
-    minWidth: "30%",
-    maxWidth: "30%",
+    minWidth: "32%",
+    maxWidth: "32%",
     aspectRatio: 1,
     flexDirection: "row",
     height: 30,

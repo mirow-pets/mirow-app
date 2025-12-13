@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image, ImageBackground, ImageSource } from "expo-image";
 import { useRouter } from "expo-router";
+import { ScrollView } from "react-native-gesture-handler";
 
 import { ThemedText } from "@/components/themed-text";
 import { whiteColor } from "@/constants/theme";
@@ -30,53 +31,55 @@ export default function AuthScreenLayout({
   const { setUserRole } = useAuth();
 
   const handleSwitchRole = async () => {
-    await AsyncStorage.removeItem("userRole");
     setUserRole(undefined);
-    router.push("/");
+    await AsyncStorage.removeItem("userRole");
+    router.replace("/");
   };
 
   return (
-    <ImageBackground
-      source={bgImage || require("@/assets/images/select-role-bg.png")}
-      style={{ flex: 1 }}
-      contentFit="cover"
-    >
-      <View style={styles.container}>
-        {showSwitchRole && (
-          <TouchableOpacity
-            onPress={handleSwitchRole}
-            style={{ position: "absolute", top: 32 }}
-          >
-            <Text>Switch role</Text>
-          </TouchableOpacity>
-        )}
-        <View style={styles.topSection}>
-          <Image
-            source={require("@/assets/images/mirow-text-logo.png")}
-            style={{ width: 250, height: 80, objectFit: "fill" }}
-          />
-          <Image
-            source={image}
-            style={{ width: 250, height: 300, objectFit: "fill" }}
-          />
-        </View>
-        <View style={styles.bottomSection}>
-          <ThemedText type="title" style={styles.title}>
-            {title}
-          </ThemedText>
-          <View style={{ marginVertical: 4 }} />
-          {typeof subTitle === "string" ? (
-            <ThemedText type="subtitle" style={styles.subTitle}>
-              {subTitle}
-            </ThemedText>
-          ) : (
-            subTitle
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+      <ImageBackground
+        source={bgImage || require("@/assets/images/pet-owner-login-bg.png")}
+        style={{ flex: 1 }}
+        contentFit="cover"
+      >
+        <View style={styles.container}>
+          {showSwitchRole && (
+            <TouchableOpacity
+              onPress={handleSwitchRole}
+              style={{ position: "absolute", top: 32 }}
+            >
+              <Text>Switch role</Text>
+            </TouchableOpacity>
           )}
-          <View style={{ marginVertical: 4 }} />
-          <View style={{ width: "100%" }}>{children}</View>
+          <View style={styles.topSection}>
+            <Image
+              source={require("@/assets/images/mirow-text-logo.png")}
+              style={{ width: 250, height: 80, objectFit: "fill" }}
+            />
+            <Image
+              source={image}
+              style={{ width: 250, height: 300, objectFit: "fill" }}
+            />
+          </View>
+          <View style={styles.bottomSection}>
+            <ThemedText type="title" style={styles.title}>
+              {title}
+            </ThemedText>
+            <View style={{ marginVertical: 4 }} />
+            {typeof subTitle === "string" ? (
+              <ThemedText type="subtitle" style={styles.subTitle}>
+                {subTitle}
+              </ThemedText>
+            ) : (
+              subTitle
+            )}
+            {/* <View style={{ marginVertical: 2 }} /> */}
+            <View style={{ width: "100%" }}>{children}</View>
+          </View>
         </View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </ScrollView>
   );
 }
 

@@ -122,6 +122,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     gap: 16,
+    flex: 1,
+    backgroundColor: whiteColor,
   },
   titleContainer: {
     flexDirection: "row",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,8 +19,12 @@ import { TCaregiverPreference, THomeType, TTransportType } from "@/types";
 
 export default function ServiceTypesScreen() {
   const router = useRouter();
-  const { serviceTypeOptions, homeTypeOptions, transportTypeOptions } =
-    useCaregiverCaregiver();
+  const {
+    serviceTypes,
+    serviceTypeOptions,
+    homeTypeOptions,
+    transportTypeOptions,
+  } = useCaregiverCaregiver();
   const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
 
   const form = useForm({
@@ -36,6 +40,38 @@ export default function ServiceTypesScreen() {
   });
 
   const values = form.watch();
+
+  const enabledPrice = useMemo(() => {
+    const selectedServiceType = serviceTypes
+      ?.filter(({ id }) => values.services.includes(id))
+      ?.map((item) => item?.type);
+
+    return {
+      isPerHour: selectedServiceType?.some((v) =>
+        ["walking", "boarding", "sitting"].includes(v)
+      ),
+      isPerMile: selectedServiceType?.some((v) =>
+        ["transportation"].includes(v)
+      ),
+      isPerService: selectedServiceType?.some((v) =>
+        ["grooming", "meal-prep", "training"].includes(v)
+      ),
+    };
+  }, [values.services, serviceTypes]);
+
+  const enabledTransportTypes = useMemo(() => {
+    const transportId = serviceTypes?.find(
+      (v) => v.type === "transportation"
+    )?.id;
+    if (!transportId) return false;
+
+    if (values.services.includes(transportId)) {
+      return true;
+    } else {
+      form.setValue("transportIds", []);
+      return false;
+    }
+  }, [values.services, form, serviceTypes]);
 
   const {
     services,
@@ -53,15 +89,22 @@ export default function ServiceTypesScreen() {
     },
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
+    console.log(enabledPrice);
     const result = await form.trigger([
       "services",
       "homeTypesIds",
-      "transportIds",
-      "pricePerHour",
-      "pricePerMile",
-      "pricePerService",
-    ]);
+      ...(enabledTransportTypes ? ["transportIds"] : []),
+      ...(enabledPrice.isPerHour ? ["pricePerHour"] : []),
+      ...(enabledPrice.isPerMile ? ["pricePerMile"] : []),
+      ...(enabledPrice.isPerService ? ["pricePerService"] : []),
+    ] as
+      | "services"
+      | "homeTypesIds"
+      | "transportIds"
+      | "pricePerHour"
+      | "pricePerMile"
+      | "pricePerService"[]);
     if (!result) return;
 
     updateProfile(
@@ -76,7 +119,17 @@ export default function ServiceTypesScreen() {
         router.replace("/caregiver/profile");
       }
     );
-  };
+  }, [
+    values,
+    enabledPrice,
+    enabledTransportTypes,
+    form,
+    updateProfile,
+    pricePerHour,
+    pricePerMile,
+    pricePerService,
+    router,
+  ]);
 
   return (
     <FormProvider {...form}>
@@ -138,50 +191,64 @@ export default function ServiceTypesScreen() {
           <ThemedText type="error">
             {form.formState.errors.homeTypesIds?.message?.toString()}
           </ThemedText>
-          <ThemedText type="defaultSemiBold">Transporation Types:</ThemedText>
-          <View>
-            {transportTypeOptions.map(({ label, value }, i) => {
-              const isChecked = transportIds.includes(
-                value as TTransportType["id"]
-              );
+          {enabledTransportTypes && (
+            <>
+              <ThemedText type="defaultSemiBold">
+                Transporation Types:
+              </ThemedText>
+              <View>
+                {transportTypeOptions.map(({ label, value }, i) => {
+                  const isChecked = transportIds.includes(
+                    value as TTransportType["id"]
+                  );
 
-              const handleOnValueChange = (isChecked: boolean) => {
-                const newTransportationTypes = isChecked
-                  ? [...transportIds, value as TTransportType["id"]]
-                  : transportIds.filter((transportId) => transportId !== value);
-                form.setValue("transportIds", newTransportationTypes);
-              };
+                  const handleOnValueChange = (isChecked: boolean) => {
+                    const newTransportationTypes = isChecked
+                      ? [...transportIds, value as TTransportType["id"]]
+                      : transportIds.filter(
+                          (transportId) => transportId !== value
+                        );
+                    form.setValue("transportIds", newTransportationTypes);
+                  };
 
-              return (
-                <View key={i} style={{ flexDirection: "row", gap: 8 }}>
-                  <Checkbox
-                    value={isChecked}
-                    onValueChange={handleOnValueChange}
-                    color={secondaryColor}
-                  />
-                  <ThemedText>{label}</ThemedText>
-                </View>
-              );
-            })}
-          </View>
+                  return (
+                    <View key={i} style={{ flexDirection: "row", gap: 8 }}>
+                      <Checkbox
+                        value={isChecked}
+                        onValueChange={handleOnValueChange}
+                        color={secondaryColor}
+                      />
+                      <ThemedText>{label}</ThemedText>
+                    </View>
+                  );
+                })}
+              </View>
+            </>
+          )}
           <ThemedText type="error">
             {form.formState.errors.transportIds?.message?.toString()}
           </ThemedText>
-          <NumberInput
-            label="Price per hour"
-            name="pricePerHour"
-            placeholder="Price per hour"
-          />
-          <NumberInput
-            label="Price per mile"
-            name="pricePerMile"
-            placeholder="Price per mile"
-          />
-          <NumberInput
-            label="Price per service"
-            name="pricePerService"
-            placeholder="Price per service"
-          />
+          {enabledPrice.isPerHour && (
+            <NumberInput
+              label="Price per hour"
+              name="pricePerHour"
+              placeholder="Price per hour"
+            />
+          )}
+          {enabledPrice.isPerMile && (
+            <NumberInput
+              label="Price per mile"
+              name="pricePerMile"
+              placeholder="Price per mile"
+            />
+          )}
+          {enabledPrice.isPerService && (
+            <NumberInput
+              label="Price per service"
+              name="pricePerService"
+              placeholder="Price per service"
+            />
+          )}
           <Button
             title="Save"
             onPress={handleSubmit}
@@ -189,6 +256,7 @@ export default function ServiceTypesScreen() {
             color="secondary"
           />
         </View>
+        <View style={{ height: 100 }} />
       </ScrollView>
     </FormProvider>
   );

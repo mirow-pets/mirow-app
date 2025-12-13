@@ -1,5 +1,4 @@
 import React from "react";
-import { useColorScheme } from "react-native";
 
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -7,17 +6,13 @@ import { Tabs } from "expo-router";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { TabsHeader } from "@/components/layout/TabsHeader";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { blackColor, Colors } from "@/constants/theme";
+import { blackColor, Colors, whiteColor } from "@/constants/theme";
 
 export default function CaregiverTabsNavigation() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].primary,
-        // headerShown: false,
+        tabBarActiveTintColor: Colors["light"].primary,
         tabBarButton: HapticTab,
         headerShadowVisible: false,
         headerStyle: {
@@ -29,7 +24,7 @@ export default function CaregiverTabsNavigation() {
         header: () => <TabsHeader />,
         tabBarShowLabel: false,
         tabBarStyle: {
-          margin: 16,
+          paddingTop: 2,
           borderRadius: 12,
           width: "100%",
           maxWidth: 280,
@@ -40,6 +35,12 @@ export default function CaregiverTabsNavigation() {
           alignItems: "center",
           paddingVertical: 16,
           paddingHorizontal: 24,
+          backgroundColor: whiteColor,
+          position: "absolute",
+          marginLeft: "50%",
+          transform: [{ translateX: "-50%" }],
+          left: 0,
+          bottom: 32,
         },
       }}
     >
@@ -47,7 +48,7 @@ export default function CaregiverTabsNavigation() {
         name="index"
         options={{
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={32} name="house.fill" color={color} />
+            <FontAwesome6 size={28} name="house" color={color} />
           ),
         }}
       />

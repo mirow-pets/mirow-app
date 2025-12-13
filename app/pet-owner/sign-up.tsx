@@ -20,7 +20,7 @@ export default function SignUpScreen() {
     <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <AuthScreenLayout
         image={require("@/assets/images/login-signup-image.png")}
-        bgImage={require("@/assets/images/login-signup-bg.png")}
+        bgImage={require("@/assets/images/pet-owner-signup-bg.png")}
         title="PET OWNER"
         showSwitchRole
         subTitle={

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
@@ -14,18 +14,19 @@ import { confirm } from "@/utils";
 export default function BookingScreen() {
   const { bookingId } = useLocalSearchParams();
   const {
-    bookings,
+    booking,
     acceptBooking,
     isAcceptingBooking,
     startBooking,
     isStartingBooking,
     completeBooking,
     isCompletingBooking,
+    getBooking,
   } = useCaregiverBooking();
 
-  const booking = useMemo(() => {
-    return bookings.find(({ id }) => id === bookingId);
-  }, [bookings, bookingId]);
+  useEffect(() => {
+    getBooking(bookingId as string);
+  }, [bookingId, getBooking]);
 
   const queue = booking?.caregiversQueues?.find(
     ({ bookingsId }) => bookingsId === booking?.id

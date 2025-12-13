@@ -1,10 +1,4 @@
-import { useColorScheme } from "react-native";
-
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
@@ -17,8 +11,7 @@ import Toast from "react-native-toast-message";
 import { ENV } from "@/env";
 import AuthProvider, { useAuth } from "@/hooks/use-auth";
 import ModalProvider from "@/hooks/use-modal";
-import PaymentProvider from "@/hooks/use-payment";
-import { UserRole } from "@/types/users";
+import { UserRole } from "@/types";
 
 const queryClient = new QueryClient();
 
@@ -32,10 +25,9 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <ModalProvider>
           <AuthProvider>
-            <PaymentProvider>
-              <RootLayoutNav />
-              <StatusBar style="auto" />
-            </PaymentProvider>
+            <RootLayoutNav />
+            <StatusBar style="auto" />
+            <Toast />
           </AuthProvider>
         </ModalProvider>
       </QueryClientProvider>
@@ -44,7 +36,6 @@ export default function RootLayout() {
 }
 
 const RootLayoutNav = () => {
-  const colorScheme = useColorScheme();
   const { userRole } = useAuth();
   const [fontsLoaded] = useFonts({
     Karantina: require("@/assets/fonts/karantina/Karantina-Bold.ttf"),
@@ -55,22 +46,18 @@ const RootLayoutNav = () => {
   if (!fontsLoaded) return null;
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={DefaultTheme}>
       <GestureHandlerRootView>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Protected guard={!!userRole}>
             {userRole === UserRole.PetOwner ? (
-              <Stack.Screen
-                name={"pet-owner"}
-                options={{ headerShown: false }}
-              />
+              <Stack.Screen name="pet-owner" options={{ headerShown: false }} />
             ) : (
               <Stack.Screen name="caregiver" options={{ headerShown: false }} />
             )}
           </Stack.Protected>
         </Stack>
-        <Toast />
       </GestureHandlerRootView>
     </ThemeProvider>
   );

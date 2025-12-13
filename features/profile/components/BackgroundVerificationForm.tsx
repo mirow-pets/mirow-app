@@ -10,9 +10,9 @@ import {
   TBackgroundVerification,
 } from "@/features/profile/validations";
 import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
+import { useCaregiverPayment } from "@/hooks/caregiver/use-caregiver-payment";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { usePayment } from "@/hooks/use-payment";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 import { BackgroungVerificationStepFour } from "./background-verification/BackgroundVerificationStepFour";
@@ -45,7 +45,7 @@ export default function BackgroundVerificationForm() {
       customerId,
     },
   } = useCaregiverProfile();
-  const { backgroundCheckInitialPayment } = usePayment();
+  const { backgroundCheckInitialPayment } = useCaregiverPayment();
 
   const backgroundCheckFee = Number(settings["background-check-fee"]);
   const convenienceFee = Number(settings["convenience-fee"]);
@@ -88,7 +88,7 @@ export default function BackgroundVerificationForm() {
           lastName,
           email,
           // TODO: Replace with actual number
-          phone: "15555555555",
+          phone,
           address: firstAddress.address,
           city: firstAddress.city,
           state: firstAddress.state,

@@ -8,17 +8,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 
 import { ENV } from "@/env";
-import {
-  TBackgroundCheckInitialPayment,
-  TPayCaregiver,
-} from "@/features/payments/validations";
+import { TBackgroundCheckInitialPayment } from "@/features/payments/validations";
 import { TAddBankAccount } from "@/features/payments/validations/add-bank-account-schema";
 import { Delete, Get, Post } from "@/services/http-service";
 import { TBankAccount } from "@/types";
 import { TInitialPay } from "@/types/payments";
-import { UserRole } from "@/types/users";
 
-import { useAuth } from "./use-auth";
+import { useAuth } from "../use-auth";
+import { useCaregiverProfile } from "./use-caregiver-profile";
 
 export interface BankAccountsResponse {
   data: TBankAccount[];
@@ -27,7 +24,7 @@ export interface BankAccountsResponse {
   object: string;
 }
 
-export interface PaymentContextValues {
+export interface CaregiverPaymentContextValues {
   bankAccounts?: BankAccountsResponse;
   isLoadingBankAccounts: boolean;
   addBankAccount: (_input: TAddBankAccount, _onSuccess?: () => void) => void;
@@ -41,20 +38,21 @@ export interface PaymentContextValues {
     _onSuccess: (_initialPay: TInitialPay) => void
   ) => void;
   isLoadingBackgroundCheckInitialPayment: boolean;
-  payCaregiver: (_input: TPayCaregiver, _onSuccess: () => void) => void;
-  isPayingCaregiver: boolean;
 }
 
-export const PaymentContext = createContext<PaymentContextValues | null>(null);
+export const CaregiverPaymentContext =
+  createContext<CaregiverPaymentContextValues | null>(null);
 
-export interface PaymentProviderProps {
+export interface CaregiverPaymentProviderProps {
   children: ReactNode;
 }
 
-const PaymentProvider = ({ children }: PaymentProviderProps) => {
-  const { currUser, userRole } = useAuth();
+const CaregiverPaymentProvider = ({
+  children,
+}: CaregiverPaymentProviderProps) => {
+  const { currUser } = useAuth();
   const queryClient = useQueryClient();
-  const isPetOwner = userRole === UserRole.PetOwner;
+  const { profileCompletion } = useCaregiverProfile();
 
   const onError = (err: Error) => {
     console.log(err);
@@ -66,7 +64,8 @@ const PaymentProvider = ({ children }: PaymentProviderProps) => {
 
     Toast.show({
       type: "error",
-      text1: message,
+      text1: "Error",
+      text2: message,
     });
   };
 
@@ -76,7 +75,7 @@ const PaymentProvider = ({ children }: PaymentProviderProps) => {
   >({
     queryKey: ["bank-accounts"],
     queryFn: () => Get("/payment-method/external-accounts/connected-account"),
-    enabled: !!currUser && !isPetOwner,
+    enabled: !!currUser && profileCompletion?.percentage === 100,
   });
 
   const { mutate: add, isPending: isAddingBankAccount } = useMutation({
@@ -146,30 +145,6 @@ const PaymentProvider = ({ children }: PaymentProviderProps) => {
     },
   });
 
-  const { mutate: _payCaregiver, isPending: isPayingCaregiver } = useMutation<
-    void,
-    Error,
-    TPayCaregiver
-  >({
-    mutationFn: async (input: TPayCaregiver) => {
-      const payCaregiver = await Post("/pay/care-giver", input);
-
-      const { error } = await initPaymentSheet({
-        paymentIntentClientSecret: payCaregiver?.clientSecret,
-        merchantDisplayName: ENV.MERCHANT_NAME,
-        customerId: payCaregiver?.customerId,
-        customerEphemeralKeySecret: payCaregiver?.ephemeralKey,
-      });
-
-      if (!error) {
-        const { error: presentError } = await presentPaymentSheet();
-        if (presentError) {
-          throw presentError;
-        }
-      }
-    },
-  });
-
   const addBankAccount = (input: TAddBankAccount, onSuccess?: () => void) =>
     add(input, { onSuccess });
 
@@ -190,11 +165,8 @@ const PaymentProvider = ({ children }: PaymentProviderProps) => {
       },
     });
 
-  const payCaregiver = (input: TPayCaregiver, onSuccess: () => void) =>
-    _payCaregiver(input, { onSuccess });
-
   return (
-    <PaymentContext.Provider
+    <CaregiverPaymentContext.Provider
       value={{
         bankAccounts,
         isLoadingBankAccounts,
@@ -206,22 +178,22 @@ const PaymentProvider = ({ children }: PaymentProviderProps) => {
         isSettingAsDefault,
         backgroundCheckInitialPayment,
         isLoadingBackgroundCheckInitialPayment,
-        payCaregiver,
-        isPayingCaregiver,
       }}
     >
       {children}
-    </PaymentContext.Provider>
+    </CaregiverPaymentContext.Provider>
   );
 };
 
-export default PaymentProvider;
+export default CaregiverPaymentProvider;
 
-export const usePayment = () => {
-  const payment = useContext(PaymentContext);
+export const useCaregiverPayment = () => {
+  const payment = useContext(CaregiverPaymentContext);
 
   if (!payment) {
-    throw new Error("Cannot access usePayment outside PaymentProvider");
+    throw new Error(
+      "Cannot access useCaregiverPayment outside CaregiverPaymentProvider"
+    );
   }
   return payment;
 };

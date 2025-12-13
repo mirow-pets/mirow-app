@@ -35,3 +35,54 @@ export interface TInitialPay {
   paymentIntentId: string;
   customerId: string;
 }
+
+export interface TPaymentMethod {
+  id: string;
+  object: string;
+  allow_redisplay: string;
+  billing_details: {
+    address: {
+      city: string | null;
+      country: string | null;
+      line1: string | null;
+      line2: string | null;
+      postal_code: string | null;
+      state: string | null;
+    };
+    email: string;
+    name: string;
+    phone: string;
+    tax_id: string | null;
+  };
+  card: {
+    brand: string;
+    checks: {
+      address_line1_check: string | null;
+      address_postal_code_check: string;
+      cvc_check: string;
+    };
+    country: string;
+    display_brand: string;
+    exp_month: number;
+    exp_year: number;
+    fingerprint: string;
+    funding: string;
+    generated_from: string | null;
+    last4: string;
+    networks: {
+      available: string[];
+      preferred: string | null;
+    };
+    regulated_status: string;
+    three_d_secure_usage: {
+      supported: boolean;
+    };
+    wallet: string | null;
+  };
+  created: number;
+  customer: string;
+  customer_account: string | null;
+  livemode: boolean;
+  metadata: unknown;
+  type: string;
+}
