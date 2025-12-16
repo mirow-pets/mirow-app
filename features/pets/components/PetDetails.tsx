@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Linking, StyleSheet, View } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { ScrollView } from "react-native-gesture-handler";
 
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { ThemedText } from "@/components/themed-text";
@@ -40,7 +41,7 @@ const InfoRow = ({
 
 export const PetDetails = ({ pet, actions }: PetDetailsProps) => {
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {/* Banner Section */}
       <View style={styles.banner}>
         <PetAvatar src={pet.profileImage} size={100} />
@@ -159,14 +160,16 @@ export const PetDetails = ({ pet, actions }: PetDetailsProps) => {
           </View>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    paddingTop: 20,
+    paddingHorizontal: 20,
     gap: 16,
+    paddingBottom: 100,
   },
   card: {
     backgroundColor: lightGrayColor,

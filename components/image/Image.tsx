@@ -14,7 +14,7 @@ import Toast from "react-native-toast-message";
 
 import { primaryColor } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { Post } from "@/services/http-service";
+import { useUploadImage } from "@/hooks/use-upload-image";
 
 import { ImagePicker } from "./ImagePicker";
 
@@ -33,6 +33,25 @@ export const Image = ({
   const primaryColor = useThemeColor({}, "primary");
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<string | null>(null);
+
+  const { upload, isUploading } = useUploadImage({
+    onSuccess: onChange,
+    onError: (error) => {
+      setIsLoading(false);
+
+      setImage(null);
+      console.log("uploadImage error", error);
+
+      Toast.show({
+        type: "error",
+        text1: "Uploading image error",
+        text2: "Something went wrong, try again!",
+      });
+    },
+    onSettled: () => {
+      setIsLoading(false);
+    },
+  });
 
   const imageComponent = (
     <View style={{ flexShrink: 1, position: "relative" }}>
@@ -61,7 +80,7 @@ export const Image = ({
             </View>
           </View>
         )}
-        {isLoading && (
+        {(isLoading || isUploading) && (
           <View style={[styles.loaderStyle]}>
             <ActivityIndicator size={20} color={primaryColor} />
             <Text style={styles.textStyle}>Loading..</Text>
@@ -84,35 +103,7 @@ export const Image = ({
   const handleSelect = async (image: BaseImagePicker.ImagePickerAsset) => {
     setImage(image.uri);
 
-    const formdata = new FormData();
-
-    const splitFileName = image.fileName?.split(".") ?? [];
-
-    formdata.append("image", {
-      uri: image.uri,
-      name: image.fileName ?? "",
-      type: `image/${splitFileName[splitFileName.length - 1]}`,
-    } as unknown as File);
-
-    try {
-      setIsLoading(true);
-      const result = await Post(
-        "/upload/image",
-        formdata,
-        "multipart/form-data"
-      );
-      if (result?.image) onChange?.(result.image);
-    } catch (error) {
-      setImage(null);
-      console.log("uploadImage error", error);
-      Toast.show({
-        type: "error",
-        text1: "Uploading image error",
-        text2: "Something went wrong, try again!",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    upload(image);
   };
 
   return (

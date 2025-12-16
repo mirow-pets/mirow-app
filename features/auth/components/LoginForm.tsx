@@ -23,7 +23,7 @@ export interface LoginFormProps {
 
 export const LoginForm = ({ path, redirect }: LoginFormProps) => {
   const router = useRouter();
-  const { setCurrUser, userRole } = useAuth();
+  const { setToken, setCurrUser, userRole } = useAuth();
 
   const { mutate, isPending } = useMutation<
     TCurrentUser & { token: string },
@@ -37,6 +37,7 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
       await AsyncStorage.setItem("currUser", JSON.stringify(user));
       await AsyncStorage.setItem("userRole", userRole);
 
+      setToken(token);
       setCurrUser(user);
 
       router.replace(redirect);

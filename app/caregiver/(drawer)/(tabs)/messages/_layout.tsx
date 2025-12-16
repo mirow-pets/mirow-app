@@ -1,15 +1,23 @@
 import { Text, TouchableOpacity, View } from "react-native";
 
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack } from "expo-router";
+
+import { whiteColor } from "@/constants/theme";
 import "react-native-reanimated";
 
-export default function MyBookingsLayout() {
+export default function MessagesLayout() {
   return (
     <Stack
       screenOptions={{
         header: ({ options, navigation }) => (
-          <View style={{ padding: 8, flexDirection: "row" }}>
+          <View
+            style={{
+              padding: 8,
+              flexDirection: "row",
+              backgroundColor: whiteColor,
+            }}
+          >
             {options.presentation === "modal" && (
               <TouchableOpacity onPress={navigation.goBack}>
                 <MaterialIcons name="arrow-back" size={24} color="black" />
@@ -31,16 +39,12 @@ export default function MyBookingsLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: "My Bookings",
+          headerTitle: "Messages",
         }}
       />
       <Stack.Screen
-        name="[bookingId]/index"
-        options={{ presentation: "modal", title: "View Booking" }}
-      />
-      <Stack.Screen
-        name="[bookingId]/pet/[petId]/index"
-        options={{ presentation: "modal", title: "View Pet" }}
+        name="[threadId]/index"
+        options={{ presentation: "modal", title: "View Chat" }}
       />
     </Stack>
   );

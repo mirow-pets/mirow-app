@@ -11,3 +11,4 @@ export {
   TBackgroundCheckInitialPayment,
 } from "./initial-payment-schema";
 export { payCaregiverSchema, TPayCaregiver } from "./pay-caregiver-schema";
+export { tipCaregiverSchema, TTipCaregiver } from "./tip-caregiver-schema";

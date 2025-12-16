@@ -8,10 +8,10 @@ import { TUpdatePetOwnerProfile } from "@/features/profile/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { Get, Patch } from "@/services/http-service";
 import { TPetOwnerProfileCompletion } from "@/types";
-import { TUser } from "@/types/users";
+import { TAuthUser } from "@/types/users";
 
 export interface PetOwnerProfileContextValues {
-  profile?: TUser;
+  profile?: TAuthUser;
   isLoadingProfile: boolean;
   profileCompletion: TPetOwnerProfileCompletion;
   isLoadingProfileCompletion: boolean;
@@ -51,7 +51,7 @@ const PetOwnerProfileProvider = ({
     });
   };
 
-  const { data: profile, isLoading: isLoadingProfile } = useQuery<TUser>({
+  const { data: profile, isLoading: isLoadingProfile } = useQuery<TAuthUser>({
     queryKey: ["pet-owner-profile", currUser?.sessionId],
     queryFn: () => Get(`/users`),
     enabled: !!currUser,

@@ -8,6 +8,7 @@ export {
   THomeType,
   TTransportType,
 } from "./caregivers";
+export { TChatThread } from "./chats";
 export { TOption } from "./common";
 export { TNotification } from "./notifications";
 export { TBankAccount, TPaymentMethod } from "./payments";

@@ -14,6 +14,7 @@ import { confirm } from "@/utils";
 export default function BookingScreen() {
   const { bookingId } = useLocalSearchParams();
   const {
+    isLoadingBooking,
     booking,
     acceptBooking,
     isAcceptingBooking,
@@ -24,15 +25,15 @@ export default function BookingScreen() {
     getBooking,
   } = useCaregiverBooking();
 
-  useEffect(() => {
-    getBooking(bookingId as string);
-  }, [bookingId, getBooking]);
+  useEffect(() => getBooking(bookingId as string), [bookingId, getBooking]);
+
+  if (isLoadingBooking) return <Text>Loading booking...</Text>;
+
+  if (!booking?.pets?.length) return <Text>Booking Not Found</Text>;
 
   const queue = booking?.caregiversQueues?.find(
     ({ bookingsId }) => bookingsId === booking?.id
   );
-
-  if (!booking?.pets?.length) return <Text>Booking Not Found</Text>;
 
   return (
     <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
@@ -103,9 +104,11 @@ export default function BookingScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    paddingTop: 20,
+    paddingHorizontal: 20,
     width: "100%",
     gap: 8,
+    paddingBottom: 100,
   },
   bookingDetails: {
     flexDirection: "row",

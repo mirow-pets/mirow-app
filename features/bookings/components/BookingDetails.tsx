@@ -1,14 +1,19 @@
 import { ReactNode } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { ThemedText } from "@/components/themed-text";
 import { blueColor, lightGrayColor, whiteColor } from "@/constants/theme";
 import { SetAsFavoriteCaregiver } from "@/features/caregivers/components/SetAsFavoriteCaregiver";
+import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { TBooking } from "@/types";
 import { formatTimeToAmPm, formatToDateTextMDY } from "@/utils/date";
 
+import { PetDetailsCardCard } from "./booking-details/PetDetailsCard";
 import { UserDetailsCard } from "./booking-details/UserDetailsCard";
 
 export interface BookingDetailsProps {
@@ -20,6 +25,8 @@ export default function BookingDetails({
   booking,
   paymentButton,
 }: BookingDetailsProps) {
+  const { isPetOwner } = useAuth();
+
   const primaryColor = useThemeColor({}, "primary");
 
   const pet = booking.pets![0]; // Assuming at least one pet for simplicity
@@ -41,17 +48,8 @@ export default function BookingDetails({
       >
         <PetAvatar src={pet.profileImage} size={100} />
         <View style={styles.summaryTextContainer}>
-          <ThemedText type="defaultSemiBold" style={styles.whiteText}>
-            {pet.name}
-          </ThemedText>
-          <ThemedText style={styles.whiteSmallText}>
-            Type: {pet.petTypes?.display}
-          </ThemedText>
           <ThemedText style={styles.whiteSmallText}>
             Service: {booking.serviceTypes?.display}
-          </ThemedText>
-          <ThemedText style={styles.whiteSmallText}>
-            Gender: {pet.gender ? "Male" : "Female"}
           </ThemedText>
           <ThemedText style={styles.whiteSmallText}>
             Start: {formatToDateTextMDY(booking.startDate)}{" "}
@@ -68,6 +66,22 @@ export default function BookingDetails({
           </ThemedText>
         </View>
       </View>
+
+      <PetDetailsCardCard
+        title="Pet"
+        pet={pet}
+        actions={
+          !isPetOwner ? (
+            <TouchableOpacity
+              onPress={() =>
+                router.push(`/caregiver/bookings/${booking.id}/pet/${pet.id}`)
+              }
+            >
+              <Ionicons name="eye" size={20} />
+            </TouchableOpacity>
+          ) : null
+        }
+      />
 
       {/* Service Fee Section */}
       <View style={[styles.card, styles.serviceFeeContainer]}>
@@ -97,10 +111,12 @@ export default function BookingDetails({
           title="Caregiver"
           user={booking.careGivers.users}
           actions={
-            <SetAsFavoriteCaregiver
-              isFavourite={booking.careGivers.isFavourite}
-              userId={booking.careGivers.usersId}
-            />
+            isPetOwner ? (
+              <SetAsFavoriteCaregiver
+                isFavourite={booking.careGivers.isFavourite}
+                userId={booking.careGivers.usersId}
+              />
+            ) : null
           }
         />
       )}

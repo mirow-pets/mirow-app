@@ -18,6 +18,7 @@ export interface TPet {
   petWeights?: TPetWeight;
   petVaccinations?: TPetVaccination[];
   petTypes?: TPetType;
+  isFavourite?: boolean;
 }
 
 export interface TPetType {

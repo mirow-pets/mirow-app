@@ -4,32 +4,18 @@ import { Href, router } from "expo-router";
 
 import { InfiniteFlatList } from "@/components/list/InfiniteFlatList";
 import { ThemedText } from "@/components/themed-text";
-import { redColor, whiteColor } from "@/constants/theme";
+import { grayColor, redColor, whiteColor } from "@/constants/theme";
 import { useAuth } from "@/hooks/use-auth";
-import { useNotification } from "@/hooks/use-notifications";
-import { TNotification, UserRole } from "@/types";
+import { TChatThread, UserRole } from "@/types";
 import { formatDateToMDY } from "@/utils";
 
-export const Notifications = () => {
-  const { setNotificationAsRead } = useNotification();
+export const Messages = () => {
   const { userRole } = useAuth();
-
-  const handleView = (notification: TNotification) => () => {
-    setNotificationAsRead(notification.id);
-    let href;
-
-    if (notification.bookingsId)
-      href = `/${userRole as UserRole}/bookings/${notification.bookingsId}`;
-    if (notification.chatThreadsId)
-      href = `/${userRole as UserRole}/messages/${notification.chatThreadsId}`;
-
-    router.replace(href as Href);
-  };
 
   return (
     <View style={styles.container}>
-      <InfiniteFlatList<TNotification>
-        url="/notifications"
+      <InfiniteFlatList<TChatThread>
+        url="/v2/chat-threads"
         perPage={5}
         contentContainerStyle={[styles.listContainer, { paddingBottom: 100 }]}
         style={{ height: 400 }}
@@ -38,11 +24,15 @@ export const Notifications = () => {
           <TouchableOpacity
             style={styles.item}
             key={index}
-            onPress={handleView(item)}
+            onPress={() => {
+              router.push(
+                `/${userRole as UserRole}/messages/${item.id}` as Href
+              );
+            }}
           >
             <View style={{ flexDirection: "row", gap: 8 }}>
               <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
-                {item.title}
+                {item.name}
               </ThemedText>
               <ThemedText
                 style={{
@@ -53,21 +43,33 @@ export const Notifications = () => {
                   ? "Today"
                   : formatDateToMDY(item.createdAt)}
               </ThemedText>
-              {!item.read && (
+              {!!item.count && (
                 <View
                   style={{
-                    height: 8,
-                    width: 8,
+                    height: 16,
+                    width: 16,
                     backgroundColor: redColor,
-                    borderRadius: 4,
+                    borderRadius: 8,
+
+                    alignItems: "center",
                   }}
-                ></View>
+                >
+                  <ThemedText style={{ fontSize: 11, color: whiteColor }}>
+                    {item.count}
+                  </ThemedText>
+                </View>
               )}
             </View>
             {/* <ThemedText numberOfLines={2} ellipsizeMode="tail">
               {item.description}
             </ThemedText> */}
-            <ThemedText>{item.description}</ThemedText>
+            <ThemedText style={{ color: grayColor }}>
+              {item.chat
+                ? item.chat.image
+                  ? "Sent Image"
+                  : item.chat.message
+                : "No message"}
+            </ThemedText>
           </TouchableOpacity>
         )}
       />

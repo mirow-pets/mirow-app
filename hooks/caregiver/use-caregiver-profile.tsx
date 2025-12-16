@@ -7,12 +7,12 @@ import Toast from "react-native-toast-message";
 import { TUpdateCaregiverProfile } from "@/features/profile/validations";
 import { Get, Patch } from "@/services/http-service";
 import {
-  TCaregiver,
   TCaregiverPreference,
   TCaregiverProfileCompletion,
   TCaregiverSkill,
   TOption,
 } from "@/types";
+import { TAuthCaregiver } from "@/types/caregivers";
 
 import { useAuth } from "../use-auth";
 
@@ -23,7 +23,7 @@ interface TCaregiverProfileFormFields {
 
 export interface CaregiverProfileContextValues {
   isLoadingCaregiverProfileFormFields: boolean;
-  profile: TCaregiver;
+  profile: TAuthCaregiver;
   isLoadingProfile: boolean;
   profileCompletion: TCaregiverProfileCompletion;
   isLoadingProfileCompletion: boolean;

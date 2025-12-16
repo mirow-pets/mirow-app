@@ -97,7 +97,9 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 100,
     width: "100%",
     gap: 16,
     backgroundColor: primaryColor,

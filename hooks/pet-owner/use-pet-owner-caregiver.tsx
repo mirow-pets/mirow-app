@@ -58,11 +58,7 @@ const PetOwnerCaregiverProvider = ({
     mutationFn: (filter) => Post("/users/care-givers", filter),
   });
 
-  const {
-    data: caregiver,
-    isLoading: isLoadingCaregiver,
-    refetch: refetchCaregiver,
-  } = useQuery({
+  const { data: caregiver, isLoading: isLoadingCaregiver } = useQuery({
     queryKey: ["caregiver", userId],
     queryFn: () => Get(`/users/care-givers/${userId}`),
     enabled: !!currUser && !!userId,
@@ -81,13 +77,19 @@ const PetOwnerCaregiverProvider = ({
           isFavourite,
         }),
       onSuccess: async () => {
-        await queryClient.refetchQueries({
-          queryKey: ["/users/favourites/care-givers"],
-        });
-        await queryClient.refetchQueries({
-          queryKey: ["booking"],
-        });
-        await refetchCaregiver();
+        const queryKeys = [
+          ["/users/favourites/care-givers"],
+          ["booking"],
+          ["caregiver", userId],
+        ];
+
+        await Promise.all(
+          queryKeys.map((queryKey) =>
+            queryClient.refetchQueries({
+              queryKey,
+            })
+          )
+        );
       },
       onError,
     });

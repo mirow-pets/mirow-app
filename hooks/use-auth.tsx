@@ -6,6 +6,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -30,6 +31,7 @@ export interface AuthContextValue {
   removeInformationsForLogout: () => void;
   userRole?: UserRole;
   setUserRole: Dispatch<SetStateAction<UserRole | undefined>>;
+  isPetOwner?: boolean;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
@@ -108,6 +110,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   //   }
   // }, [hasToken]);
 
+  const isPetOwner = useMemo(() => userRole === UserRole.PetOwner, [userRole]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -121,6 +125,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         removeInformationsForLogout,
         userRole,
         setUserRole,
+        isPetOwner,
       }}
     >
       {isInitializing ? <ThemedText>Loading...</ThemedText> : children}

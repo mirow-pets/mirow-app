@@ -9,9 +9,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 
 import { ENV } from "@/env";
-import { TPayCaregiver } from "@/features/payments/validations";
+import { TPayCaregiver, TTipCaregiver } from "@/features/payments/validations";
 import { useAuth } from "@/hooks/use-auth";
-import { Delete, Get, Post } from "@/services/http-service";
+import { Delete, Get, Patch, Post } from "@/services/http-service";
 import { TBankAccount, TPaymentMethod } from "@/types";
 
 import { useModal } from "../use-modal";
@@ -27,6 +27,8 @@ export interface PaymentMethodsResponse {
 export interface PetOwnerPaymentContextValues {
   payCaregiver: (_input: TPayCaregiver, _onSuccess: () => void) => void;
   isPayingCaregiver: boolean;
+  tipCaregiver: (_input: TTipCaregiver, _onSuccess: () => void) => void;
+  isTippingCaregiver: boolean;
   paymentMethods?: PaymentMethodsResponse;
   isLoadingPaymentMethods: boolean;
   deleteBankAccount: (_bankAccountId: TBankAccount["id"]) => void;
@@ -158,8 +160,42 @@ const PetOwnerPaymentProvider = ({
     },
   });
 
+  const { mutate: _tipCaregiver, isPending: isTippingCaregiver } = useMutation<
+    void,
+    Error,
+    TTipCaregiver
+  >({
+    mutationFn: async (input: TPayCaregiver) => {
+      const payCaregiver = await Post("/tip-pay/care-giver", input);
+
+      const { error } = await initPaymentSheet({
+        paymentIntentClientSecret: payCaregiver?.clientSecret,
+        merchantDisplayName: ENV.MERCHANT_NAME,
+        customerId: payCaregiver?.customerId,
+        customerEphemeralKeySecret: payCaregiver?.ephemeralKey,
+      });
+
+      if (!error) {
+        const { error: presentError } = await presentPaymentSheet();
+        if (presentError) {
+          throw presentError;
+        }
+
+        console.log("input.amount", input.amount);
+
+        await Patch(`/tip-pay/care-giver/${input.caregiverId}`, {
+          amount: +(input.amount / 100).toFixed(2),
+          bookingId: input.bookingId,
+        });
+      }
+    },
+  });
+
   const payCaregiver = (input: TPayCaregiver, onSuccess: () => void) =>
     _payCaregiver(input, { onSuccess });
+
+  const tipCaregiver = (input: TPayCaregiver, onSuccess: () => void) =>
+    _tipCaregiver(input, { onSuccess });
 
   const deleteBankAccount = (bankAccountId: string) => del(bankAccountId);
 
@@ -174,6 +210,8 @@ const PetOwnerPaymentProvider = ({
         isDeletingBankAccount,
         add,
         isAddingPaymentMethod,
+        tipCaregiver,
+        isTippingCaregiver,
       }}
     >
       {children}

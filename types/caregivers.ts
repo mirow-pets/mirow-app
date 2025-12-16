@@ -1,22 +1,36 @@
 import { TPetType } from "./pets";
 import { TServiceType } from "./services";
-import { TUser } from "./users";
+import { TAuthUser, TUser } from "./users";
 
 export interface TCaregiver {
-  deletedAt: Date;
   usersId: string;
   acceptanceRadius: number;
-  connectedAccId: string;
   experience: number;
   pricePerHour: number;
   pricePerService: number;
   pricePerMile: number;
   averageStarRatings: number;
   totalStars: number;
-  totalTips: number;
   totalReviews: number;
   serviceCompleted: number;
   repeatedBookings: number;
+  users: TUser;
+  serviceTypes?: TServiceType[];
+  petTypes?: TPetType[];
+  careGiverPreferences?: TCaregiverPreference[];
+  careGiverSkills?: TCaregiverSkill[];
+  homeTypes?: THomeType[];
+  transportType?: TTransportType[];
+  distance: { text?: string };
+  isFavourite: boolean;
+}
+
+export interface TAuthCaregiver extends TCaregiver {
+  deletedAt: Date;
+  connectedAccId: string;
+  experience: number;
+  totalTips: number;
+  totalReviews: number;
   day: number;
   month: number;
   year: number;
@@ -31,15 +45,7 @@ export interface TCaregiver {
   customerId: string;
   backgroundVerifyStatus: string;
   kycStatusId: number;
-  users: TUser;
-  serviceTypes?: TServiceType[];
-  petTypes?: TPetType[];
-  careGiverPreferences?: TCaregiverPreference[];
-  careGiverSkills?: TCaregiverSkill[];
-  homeTypes?: THomeType[];
-  transportType?: TTransportType[];
-  distance: { text?: string };
-  isFavourite: boolean;
+  users: TAuthUser;
 }
 
 export interface TCaregiverPreference {
