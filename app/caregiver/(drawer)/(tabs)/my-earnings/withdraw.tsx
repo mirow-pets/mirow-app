@@ -21,11 +21,11 @@ import { ThemedText } from "@/components/themed-text";
 import { useCaregiverPayment } from "@/hooks/caregiver/use-caregiver-payment";
 import { Post } from "@/services/http-service";
 import {
+  centToMajorUnit,
   confirm,
   formatCurrency,
+  majorToCentUnit,
   onError,
-  toMajorUnit,
-  toMinorUnit,
 } from "@/utils";
 
 const getSchema = (available: number) => {
@@ -81,8 +81,8 @@ export default function WithdrawScreen() {
       : 0;
 
   // In backend, all amounts are in cents, show in dollars
-  const availableDisplay = toMajorUnit(available);
-  const totalEarningsDisplay = toMajorUnit(totalEarnings);
+  const availableDisplay = centToMajorUnit(available);
+  const totalEarningsDisplay = centToMajorUnit(totalEarnings);
 
   const { bankAccounts } = useCaregiverPayment();
 
@@ -126,7 +126,7 @@ export default function WithdrawScreen() {
 
   // Withdraw form submit handler
   const onSubmit = (data: FormData) => {
-    const num = toMinorUnit(data.amount);
+    const num = majorToCentUnit(data.amount);
 
     confirm({
       title: "Confirm Withdrawal",

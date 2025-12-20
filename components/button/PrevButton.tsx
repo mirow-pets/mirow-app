@@ -12,7 +12,10 @@ export interface PrevButtonProps {
 
 export const PrevButton = ({ loading, onPress }: PrevButtonProps) => {
   return (
-    <TouchableOpacity onPress={onPress} disabled={loading}>
+    <TouchableOpacity
+      onPress={loading ? undefined : onPress}
+      disabled={loading}
+    >
       <FontAwesome
         name="chevron-circle-left"
         size={56}

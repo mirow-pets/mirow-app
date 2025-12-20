@@ -134,17 +134,19 @@ const CaregiverCaregiverProvider = ({
     mutationFn: (input: FormData) =>
       Post("/care-givers/galleries", input, "multipart/form-data"),
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.refetchQueries({
-          queryKey: ["caregiver-galleries", userId],
-        }),
-        queryClient.refetchQueries({
-          queryKey: ["caregiver-profile"],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["caregiver-profile-completion"],
-        }),
-      ]);
+      const queryKeys = [
+        ["caregiver-galleries", userId],
+        ["caregiver-profile"],
+        ["caregiver-profile-completion"],
+      ];
+
+      await Promise.all(
+        queryKeys.map((queryKey) =>
+          queryClient.refetchQueries({
+            queryKey,
+          })
+        )
+      );
 
       Toast.show({
         type: "success",

@@ -1,6 +1,6 @@
 export { alert } from "./alert";
 export { confirm } from "./confirm";
-export { toMajorUnit, toMinorUnit } from "./currency";
+export { centToMajorUnit, majorToCentUnit } from "./currency";
 export { formatDateToMDY } from "./date";
 export { formatCurrency } from "./format-currency";
 export { formatNumber } from "./format-number";

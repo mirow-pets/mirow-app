@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image, ImageBackground, ImageSource } from "expo-image";
-import { useRouter } from "expo-router";
+import { Href, useRouter } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { ThemedText } from "@/components/themed-text";
@@ -28,13 +28,17 @@ export default function AuthScreenLayout({
   showSwitchRole,
 }: AuthScreenLayoutProps) {
   const router = useRouter();
-  const { setUserRole } = useAuth();
+  const { currUser, userRole, setUserRole } = useAuth();
 
   const handleSwitchRole = async () => {
     setUserRole(undefined);
     await AsyncStorage.removeItem("userRole");
     router.replace("/");
   };
+
+  useEffect(() => {
+    if (currUser) router.push(`/${userRole}/(drawer)/(tabs)` as Href);
+  }, [currUser, userRole, router]);
 
   return (
     <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">

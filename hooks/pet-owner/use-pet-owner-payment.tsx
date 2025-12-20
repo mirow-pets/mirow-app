@@ -13,7 +13,7 @@ import { TPayCaregiver, TTipCaregiver } from "@/features/payments/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { Delete, Get, Patch, Post } from "@/services/http-service";
 import { TBankAccount, TPaymentMethod } from "@/types";
-import { onError } from "@/utils";
+import { majorToCentUnit, onError } from "@/utils";
 
 import { useModal } from "../use-modal";
 import { usePetOwnerProfile } from "./use-pet-owner-profile";
@@ -152,7 +152,11 @@ const PetOwnerPaymentProvider = ({
     TTipCaregiver
   >({
     mutationFn: async (input: TPayCaregiver) => {
-      const payCaregiver = await Post("/tip-pay/care-giver", input);
+      const amount = majorToCentUnit(input.amount);
+      const payCaregiver = await Post("/tip-pay/care-giver", {
+        ...input,
+        amount,
+      });
 
       const { error } = await initPaymentSheet({
         paymentIntentClientSecret: payCaregiver?.clientSecret,
@@ -166,11 +170,9 @@ const PetOwnerPaymentProvider = ({
         if (presentError) {
           throw presentError;
         }
-
-        console.log("input.amount", input.amount);
-
+        // TODO: Secure this to the backend
         await Patch(`/tip-pay/care-giver/${input.caregiverId}`, {
-          amount: +(input.amount / 100).toFixed(2),
+          amount,
           bookingId: input.bookingId,
         });
       }

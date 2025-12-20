@@ -1,5 +1,6 @@
 import { TCaregiver, TCaregiverQueue } from "./caregivers";
 import { TPet } from "./pets";
+import { TReview } from "./reviews";
 import { TServiceType } from "./services";
 import { TUser } from "./users";
 
@@ -9,7 +10,7 @@ export interface TBooking {
   startDate: Date;
   transactionId: string;
   paymentIndentId: string;
-  amount: string;
+  amount: number;
   tipPaymentIndentId: string;
   tips: number;
   pickup: string;
@@ -43,6 +44,7 @@ export interface TBooking {
   bookingStatus?: TBookingStatus;
   caregiversQueues: TCaregiverQueue[];
   careGivers: TCaregiver;
+  reviews?: TReview;
 }
 
 export interface TBookingStatus {

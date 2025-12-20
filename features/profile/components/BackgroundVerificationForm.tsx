@@ -45,7 +45,10 @@ export default function BackgroundVerificationForm() {
       customerId,
     },
   } = useCaregiverProfile();
-  const { backgroundCheckInitialPayment } = useCaregiverPayment();
+  const {
+    backgroundCheckInitialPayment,
+    isLoadingBackgroundCheckInitialPayment,
+  } = useCaregiverPayment();
 
   const backgroundCheckFee = Number(settings["background-check-fee"]);
   const convenienceFee = Number(settings["convenience-fee"]);
@@ -169,6 +172,7 @@ export default function BackgroundVerificationForm() {
               convenienceFee={convenienceFee}
               onNext={handlePayment}
               onPrev={handlePrev}
+              loading={isLoadingBackgroundCheckInitialPayment}
             />
           )}
           {step === 4 && (

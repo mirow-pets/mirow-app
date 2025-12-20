@@ -14,6 +14,7 @@ export { TNotification } from "./notifications";
 export { TBankAccount, TPaymentMethod } from "./payments";
 export { TPetOwnerProfileCompletion } from "./pet-owners";
 export { TPet } from "./pets";
+export { TReview } from "./reviews";
 export { TServiceType } from "./services";
 export { TUser, UserRole } from "./users";
 export { TWithdrawal } from "./withdrawals";

@@ -45,7 +45,7 @@ export const RateBookingButton = ({ booking }: RateBookingButtonProps) => {
 
     tipCaregiver(
       {
-        amount: +(tipAmount * 100).toFixed(),
+        amount: tipAmount,
         caregiverId: input.careGiversId,
         bookingId: input.bookingsId,
       },
@@ -58,10 +58,11 @@ export const RateBookingButton = ({ booking }: RateBookingButtonProps) => {
       <Modal
         id="ratings"
         title="Let's rate your Caregiver service"
-        trigger={<ThemedText>Rate</ThemedText>}
+        trigger={<ThemedText style={{ color: primaryColor }}>Rate</ThemedText>}
         style={{ gap: 16 }}
         onConfirm={form.handleSubmit(submit)}
         disabled={isTippingCaregiver || isCreatingReview}
+        loading={isTippingCaregiver || isCreatingReview}
       >
         <View style={{ gap: 16 }}>
           <ThemedText>

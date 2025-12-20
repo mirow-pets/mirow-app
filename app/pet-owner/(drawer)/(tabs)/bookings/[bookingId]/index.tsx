@@ -18,7 +18,7 @@ export default function BookingScreen() {
   const { bookingId } = useLocalSearchParams();
   const { profile } = usePetOwnerProfile();
   const { booking, isLoadingBooking, getBooking } = usePetOwnerBooking();
-  const { payCaregiver } = usePetOwnerPayment();
+  const { payCaregiver, isPayingCaregiver } = usePetOwnerPayment();
   const queryClient = useQueryClient();
 
   const isOwner = booking?.usersId === profile?.id;
@@ -36,7 +36,7 @@ export default function BookingScreen() {
   const handlePayNow = () =>
     payCaregiver(
       {
-        amount: +(Number(booking.amount) * 100).toFixed(),
+        amount: booking.amount,
         caregiverId: booking.careGiversId,
         bookingId: booking.id,
       },
@@ -47,13 +47,22 @@ export default function BookingScreen() {
     );
 
   if (isOwner) {
-    if (booking.amount && booking.paymentStatusId === 1) {
+    if (
+      booking.amount &&
+      booking.paymentStatusId === 1 &&
+      booking.bookingStatus?.status === "completed"
+    ) {
       paymentButton = (
-        <Button title="Pay Now" onPress={handlePayNow} size="sm" />
+        <Button
+          title="Pay Now"
+          onPress={handlePayNow}
+          size="sm"
+          disabled={isPayingCaregiver}
+        />
       );
     }
 
-    if (booking.bookingStatus?.status === "completed") {
+    if (booking.bookingStatus?.status === "completed" && !booking.reviews) {
       paymentButton = <RateBookingButton booking={booking} />;
     }
   }

@@ -13,7 +13,7 @@ import {
   TOption,
 } from "@/types";
 import { TAuthCaregiver } from "@/types/caregivers";
-import { onError } from "@/utils";
+import { majorToCentUnit, onError } from "@/utils";
 
 import { useAuth } from "../use-auth";
 
@@ -83,14 +83,26 @@ const CaregiverProfileProvider = ({
 
   const { mutate: _updateProfile, isPending: isUpdatingProfile } = useMutation({
     mutationFn: (input: TUpdateCaregiverProfile) =>
-      Patch(`/care-givers`, input),
+      Patch(`/care-givers`, {
+        ...input,
+        pricePerHour: input.pricePerHour && majorToCentUnit(input.pricePerHour),
+        pricePerService:
+          input.pricePerService && majorToCentUnit(input.pricePerService),
+        pricePerMile: input.pricePerMile && majorToCentUnit(input.pricePerMile),
+      }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["caregiver-profile", currUser?.sessionId],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["caregiver-profile-completion", currUser?.sessionId],
-      });
+      const queryKeys = [
+        ["caregiver-profile", currUser?.sessionId],
+        ["caregiver-profile-completion", currUser?.sessionId],
+      ];
+
+      await Promise.all(
+        queryKeys.map((queryKey) =>
+          queryClient.refetchQueries({
+            queryKey,
+          })
+        )
+      );
 
       Toast.show({
         type: "success",

@@ -6,6 +6,7 @@ import { ThemedText } from "@/components/themed-text";
 import { formatCurrency } from "@/utils";
 
 export interface BackgroungVerificationStepThreeProps {
+  loading?: boolean;
   backgroundCheckFee: number;
   convenienceFee: number;
   onPrev?: () => void;
@@ -13,13 +14,14 @@ export interface BackgroungVerificationStepThreeProps {
 }
 
 export const BackgroungVerificationStepThree = ({
+  loading,
   backgroundCheckFee,
   convenienceFee,
   onPrev,
   onNext,
 }: BackgroungVerificationStepThreeProps) => {
   return (
-    <FormStepsLayout {...{ onPrev, onNext }}>
+    <FormStepsLayout {...{ loading, onPrev, onNext }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <ThemedText>Backround check fee:</ThemedText>
         <ThemedText>{formatCurrency(backgroundCheckFee)}</ThemedText>

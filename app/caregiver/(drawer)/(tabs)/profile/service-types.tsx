@@ -16,6 +16,7 @@ import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
 import { TCaregiverPreference, THomeType, TTransportType } from "@/types";
+import { centToMajorUnit } from "@/utils";
 
 export default function ServiceTypesScreen() {
   const router = useRouter();
@@ -33,9 +34,12 @@ export default function ServiceTypesScreen() {
       services: profile?.serviceTypes?.map(({ id }) => id) ?? [],
       homeTypesIds: profile?.homeTypes?.map(({ id }) => id) ?? [],
       transportIds: profile?.transportType?.map(({ id }) => id) ?? [],
-      pricePerHour: profile?.pricePerHour,
-      pricePerMile: profile?.pricePerMile,
-      pricePerService: profile?.pricePerService,
+      pricePerHour:
+        profile?.pricePerHour && centToMajorUnit(profile.pricePerHour),
+      pricePerMile:
+        profile?.pricePerMile && centToMajorUnit(profile.pricePerMile),
+      pricePerService:
+        profile?.pricePerService && centToMajorUnit(profile.pricePerService),
     },
   });
 
@@ -90,7 +94,6 @@ export default function ServiceTypesScreen() {
   });
 
   const handleSubmit = useCallback(async () => {
-    console.log(enabledPrice);
     const result = await form.trigger([
       "services",
       "homeTypesIds",

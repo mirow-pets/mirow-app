@@ -11,6 +11,7 @@ import { SetAsFavoriteCaregiver } from "@/features/caregivers/components/SetAsFa
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { TBooking } from "@/types";
+import { centToMajorUnit, formatCurrency } from "@/utils";
 import { formatTimeToAmPm, formatToDateTextMDY } from "@/utils/date";
 
 import { PetDetailsCardCard } from "./booking-details/PetDetailsCard";
@@ -91,11 +92,16 @@ export default function BookingDetails({
         <InfoRow
           label="Amount"
           value={
-            !booking.amount ? "-" : `$${parseFloat(booking.amount).toFixed(2)}`
+            !booking.amount
+              ? "-"
+              : `${formatCurrency(centToMajorUnit(booking.amount))}`
           }
         />
         {booking.tips > 0 && (
-          <InfoRow label="Tips" value={`$${booking.tips.toFixed(2)}`} />
+          <InfoRow
+            label="Tips"
+            value={formatCurrency(centToMajorUnit(booking.tips))}
+          />
         )}
         {paymentButton}
       </View>
