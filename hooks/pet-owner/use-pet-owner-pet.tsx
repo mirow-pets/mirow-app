@@ -8,7 +8,7 @@ import { TAddPet, TEditPet } from "@/features/pets/validations";
 import { Delete, Get, Patch, Post } from "@/services/http-service";
 import { TPet } from "@/types";
 import { TPetType, TPetVaccination, TPetWeight } from "@/types/pets";
-import { replaceNullWithUndefined } from "@/utils";
+import { onError, replaceNullWithUndefined } from "@/utils";
 
 import { useAuth } from "../use-auth";
 
@@ -55,15 +55,6 @@ const PetOwnerPetProvider = ({ children }: PetOwnerPetProviderProps) => {
   const router = useRouter();
   const [petId, setPetId] = useState<TPet["id"]>();
   const queryClient = useQueryClient();
-
-  const onError = (err: Error) => {
-    console.log(err);
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "An unexpected error occurred. Please try again.",
-    });
-  };
 
   const { data: petFormFields, isLoading: isLoadingPetFormFields } =
     useQuery<TPetFormFields>({

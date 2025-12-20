@@ -1,8 +1,10 @@
 export { alert } from "./alert";
 export { confirm } from "./confirm";
+export { toMajorUnit, toMinorUnit } from "./currency";
 export { formatDateToMDY } from "./date";
 export { formatCurrency } from "./format-currency";
 export { formatNumber } from "./format-number";
 export { formatPhoneNumber } from "./format-phone-number";
 export { formatSsn } from "./format-ssn";
+export { onError } from "./on-error";
 export { replaceNullWithUndefined } from "./replace-null-with-undefined";

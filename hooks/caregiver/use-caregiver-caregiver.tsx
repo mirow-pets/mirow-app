@@ -21,6 +21,7 @@ import {
 import { TCaregiverGallery } from "@/types/caregivers";
 import { TPetType } from "@/types/pets";
 import { TSetting } from "@/types/settings";
+import { onError } from "@/utils";
 
 interface TCaregiverSignupFormFields {
   documentTypes: TDocument[];
@@ -67,21 +68,6 @@ const CaregiverCaregiverProvider = ({
   const { currUser } = useAuth();
   const [userId, setUserId] = useState<TCaregiver["usersId"]>();
   const queryClient = useQueryClient();
-
-  const onError = (err: Error) => {
-    console.log(err);
-    let message = "An unexpected error occurred. Please try again.";
-
-    if ("statusCode" in err && Number(err.statusCode) < 500) {
-      message = err.message;
-    }
-
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: message,
-    });
-  };
 
   const {
     data: caregiverSignupFormFields,

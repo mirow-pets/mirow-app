@@ -21,6 +21,9 @@ export default function CaregeiverDrawerLayout() {
   const handleMyBookings = () => {
     router.push("/caregiver/bookings");
   };
+  const handleMyEarnings = () => {
+    router.push("/caregiver/my-earnings");
+  };
 
   const handleLogout = () => {
     logout();
@@ -32,6 +35,7 @@ export default function CaregeiverDrawerLayout() {
       onPress: handleProfile,
     },
     { label: "My Bookings", onPress: handleMyBookings },
+    { label: "My Earnings", onPress: handleMyEarnings },
     { label: "Logout", onPress: handleLogout },
   ];
 

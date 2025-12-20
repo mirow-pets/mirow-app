@@ -23,7 +23,7 @@ export const Notifications = () => {
     if (notification.chatThreadsId)
       href = `/${userRole as UserRole}/messages/${notification.chatThreadsId}`;
 
-    router.replace(href as Href);
+    if (href) router.replace(href as Href);
   };
 
   return (

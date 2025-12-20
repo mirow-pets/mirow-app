@@ -16,3 +16,4 @@ export { TPetOwnerProfileCompletion } from "./pet-owners";
 export { TPet } from "./pets";
 export { TServiceType } from "./services";
 export { TUser, UserRole } from "./users";
+export { TWithdrawal } from "./withdrawals";

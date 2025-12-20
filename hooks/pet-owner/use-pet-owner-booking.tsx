@@ -8,6 +8,7 @@ import { TAddBooking, TCancelBooking } from "@/features/bookings/validations";
 import { useModal } from "@/hooks/use-modal";
 import { Get, Patch, Post } from "@/services/http-service";
 import { TBooking } from "@/types";
+import { onError } from "@/utils";
 
 export interface PetOwnerBookingContextValues {
   bookings: TBooking[];
@@ -34,21 +35,6 @@ const PetOwnerBookingProvider = ({
   const { setOpenId } = useModal();
   const router = useRouter();
   const [bookingId, setBookingId] = useState<TBooking["id"]>();
-
-  const onError = (err: Error) => {
-    console.log(err);
-    let message = "An unexpected error occurred. Please try again.";
-
-    if ("statusCode" in err && Number(err.statusCode) < 500) {
-      message = err.message;
-    }
-
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: message,
-    });
-  };
 
   const {
     data: bookings = [],

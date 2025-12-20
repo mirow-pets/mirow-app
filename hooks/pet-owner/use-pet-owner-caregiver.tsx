@@ -1,11 +1,11 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Toast from "react-native-toast-message";
 
 import { useAuth } from "@/hooks/use-auth";
 import { Get, Post } from "@/services/http-service";
 import { TCaregiver, TUser } from "@/types";
+import { onError } from "@/utils";
 
 export interface PetOwnerCaregiverContextValues {
   getCaregivers: (_filter: { serviceTypes: number[] }) => void;
@@ -34,21 +34,6 @@ const PetOwnerCaregiverProvider = ({
   const { currUser } = useAuth();
   const [userId, setUserId] = useState<TCaregiver["usersId"]>();
   const queryClient = useQueryClient();
-
-  const onError = (err: Error) => {
-    console.log(err);
-    let message = "An unexpected error occurred. Please try again.";
-
-    if ("statusCode" in err && Number(err.statusCode) < 500) {
-      message = err.message;
-    }
-
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: message,
-    });
-  };
 
   const {
     data: caregivers = [],

@@ -10,13 +10,11 @@ import { InfiniteFlatList } from "@/components/list/InfiniteFlatList";
 import { ThemedText } from "@/components/themed-text";
 import { grayColor, whiteColor } from "@/constants/theme";
 import { PetTypesSelector } from "@/features/pets/components/PetTypesSelector";
-import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { TPet } from "@/types";
 import { TPetType } from "@/types/pets";
 
 export default function PetsScreen() {
-  const { petTypes } = usePetOwnerPet();
   const primaryColor = useThemeColor({}, "primary");
   const router = useRouter();
   const [showSearch, setShowSearch] = useState(false);

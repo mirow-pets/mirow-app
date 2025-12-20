@@ -1,10 +1,10 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Toast from "react-native-toast-message";
 
 import { Get, Post } from "@/services/http-service";
 import { TPet } from "@/types";
+import { onError } from "@/utils";
 
 export interface CaregiverPetContextValues {
   setAsFavourite: (_input: { petId: TPet["id"]; isFavourite: boolean }) => void;
@@ -24,15 +24,6 @@ export interface CaregiverPetProviderProps {
 const CaregiverPetProvider = ({ children }: CaregiverPetProviderProps) => {
   const [petId, setPetId] = useState<TPet["id"]>();
   const queryClient = useQueryClient();
-
-  const onError = (err: Error) => {
-    console.log(err);
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "An unexpected error occurred. Please try again.",
-    });
-  };
 
   let { data: pet, isLoading: isLoadingPet } = useQuery({
     queryKey: ["pet", petId],

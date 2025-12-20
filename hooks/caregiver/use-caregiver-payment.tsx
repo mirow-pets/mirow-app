@@ -13,6 +13,7 @@ import { TAddBankAccount } from "@/features/payments/validations/add-bank-accoun
 import { Delete, Get, Post } from "@/services/http-service";
 import { TBankAccount } from "@/types";
 import { TInitialPay } from "@/types/payments";
+import { onError } from "@/utils";
 
 import { useAuth } from "../use-auth";
 import { useCaregiverProfile } from "./use-caregiver-profile";
@@ -53,21 +54,6 @@ const CaregiverPaymentProvider = ({
   const { currUser } = useAuth();
   const queryClient = useQueryClient();
   const { profileCompletion } = useCaregiverProfile();
-
-  const onError = (err: Error) => {
-    console.log(err);
-    let message = "An unexpected error occurred. Please try again.";
-
-    if ("statusCode" in err && Number(err.statusCode) < 500) {
-      message = err.message;
-    }
-
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: message,
-    });
-  };
 
   const { data: bankAccounts, isLoading: isLoadingBankAccounts } = useQuery<
     BankAccountsResponse,

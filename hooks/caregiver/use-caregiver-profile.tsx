@@ -13,6 +13,7 @@ import {
   TOption,
 } from "@/types";
 import { TAuthCaregiver } from "@/types/caregivers";
+import { onError } from "@/utils";
 
 import { useAuth } from "../use-auth";
 
@@ -48,21 +49,6 @@ const CaregiverProfileProvider = ({
 }: CaregiverProfileProviderProps) => {
   const { currUser, logout } = useAuth();
   const queryClient = useQueryClient();
-
-  const onError = (err: Error) => {
-    console.log(err);
-    let message = "An unexpected error occurred. Please try again.";
-
-    if ("statusCode" in err && Number(err.statusCode) < 500) {
-      message = err.message;
-    }
-
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: message,
-    });
-  };
 
   const {
     data: caregiverProfileFormFields = {

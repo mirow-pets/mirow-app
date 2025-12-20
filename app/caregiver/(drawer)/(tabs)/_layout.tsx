@@ -6,13 +6,15 @@ import { Tabs } from "expo-router";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { TabsHeader } from "@/components/layout/TabsHeader";
-import { blackColor, Colors, whiteColor } from "@/constants/theme";
+import { blackColor, whiteColor } from "@/constants/theme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function CaregiverTabsNavigation() {
+  const primaryColor = useThemeColor({}, "primary");
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors["light"].primary,
+        tabBarActiveTintColor: primaryColor,
         tabBarButton: HapticTab,
         headerShadowVisible: false,
         headerStyle: {
@@ -82,6 +84,12 @@ export default function CaregiverTabsNavigation() {
       />
       <Tabs.Screen
         name="notifications"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="my-earnings"
         options={{
           href: null,
         }}

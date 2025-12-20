@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useModal } from "@/hooks/use-modal";
 import { Get, Patch } from "@/services/http-service";
 import { TBooking } from "@/types";
+import { onError } from "@/utils";
 
 import { useCaregiverProfile } from "./use-caregiver-profile";
 
@@ -44,21 +45,6 @@ const CaregiverBookingProvider = ({
   const [bookingId, setBookingId] = useState<TBooking["id"]>();
 
   const router = useRouter();
-
-  const onError = (err: Error) => {
-    console.log(err);
-    let message = "An unexpected error occurred. Please try again.";
-
-    if ("statusCode" in err && Number(err.statusCode) < 500) {
-      message = err.message;
-    }
-
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: message,
-    });
-  };
 
   const {
     data: bookings = [],

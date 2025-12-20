@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Get, Patch } from "@/services/http-service";
 import { TPetOwnerProfileCompletion } from "@/types";
 import { TAuthUser } from "@/types/users";
+import { onError } from "@/utils";
 
 export interface PetOwnerProfileContextValues {
   profile?: TAuthUser;
@@ -35,21 +36,6 @@ const PetOwnerProfileProvider = ({
   const { currUser, logout } = useAuth();
 
   const queryClient = useQueryClient();
-
-  const onError = (err: Error) => {
-    console.log(err);
-    let message = "An unexpected error occurred. Please try again.";
-
-    if ("statusCode" in err && Number(err.statusCode) < 500) {
-      message = err.message;
-    }
-
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: message,
-    });
-  };
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery<TAuthUser>({
     queryKey: ["pet-owner-profile", currUser?.sessionId],

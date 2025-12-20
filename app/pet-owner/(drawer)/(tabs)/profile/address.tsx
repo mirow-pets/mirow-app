@@ -31,8 +31,6 @@ export default function AddressScreen() {
     },
   });
 
-  const values = form.watch();
-
   useExitFormRouteWarning({
     isDirty: form.formState.isDirty,
     onExit: () => {

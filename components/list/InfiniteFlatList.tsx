@@ -5,6 +5,7 @@ import { FlatList } from "react-native-gesture-handler";
 
 import { ThemedText } from "@/components/themed-text";
 import { addQueryParams, Get } from "@/services/http-service";
+import { onError } from "@/utils";
 
 export interface InfiniteFlatListProps<T> {
   url: string;
@@ -58,9 +59,7 @@ export const InfiniteFlatList = <T extends object>({
         return (allPages.length - 1) * perPage;
       },
       meta: {
-        onError: () => {
-          console.log("erro");
-        },
+        onError,
       },
     }
   );
