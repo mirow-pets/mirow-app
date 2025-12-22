@@ -36,7 +36,7 @@ export interface CaregiverPaymentContextValues {
   isSettingAsDefault: boolean;
   backgroundCheckInitialPayment: (
     _input: TBackgroundCheckInitialPayment,
-    _onSuccess: (_initialPay: TInitialPay) => void
+    _onSuccess: (_initialPay?: TInitialPay) => void
   ) => void;
   isLoadingBackgroundCheckInitialPayment: boolean;
 }
@@ -111,9 +111,18 @@ const CaregiverPaymentProvider = ({
   const {
     mutate: _backgroundCheckInitialPayment,
     isPending: isLoadingBackgroundCheckInitialPayment,
-  } = useMutation<TInitialPay, Error, TBackgroundCheckInitialPayment>({
+  } = useMutation<
+    TInitialPay | undefined,
+    Error,
+    TBackgroundCheckInitialPayment
+  >({
     mutationFn: async (input: TBackgroundCheckInitialPayment) => {
-      const initialPay = await Post("/initial-pay/care-giver", input);
+      const initialPay = await Post(
+        "/v2/background-verifications/payment",
+        input
+      );
+
+      if (initialPay.isFree) return;
 
       const { error } = await initPaymentSheet({
         paymentIntentClientSecret: initialPay.clientSecret,
@@ -138,10 +147,10 @@ const CaregiverPaymentProvider = ({
 
   const backgroundCheckInitialPayment = (
     input: TBackgroundCheckInitialPayment,
-    onSuccess: (_initialPay: TInitialPay) => void
+    onSuccess: (_initialPay?: TInitialPay) => void
   ) =>
     _backgroundCheckInitialPayment(input, {
-      onSuccess: async (initialPay: TInitialPay) => {
+      onSuccess: async (initialPay?: TInitialPay) => {
         Toast.show({
           type: "success",
           text1: "Background check paid successfully",

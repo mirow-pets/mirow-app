@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { FormProvider, useForm } from "react-hook-form";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -14,6 +15,8 @@ import { useCaregiverPayment } from "@/hooks/caregiver/use-caregiver-payment";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { addQueryParams, Get } from "@/services/http-service";
+import { TInitialPay } from "@/types/payments";
 
 import { BackgroungVerificationStepFour } from "./background-verification/BackgroundVerificationStepFour";
 import { BackgroungVerificationStepOne } from "./background-verification/BackgroundVerificationStepOne";
@@ -22,6 +25,7 @@ import { BackgroungVerificationStepTwo } from "./background-verification/Backgro
 
 export default function BackgroundVerificationForm() {
   const [step, setStep] = useState(1);
+  const [promocode, setPromocode] = useState<string>();
   const primaryColor = useThemeColor({}, "primary");
   const {
     settings,
@@ -43,6 +47,7 @@ export default function BackgroundVerificationForm() {
       month,
       year,
       customerId,
+      isBackgroundVerificationPaid,
     },
   } = useCaregiverProfile();
   const {
@@ -50,8 +55,13 @@ export default function BackgroundVerificationForm() {
     isLoadingBackgroundCheckInitialPayment,
   } = useCaregiverPayment();
 
-  const backgroundCheckFee = Number(settings["background-check-fee"]);
   const convenienceFee = Number(settings["convenience-fee"]);
+
+  const { data: backgroundCheckFee } = useQuery({
+    queryKey: ["background-check-fee", promocode],
+    queryFn: () =>
+      Get(addQueryParams("/v2/background-verifications/fee", { promocode })),
+  });
 
   const form = useForm({
     resolver: zodResolver(backgroundVerificationSchema),
@@ -105,11 +115,16 @@ export default function BackgroundVerificationForm() {
     const result = await form.trigger(
       fields as unknown as keyof TBackgroundVerification
     );
-    if (result) setStep((step) => (step === 2 && customerId ? 4 : step + 1));
+    if (result)
+      setStep((step) =>
+        step === 2 && isBackgroundVerificationPaid ? 4 : step + 1
+      );
   };
 
   const handlePrev = () =>
-    setStep((step) => (step === 4 && customerId ? 2 : step - 1));
+    setStep((step) =>
+      step === 4 && isBackgroundVerificationPaid ? 2 : step - 1
+    );
 
   const handlePayment = () => {
     backgroundCheckInitialPayment(
@@ -118,17 +133,28 @@ export default function BackgroundVerificationForm() {
         email,
         name: `${firstName} ${lastName}`,
         phone,
+        promocode,
       },
-      (initialPay) => {
-        form.setValue("customerId", initialPay.customerId);
-        initiateBackgroundVerification(
-          {
-            ...values,
-            country: values.country ?? "US",
-            customerId: initialPay.customerId,
-          },
-          () => setStep(4)
-        );
+      (initialPay?: TInitialPay) => {
+        if (initialPay) {
+          form.setValue("customerId", initialPay.customerId);
+          initiateBackgroundVerification(
+            {
+              ...values,
+              country: values.country ?? "US",
+              customerId: initialPay.customerId,
+            },
+            () => setStep(4)
+          );
+        } else {
+          initiateBackgroundVerification(
+            {
+              ...values,
+              country: values.country ?? "US",
+            },
+            () => setStep(4)
+          );
+        }
       }
     );
   };
@@ -168,11 +194,13 @@ export default function BackgroundVerificationForm() {
           )}
           {step === 3 && (
             <BackgroungVerificationStepThree
+              promocode={promocode}
               backgroundCheckFee={backgroundCheckFee}
               convenienceFee={convenienceFee}
               onNext={handlePayment}
               onPrev={handlePrev}
               loading={isLoadingBackgroundCheckInitialPayment}
+              onPromocodeChange={setPromocode}
             />
           )}
           {step === 4 && (

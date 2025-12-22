@@ -46,6 +46,7 @@ export interface TAuthCaregiver extends TCaregiver {
   backgroundVerifyStatus: string;
   kycStatusId: number;
   users: TAuthUser;
+  isBackgroundVerificationPaid: boolean;
 }
 
 export interface TCaregiverPreference {

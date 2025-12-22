@@ -29,7 +29,7 @@ export const backgroundVerificationSchema = z.object({
       eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
       return val <= eighteenYearsAgo;
     }, "You must be at least 13 years old"),
-  customerId: z.string(),
+  customerId: z.string().optional().nullable(),
 });
 
 export type TBackgroundVerification = z.infer<
