@@ -15,6 +15,7 @@ import { TLogin, loginSchema } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { Post } from "@/services/http-service";
 import { TCurrentUser } from "@/types/users";
+import { onError } from "@/utils";
 
 export interface LoginFormProps {
   path: string;
@@ -46,19 +47,7 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
         text1: "Logged in successfully!",
       });
     },
-    onError: (err) => {
-      let message = "An unexpected error occurred. Please try again.";
-
-      if ("statusCode" in err) {
-        if (err.statusCode === 401) message = "Invalid username or password";
-      }
-
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: message,
-      });
-    },
+    onError,
   });
 
   const form = useForm({
