@@ -9,13 +9,11 @@ import CaregiverBookingProvider from "@/hooks/caregiver/use-caregiver-booking";
 import CaregiverPaymentProvider from "@/hooks/caregiver/use-caregiver-payment";
 import CaregiverPetProvider from "@/hooks/caregiver/use-caregiver-pet";
 import CaregiverProfileProvider from "@/hooks/caregiver/use-caregiver-profile";
-import { useAuth } from "@/hooks/use-auth";
 import NotificationProvider from "@/hooks/use-notifications";
 import SocketProvider from "@/hooks/use-socket";
 
 export default function CaregeiverDrawerLayout() {
   const router = useRouter();
-  const { logout } = useAuth();
 
   const handleProfile = () => router.push("/caregiver/profile");
   const handleMyBookings = () => {
@@ -25,8 +23,8 @@ export default function CaregeiverDrawerLayout() {
     router.push("/caregiver/my-earnings");
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleSettings = () => {
+    router.push("/caregiver/settings");
   };
 
   const menu = [
@@ -36,7 +34,7 @@ export default function CaregeiverDrawerLayout() {
     },
     { label: "My Bookings", onPress: handleMyBookings },
     { label: "My Earnings", onPress: handleMyEarnings },
-    { label: "Logout", onPress: handleLogout },
+    { label: "Settings", onPress: handleSettings },
   ];
 
   return (

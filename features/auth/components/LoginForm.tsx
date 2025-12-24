@@ -15,7 +15,7 @@ import { TLogin, loginSchema } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { Post } from "@/services/http-service";
 import { TCurrentUser } from "@/types/users";
-import { onError } from "@/utils";
+import { confirm, onError } from "@/utils";
 
 export interface LoginFormProps {
   path: string;
@@ -26,13 +26,26 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
   const router = useRouter();
   const { setToken, setCurrUser, userRole } = useAuth();
 
+  const form = useForm({
+    resolver: zodResolver(loginSchema),
+  });
+
   const { mutate, isPending } = useMutation<
-    TCurrentUser & { token: string },
+    TCurrentUser & { token: string; isActivate: boolean },
     Error,
     TLogin
   >({
     mutationFn: (input: TLogin) => Post(path, input),
-    onSuccess: async ({ token, ...user }) => {
+    onSuccess: async ({ token, isActivate, ...user }) => {
+      if (isActivate) {
+        confirm({
+          title: "Reactivate your account",
+          description:
+            "Your account is currently deactivated. Would you like to reactivate it now?",
+          onConfirm: () => mutate({ ...form.getValues(), isActivate }),
+        });
+        return;
+      }
       if (!userRole) return;
       await AsyncStorage.setItem("accessToken", token);
       await AsyncStorage.setItem("currUser", JSON.stringify(user));
@@ -48,10 +61,6 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
       });
     },
     onError,
-  });
-
-  const form = useForm({
-    resolver: zodResolver(loginSchema),
   });
 
   const submit = (input: TLogin) => {

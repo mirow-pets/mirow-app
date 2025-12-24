@@ -89,6 +89,12 @@ export default function CaregiverTabsNavigation() {
         }}
       />
       <Tabs.Screen
+        name="settings"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="my-earnings"
         options={{
           href: null,

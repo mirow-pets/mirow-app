@@ -1,3 +1,5 @@
+import { TUserNotificationPreference } from "./notifications";
+
 export enum UserRole {
   CareGiver = "caregiver",
   PetOwner = "pet-owner",
@@ -21,6 +23,8 @@ export interface TAuthUser extends TUser {
   eFirstName: string;
   eLastName: string;
   ePhone: string;
+  notificationPreferences: TUserNotificationPreference[];
+  isAutoPayout: boolean;
 }
 
 export interface TCurrentUser {

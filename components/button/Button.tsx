@@ -69,7 +69,7 @@ export const Button = ({
       accessibilityRole="button"
       onPress={onPress}
       disabled={isDisabled}
-      style={containerStyle}
+      style={[containerStyle, isDisabled ? styles.disabled : {}]}
       {...rest}
     >
       <View style={styles.content}>

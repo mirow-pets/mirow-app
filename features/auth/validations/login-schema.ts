@@ -7,6 +7,7 @@ export const loginSchema = z.object({
   password: z
     .string({ message: "Password is required" })
     .nonempty("Password is required"),
+  isActivate: z.boolean().optional(),
 });
 
 export type TLogin = z.infer<typeof loginSchema>;

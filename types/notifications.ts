@@ -10,3 +10,17 @@ export interface TNotification {
   bookingsId: string;
   createdAt: Date;
 }
+
+export interface TNotificationPreference {
+  deletedAt: Date;
+  id: number;
+  preference: string;
+  image: string;
+  display: string;
+}
+
+export interface TUserNotificationPreference {
+  id: number;
+  notificationPreferencesId: number;
+  isEnable: boolean;
+}

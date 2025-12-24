@@ -92,6 +92,12 @@ export default function PetOwnerTabsNavigation() {
         }}
       />
       <Tabs.Screen
+        name="settings"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="notifications"
         options={{
           href: null,

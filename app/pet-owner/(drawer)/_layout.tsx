@@ -10,21 +10,16 @@ import PetOwnerBookingProvider from "@/hooks/pet-owner/use-pet-owner-booking";
 import PetOwnerCaregiverProvider from "@/hooks/pet-owner/use-pet-owner-caregiver";
 import PetOwnerPaymentProvider from "@/hooks/pet-owner/use-pet-owner-payment";
 import PetOwnerPetProvider from "@/hooks/pet-owner/use-pet-owner-pet";
-import { useAuth } from "@/hooks/use-auth";
 import NotificationProvider from "@/hooks/use-notifications";
 import SocketProvider from "@/hooks/use-socket";
 
 export default function PetOwnerDrawerLayout() {
   const router = useRouter();
-  const { logout } = useAuth();
 
   const handleProfile = () => router.push("/pet-owner/profile");
+  const handleSettings = () => router.push("/pet-owner/settings");
   const handlePets = () => router.push("/pet-owner/pets");
   const handleMyBookings = () => router.push("/pet-owner/bookings");
-
-  const handleLogout = () => {
-    logout();
-  };
 
   const menu = [
     {
@@ -32,11 +27,14 @@ export default function PetOwnerDrawerLayout() {
       onPress: handleProfile,
     },
     {
+      label: "Settings",
+      onPress: handleSettings,
+    },
+    {
       label: "Pets",
       onPress: handlePets,
     },
     { label: "My Bookings", onPress: handleMyBookings },
-    { label: "Logout", onPress: handleLogout },
   ];
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { useQueryClient } from "@tanstack/react-query";
@@ -19,9 +19,14 @@ export default function BookingScreen() {
   const { profile } = usePetOwnerProfile();
   const { booking, isLoadingBooking, getBooking } = usePetOwnerBooking();
   const { payCaregiver, isPayingCaregiver } = usePetOwnerPayment();
+  const [tempPaid, setTempPaid] = useState(false);
   const queryClient = useQueryClient();
 
   const isOwner = booking?.usersId === profile?.id;
+  const isPaid = useMemo(
+    () => booking?.paymentStatus?.status === "paid" || tempPaid,
+    [booking?.paymentStatus?.status, tempPaid]
+  );
 
   useEffect(() => {
     getBooking(bookingId as string);
@@ -33,25 +38,30 @@ export default function BookingScreen() {
 
   let paymentButton = null;
 
-  const handlePayNow = () =>
+  const handlePayNow = () => {
     payCaregiver(
       {
         amount: booking.amount,
         caregiverId: booking.careGiversId,
         bookingId: booking.id,
       },
-      () =>
+      () => {
+        setTempPaid(true);
         queryClient.refetchQueries({
           queryKey: ["booking", booking.id],
-        })
+        });
+      }
     );
+  };
 
   if (isOwner) {
     if (
       booking.amount &&
       booking.paymentStatusId === 1 &&
-      booking.bookingStatus?.status === "completed"
+      booking.bookingStatus?.status === "completed" &&
+      !isPaid
     ) {
+      // TODO: Once the user is paid disable this button even the payment is not yet completed
       paymentButton = (
         <Button
           title="Pay Now"
@@ -60,9 +70,10 @@ export default function BookingScreen() {
           disabled={isPayingCaregiver}
         />
       );
-    }
-
-    if (booking.bookingStatus?.status === "completed" && !booking.reviews) {
+    } else if (
+      booking.bookingStatus?.status === "completed" &&
+      !booking.reviews
+    ) {
       paymentButton = <RateBookingButton booking={booking} />;
     }
   }

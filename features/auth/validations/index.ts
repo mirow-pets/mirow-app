@@ -1,4 +1,12 @@
+export { changeEmailSchema } from "./change-email-schema";
+export type { TChangeEmail } from "./change-email-schema";
+export { changePasswordSchema } from "./change-password-schema";
+export type { TChangePassword } from "./change-password-schema";
 export { loginSchema } from "./login-schema";
 export type { TLogin } from "./login-schema";
+export { sendOtpSchema } from "./send-otp-schema";
+export type { TSendOtp } from "./send-otp-schema";
 export { signUpSchema } from "./sign-up-schema";
 export type { TSignUp } from "./sign-up-schema";
+export { verifyOtpSchema } from "./verify-top-schema";
+export type { TVerifyOtp } from "./verify-top-schema";

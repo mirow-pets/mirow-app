@@ -1,9 +1,16 @@
 import { createContext, ReactNode, useContext } from "react";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  UseMutateFunction,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
-import { addQueryParams, Get, Patch } from "@/services/http-service";
+import { TEnableNotification } from "@/features/notifications/validations";
+import { addQueryParams, Get, Patch, Post } from "@/services/http-service";
 import { TNotification } from "@/types";
+import { TNotificationPreference } from "@/types/notifications";
 
 import { useAuth } from "./use-auth";
 
@@ -11,6 +18,10 @@ export interface NotificationContextValues {
   notifications: TNotification[];
   isLoadingNotifications: boolean;
   setNotificationAsRead: (_notificationId: TNotification["id"]) => void;
+  notificationPreferences: TNotificationPreference[];
+  isLoadingNotificationPreferences: boolean;
+  enableNotification: UseMutateFunction<void, Error, TEnableNotification>;
+  isEnablingNotification: boolean;
 }
 
 export const NotificationContext =
@@ -51,6 +62,34 @@ const NotificationProvider = ({ children }: NotificationProviderProps) => {
     },
   });
 
+  const {
+    data: notificationPreferences,
+    isLoading: isLoadingNotificationPreferences,
+  } = useQuery({
+    queryKey: ["notification-preferences"],
+    queryFn: () => Get("/notification-preferences"),
+  });
+
+  const { mutate: enableNotification, isPending: isEnablingNotification } =
+    useMutation<void, Error, TEnableNotification>({
+      mutationFn: (input: TEnableNotification) =>
+        Post(`/enable-notification`, input),
+      onSuccess: async () => {
+        const queryKeys = [
+          ["caregiver-profile", currUser?.sessionId],
+          ["pet-owner-profile", currUser?.sessionId],
+        ];
+
+        await Promise.all(
+          queryKeys.map((queryKey) =>
+            queryClient.refetchQueries({
+              queryKey,
+            })
+          )
+        );
+      },
+    });
+
   const setNotificationAsRead = (notificationId: TNotification["id"]) =>
     read(notificationId);
 
@@ -60,6 +99,10 @@ const NotificationProvider = ({ children }: NotificationProviderProps) => {
         notifications,
         isLoadingNotifications,
         setNotificationAsRead,
+        notificationPreferences,
+        isLoadingNotificationPreferences,
+        enableNotification,
+        isEnablingNotification,
       }}
     >
       {children}

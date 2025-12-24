@@ -86,3 +86,14 @@ export interface TPaymentMethod {
   metadata: unknown;
   type: string;
 }
+
+export interface TPaymentStatus {
+  createdAt: Date;
+  deletedAt: Date | null;
+  display: string;
+  id: number;
+  image: string | null;
+  isDeleted: boolean;
+  status: string;
+  updatedAt: Date;
+}
