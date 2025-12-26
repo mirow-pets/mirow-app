@@ -2,6 +2,7 @@ export { alert } from "./alert";
 export { confirm } from "./confirm";
 export { centToMajorUnit, majorToCentUnit } from "./currency";
 export { formatDateToMDY } from "./date";
+export { defaultHeader } from "./default-header";
 export { formatCurrency } from "./format-currency";
 export { formatNumber } from "./format-number";
 export { formatPhoneNumber } from "./format-phone-number";

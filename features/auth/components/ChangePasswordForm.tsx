@@ -96,10 +96,19 @@ export default function ChangePasswordForm({ user }: ChangePasswordFormProps) {
     <OtpProvider>
       <View style={[styles.container, { backgroundColor: primaryColor }]}>
         {step === 1 && (
-          <SubmitOtpStep user={user} type="password-update" next={handleNext} />
+          <SubmitOtpStep
+            description="We'll send you a one-time password (OTP) to help you change your password."
+            email={user?.email}
+            type="password-update"
+            next={handleNext}
+          />
         )}
         {step === 2 && (
-          <VerifyOtpStep user={user} type="password-update" next={handleNext} />
+          <VerifyOtpStep
+            email={user?.email}
+            type="password-update"
+            next={handleNext}
+          />
         )}
         {step === 3 && <ChangePasswordStep user={user} />}
       </View>

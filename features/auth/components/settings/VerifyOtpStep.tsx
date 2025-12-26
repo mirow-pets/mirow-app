@@ -23,12 +23,12 @@ import { TAuthUser, UserRole } from "@/types/users";
 import { onError } from "@/utils";
 
 export interface VerifyOtpStepProps {
-  user: TAuthUser;
+  email?: TAuthUser["email"];
   type: "2fa" | "email-update" | "password-update";
   next: () => void;
 }
 
-export const VerifyOtpStep = ({ user, type, next }: VerifyOtpStepProps) => {
+export const VerifyOtpStep = ({ email, type, next }: VerifyOtpStepProps) => {
   const { setOtp, sendOtp, isSendingOtp } = useOtp();
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const { userRole } = useAuth();
@@ -42,7 +42,7 @@ export const VerifyOtpStep = ({ user, type, next }: VerifyOtpStepProps) => {
   const form = useForm({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: {
-      email: user?.email!,
+      email,
     },
     mode: "onChange",
   });
@@ -57,7 +57,7 @@ export const VerifyOtpStep = ({ user, type, next }: VerifyOtpStepProps) => {
   const handleResendOtp = () => {
     sendOtp(
       {
-        email: user?.email!,
+        email: email!,
         role: userRole === UserRole.PetOwner ? "petowner" : "caregiver",
         type,
       },
@@ -80,6 +80,13 @@ export const VerifyOtpStep = ({ user, type, next }: VerifyOtpStepProps) => {
     });
   };
 
+  console.log(
+    form.watch(),
+    form.formState.errors,
+    form.formState.isValid,
+    isVerifyingOtp
+  );
+
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
@@ -87,7 +94,7 @@ export const VerifyOtpStep = ({ user, type, next }: VerifyOtpStepProps) => {
           Please enter the OTP sent to
         </ThemedText>
         <ThemedText type="subtitle" style={styles.email}>
-          {user?.email}
+          {email}
         </ThemedText>
         <Timer
           state={state}

@@ -28,12 +28,14 @@ export const Input = ({ label, name, formatter, ...props }: InputProps) => {
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               onBlur={onBlur}
-              onChangeText={(value) =>
-                onChange(formatter ? formatter(value) : value)
-              }
               value={value?.toString()}
               placeholderTextColor={grayColor}
               {...props}
+              onChangeText={(value) => {
+                const formatted = formatter ? formatter(value) : value;
+                onChange(formatted);
+                props.onChangeText?.(formatted);
+              }}
               style={[styles.input, props.style]}
             />
           )}

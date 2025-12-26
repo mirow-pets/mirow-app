@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,8 +11,10 @@ import Toast from "react-native-toast-message";
 import { Button } from "@/components/button/Button";
 import { Input } from "@/components/form/Input";
 import { PasswordInput } from "@/components/form/PasswordInput";
+import { ThemedText } from "@/components/themed-text";
 import { TLogin, loginSchema } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
+import { useThemeColor } from "@/hooks/use-theme-color";
 import { Post } from "@/services/http-service";
 import { TCurrentUser } from "@/types/users";
 import { confirm, onError } from "@/utils";
@@ -23,6 +25,7 @@ export interface LoginFormProps {
 }
 
 export const LoginForm = ({ path, redirect }: LoginFormProps) => {
+  const secondaryColor = useThemeColor({}, "secondary");
   const router = useRouter();
   const { setToken, setCurrUser, userRole } = useAuth();
 
@@ -67,17 +70,33 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
     mutate(input);
   };
 
+  const handleForgotPassword = () => {
+    router.push("/pet-owner/forgot-password");
+  };
+
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
         <Input name="username" placeholder="Username" autoCapitalize="none" />
         <PasswordInput name="password" placeholder="Password" />
+        <View style={styles.forgotPasswordWrapper}>
+          <TouchableOpacity
+            onPress={handleForgotPassword}
+            style={styles.forgotPasswordTouchable}
+          >
+            <ThemedText
+              style={[styles.forgotPasswordText, { color: secondaryColor }]}
+            >
+              Forgot password?
+            </ThemedText>
+          </TouchableOpacity>
+        </View>
         <Button
           title="Login"
           onPress={form.handleSubmit(submit)}
           loading={isPending}
           color="secondary"
-          style={{ minWidth: "70%" }}
+          style={{ minWidth: "70%", marginTop: 18 }}
         />
       </View>
     </FormProvider>
@@ -88,5 +107,19 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     padding: 32,
+  },
+  forgotPasswordWrapper: {
+    alignSelf: "flex-end",
+    marginTop: 8,
+    marginBottom: 18,
+    marginRight: 4,
+  },
+  forgotPasswordTouchable: {
+    // Add touchable area expansion if desired
+  },
+  forgotPasswordText: {
+    textDecorationLine: "underline",
+    fontSize: 15,
+    fontWeight: "500",
   },
 });

@@ -13,19 +13,27 @@ import { useOtp } from "@/hooks/use-otp";
 import { TAuthUser, UserRole } from "@/types/users";
 
 export interface SubmitOtpStepProps {
-  user: TAuthUser;
+  email?: TAuthUser["email"];
+  description?: string;
   type: "2fa" | "email-update" | "password-update";
+  onEmailChange?: (_email: string) => void;
   next: () => void;
 }
 
-export const SubmitOtpStep = ({ user, type, next }: SubmitOtpStepProps) => {
+export const SubmitOtpStep = ({
+  description,
+  email,
+  type,
+  next,
+  onEmailChange,
+}: SubmitOtpStepProps) => {
   const { sendOtp, isSendingOtp } = useOtp();
   const { userRole } = useAuth();
 
   const form = useForm({
     resolver: zodResolver(sendOtpSchema),
     defaultValues: {
-      email: user?.email!,
+      email: email!,
       role: (userRole === UserRole.PetOwner ? "petowner" : "caregiver") as
         | "petowner"
         | "caregiver",
@@ -46,11 +54,14 @@ export const SubmitOtpStep = ({ user, type, next }: SubmitOtpStepProps) => {
 
   return (
     <FormProvider {...form}>
-      <ThemedText>
-        We&apos;ll send you a one-time password (OTP) to help you reset your
-        password.
-      </ThemedText>
-      <Input name="email" placeholder="Email" readOnly />
+      <ThemedText>{description}</ThemedText>
+      <Input
+        name="email"
+        placeholder="Email"
+        readOnly={!!email}
+        onChangeText={onEmailChange}
+        autoCapitalize="none"
+      />
       <Button
         title="Continue"
         onPress={form.handleSubmit(submit)}

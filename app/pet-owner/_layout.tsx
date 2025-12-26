@@ -14,6 +14,10 @@ export default function PetOwnerLayout() {
         </Stack.Protected>
         <Stack.Screen name="sign-up" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="forgot-password"
+          options={{ title: "Forgot Password" }}
+        />
       </Stack>
     </PetOwnerProfileProvider>
   );

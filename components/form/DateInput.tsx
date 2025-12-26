@@ -15,6 +15,16 @@ interface DateInputProps
   name: string;
 }
 
+function formatUserFriendlyDate(date?: Date) {
+  if (!date) return "-";
+  // Format: Sep 28, 2024 (use user's locale)
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export const DateInput = ({ label, name, ...props }: DateInputProps) => {
   const form = useFormContext();
   const { errors } = useFormState({ control: form.control, name });
@@ -32,7 +42,7 @@ export const DateInput = ({ label, name, ...props }: DateInputProps) => {
           render={({ field: { onChange, value } }) => (
             <TouchableOpacity onPress={() => setOpen(true)}>
               <View style={styles.input}>
-                <ThemedText>{value?.toDateString() || "-"}</ThemedText>
+                <ThemedText>{formatUserFriendlyDate(value)}</ThemedText>
                 <DateTimePickerModal
                   {...props}
                   isVisible={open}

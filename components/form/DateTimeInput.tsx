@@ -14,6 +14,19 @@ interface DateTimeInputProps {
   maximumDate?: Date;
 }
 
+// Formats a user-friendly date and time string using user's locale
+function formatUserFriendlyDateTime(date?: Date) {
+  if (!date) return "-";
+  // Example: Sep 28, 2024, 3:05 PM
+  return date.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 export const DateTimeInput = ({
   label,
   name,
@@ -36,11 +49,7 @@ export const DateTimeInput = ({
           render={({ field: { onChange, value } }) => (
             <TouchableOpacity onPress={() => setOpen(true)}>
               <View style={styles.input}>
-                <Text>
-                  {value
-                    ? `${value?.toDateString()} ${value?.toTimeString()}`
-                    : "-"}
-                </Text>
+                <Text>{formatUserFriendlyDateTime(value)}</Text>
                 <DateTimePickerModal
                   isVisible={open}
                   mode="datetime"
