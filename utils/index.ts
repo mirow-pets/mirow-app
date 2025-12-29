@@ -8,4 +8,5 @@ export { formatNumber } from "./format-number";
 export { formatPhoneNumber } from "./format-phone-number";
 export { formatSsn } from "./format-ssn";
 export { onError } from "./on-error";
+export { registerForPushNotificationsAsync } from "./register-for-push-notifications-async";
 export { replaceNullWithUndefined } from "./replace-null-with-undefined";

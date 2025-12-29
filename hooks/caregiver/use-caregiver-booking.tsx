@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 
@@ -25,7 +26,7 @@ export interface CaregiverBookingContextValues {
   completeBooking: (_bookingId: TBooking["id"]) => void;
   isCompletingBooking: boolean;
   getBooking: (_bookingId: string) => void;
-  booking: TBooking;
+  booking?: TBooking;
   isLoadingBooking: boolean;
 }
 
@@ -60,7 +61,7 @@ const CaregiverBookingProvider = ({
     data: booking,
     isLoading: isLoadingBooking,
     refetch: refetchBooking,
-  } = useQuery({
+  } = useQuery<TBooking>({
     queryKey: ["booking", bookingId],
     queryFn: () => Get(`/v2/users/bookings/${bookingId}`),
     enabled: !!bookingId,
@@ -77,8 +78,7 @@ const CaregiverBookingProvider = ({
       if (!message.includes("successfully")) {
         return alert(message);
       }
-      await refetchBookings();
-      await refetchBooking();
+      if (bookingId) await Promise.all([refetchBookings(), refetchBooking()]);
       setOpenId("");
 
       Toast.show({
@@ -103,8 +103,7 @@ const CaregiverBookingProvider = ({
         rejectReason,
       }),
     onSuccess: async () => {
-      await refetchBookings();
-      await refetchBooking();
+      if (bookingId) await Promise.all([refetchBookings(), refetchBooking()]);
       setOpenId("");
 
       router.push("/caregiver/bookings");
@@ -125,9 +124,21 @@ const CaregiverBookingProvider = ({
     mutationFn: (bookingId: TBooking["id"]) =>
       Patch(`/care-givers/bookings/${bookingId}/inprogress`),
     onSuccess: async () => {
-      await refetchBookings();
-      await refetchBooking();
+      if (bookingId) await Promise.all([refetchBookings(), refetchBooking()]);
       setOpenId("");
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Service in progress",
+          body: `${booking?.pets?.[0]?.name}'s ${booking?.serviceTypes?.display} service is inprogress!`,
+          sound: "default",
+          autoDismiss: true,
+          data: {
+            url: `/care-givers/bookings/${bookingId}`,
+          },
+        },
+        trigger: null,
+      });
 
       Toast.show({
         type: "success",
@@ -145,21 +156,31 @@ const CaregiverBookingProvider = ({
     mutationFn: (bookingId: TBooking["id"]) =>
       Patch(`/care-givers/bookings/${bookingId}/complete`),
     onSuccess: async () => {
-      await refetchBookings();
-      await refetchBooking();
+      if (bookingId) await Promise.all([refetchBookings(), refetchBooking()]);
       setOpenId("");
 
       Toast.show({
         type: "success",
         text1: "Booking completed successfully!",
       });
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Service completed",
+          body: `${booking?.pets?.[0]?.name}'s ${booking?.serviceTypes?.display} service is completed!`,
+          sound: "default",
+          autoDismiss: true,
+          data: {
+            url: `/care-givers/bookings/${bookingId}`,
+          },
+        },
+        trigger: null,
+      });
     },
     onError,
   });
 
-  const getBooking = (bookingId: string) => {
-    setBookingId(bookingId);
-  };
+  const getBooking = (bookingId: string) => setBookingId(bookingId);
 
   const acceptBooking = (bookingId: TBooking["id"]) => accept(bookingId);
 

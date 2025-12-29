@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import {
   UseMutateFunction,
@@ -11,6 +17,7 @@ import { TEnableNotification } from "@/features/notifications/validations";
 import { addQueryParams, Get, Patch, Post } from "@/services/http-service";
 import { TNotification } from "@/types";
 import { TNotificationPreference } from "@/types/notifications";
+import { registerForPushNotificationsAsync } from "@/utils";
 
 import { useAuth } from "./use-auth";
 
@@ -33,7 +40,14 @@ export interface NotificationProviderProps {
 
 const NotificationProvider = ({ children }: NotificationProviderProps) => {
   const { currUser } = useAuth();
+  const [expoPushToken, setExpoPushToken] = useState("");
+
   const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: (input: { token: string; sessionId: string }) =>
+      Patch("/users/firebase-token", input),
+  });
 
   const { data: notifications = [], isLoading: isLoadingNotifications } =
     useQuery<TNotification[], Error>({
@@ -47,6 +61,7 @@ const NotificationProvider = ({ children }: NotificationProviderProps) => {
           })
         ),
       enabled: !!currUser,
+      refetchInterval: 10_000,
     });
 
   const { mutate: read } = useMutation<void, Error, TNotification["id"]>({
@@ -92,6 +107,15 @@ const NotificationProvider = ({ children }: NotificationProviderProps) => {
 
   const setNotificationAsRead = (notificationId: TNotification["id"]) =>
     read(notificationId);
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) => {
+      console.log("token123", token, !currUser?.sessionId);
+      if (!token || !currUser?.sessionId) return;
+      setExpoPushToken(token);
+      mutate({ token, sessionId: currUser.sessionId });
+    });
+  }, [currUser?.sessionId, mutate]);
 
   return (
     <NotificationContext.Provider

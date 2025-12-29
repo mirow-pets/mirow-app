@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "370085557343",
+    "project_id": "mirow-admin",
+    "storage_bucket": "mirow-admin.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:370085557343:android:7d791d411b0242dc4897ea",
+        "android_client_info": {
+          "package_name": "com.mirow.mirow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-bg9AB5e7NsQU4HHWVeG4VzCNB5TZEd4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

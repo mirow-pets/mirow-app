@@ -54,7 +54,7 @@ export const TabsHeader = () => {
             fontSize: 10,
           }}
         >
-          Welcome!
+          Welcome!a
         </Text>
         <Text
           style={{
@@ -63,7 +63,7 @@ export const TabsHeader = () => {
             textTransform: "uppercase",
           }}
         >
-          {currUser?.firstName} {currUser?.lastName}
+          {currUser?.firstName} {currUser?.lastName}a
         </Text>
       </View>
       <View style={{ flexDirection: "row", gap: 4 }}>

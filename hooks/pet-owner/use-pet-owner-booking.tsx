@@ -64,8 +64,7 @@ const PetOwnerBookingProvider = ({
     mutationFn: ({ serviceTypesId, ...input }: TAddBooking) =>
       Post("/users/bookings/meal-service", input),
     onSuccess: async () => {
-      await refetchBookings();
-      await refetchBooking();
+      if (bookingId) await Promise.all([refetchBookings(), refetchBooking()]);
 
       router.replace("/pet-owner/bookings");
 
@@ -85,8 +84,7 @@ const PetOwnerBookingProvider = ({
     mutationFn: ({ bookingId, cancelReason }: TCancelBooking) =>
       Patch(`/users/bookings/${bookingId}/cancel`, { cancelReason }),
     onSuccess: async () => {
-      await refetchBookings();
-      await refetchBooking();
+      if (bookingId) await Promise.all([refetchBookings(), refetchBooking()]);
       setOpenId("");
 
       Toast.show({
