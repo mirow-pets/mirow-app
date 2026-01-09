@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -9,6 +10,7 @@ import { greenColor, lightGrayColor } from "@/constants/theme";
 import BookingDetails from "@/features/bookings/components/BookingDetails";
 import { RejectBookingButton } from "@/features/bookings/components/RejectBookingButton";
 import { useCaregiverBooking } from "@/hooks/caregiver/use-caregiver-booking";
+import { useMessage } from "@/hooks/use-message";
 import { confirm } from "@/utils";
 
 export default function BookingScreen() {
@@ -25,6 +27,8 @@ export default function BookingScreen() {
     getBooking,
   } = useCaregiverBooking();
 
+  const message = useMessage();
+
   useEffect(() => getBooking(bookingId as string), [bookingId, getBooking]);
 
   if (isLoadingBooking) return <Text>Loading booking...</Text>;
@@ -35,11 +39,17 @@ export default function BookingScreen() {
     ({ bookingsId }) => bookingsId === booking?.id
   );
 
+  const messageButton = (
+    <TouchableOpacity onPress={() => message(booking.usersId)}>
+      <AntDesign name="message" size={20} color="black" />
+    </TouchableOpacity>
+  );
+
   return (
     <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
-        <BookingDetails booking={booking} />
-        {!!queue && (
+        <BookingDetails booking={booking} messageButton={messageButton} />
+        {(!!queue || booking.isOpenShift) && (
           <View>
             {booking.bookingStatus?.status === "accepted" && (
               <TouchableOpacity
@@ -89,10 +99,12 @@ export default function BookingScreen() {
                 >
                   <ThemedText style={{ color: greenColor }}>Accept</ThemedText>
                 </TouchableOpacity>
-                <RejectBookingButton
-                  bookingId={booking.id}
-                  careGiverQeueuId={queue.id}
-                />
+                {queue && (
+                  <RejectBookingButton
+                    bookingId={booking.id}
+                    careGiverQeueuId={queue.id}
+                  />
+                )}
               </View>
             )}
           </View>

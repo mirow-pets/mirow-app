@@ -127,9 +127,11 @@ export default function BackgroundVerificationForm() {
     );
 
   const handlePayment = () => {
+    const amount = +(backgroundCheckFee + convenienceFee * 100).toFixed();
+
     backgroundCheckInitialPayment(
       {
-        amount: +((backgroundCheckFee + convenienceFee) * 100).toFixed(),
+        amount,
         email,
         name: `${firstName} ${lastName}`,
         phone,

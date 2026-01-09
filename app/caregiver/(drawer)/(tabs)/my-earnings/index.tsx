@@ -109,7 +109,7 @@ export default function MyEarningsScreen() {
               : "$0.00"}
           </ThemedText>
         </View>
-        <View style={styles.miniCard}>
+        {/* <View style={styles.miniCard}>
           <ThemedText style={styles.miniLabel}>Instantly Available</ThemedText>
           <ThemedText style={styles.miniAmount}>
             {totalEarnings
@@ -119,13 +119,22 @@ export default function MyEarningsScreen() {
                 )
               : "$0.00"}
           </ThemedText>
-        </View>
+        </View> */}
+      </View>
+
+      <View style={{ marginTop: 6 }}>
+        <ThemedText style={{ fontSize: 12, color: "#888" }}>
+          Note: If your Stripe account is new, funds typically remain pending
+          for 7–14 days while under risk review. After this initial period,
+          payouts become available in about 2 days.
+        </ThemedText>
       </View>
 
       <Button
         title="Withdraw"
         style={{ marginTop: 16 }}
         onPress={handleWithdraw}
+        disabled={!available.amount}
       />
 
       <Button

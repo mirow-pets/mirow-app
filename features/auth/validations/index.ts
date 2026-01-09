@@ -6,6 +6,8 @@ export { loginSchema } from "./login-schema";
 export type { TLogin } from "./login-schema";
 export { resetPasswordSchema } from "./reset-password-schema";
 export type { TResetPassword } from "./reset-password-schema";
+export { sendLocationSchema } from "./send-location-schema";
+export type { TSendLocation } from "./send-location-schema";
 export { sendOtpSchema } from "./send-otp-schema";
 export type { TSendOtp } from "./send-otp-schema";
 export { signUpSchema } from "./sign-up-schema";

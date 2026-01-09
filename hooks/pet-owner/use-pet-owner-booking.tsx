@@ -1,10 +1,23 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  initPaymentSheet,
+  presentPaymentSheet,
+} from "@stripe/stripe-react-native";
+import {
+  UseMutateFunction,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 
-import { TAddBooking, TCancelBooking } from "@/features/bookings/validations";
+import { ENV } from "@/env";
+import {
+  TAddBooking,
+  TCancelBooking,
+  TPayBooking,
+} from "@/features/bookings/validations";
 import { useModal } from "@/hooks/use-modal";
 import { Get, Patch, Post } from "@/services/http-service";
 import { TBooking } from "@/types";
@@ -20,6 +33,8 @@ export interface PetOwnerBookingContextValues {
   getBooking: (_bookingId: string) => void;
   booking: TBooking;
   isLoadingBooking: boolean;
+  payBooking: UseMutateFunction<void, Error, TPayBooking>;
+  isPayingBooking: boolean;
 }
 
 export const PetOwnerBookingContext =
@@ -95,6 +110,30 @@ const PetOwnerBookingProvider = ({
     onError,
   });
 
+  const { mutate: payBooking, isPending: isPayingBooking } = useMutation<
+    void,
+    Error,
+    TPayBooking
+  >({
+    mutationFn: async (input: TPayBooking) => {
+      const payCaregiver = await Post(`/v2/bookings/${input.bookingId}/pay`);
+
+      const { error } = await initPaymentSheet({
+        paymentIntentClientSecret: payCaregiver?.clientSecret,
+        merchantDisplayName: ENV.MERCHANT_NAME,
+        customerId: payCaregiver?.customerId,
+        customerEphemeralKeySecret: payCaregiver?.ephemeralKey,
+      });
+
+      if (!error) {
+        const { error: presentError } = await presentPaymentSheet();
+        if (presentError) {
+          throw presentError;
+        }
+      }
+    },
+  });
+
   const addBooking = (input: TAddBooking) => add(input);
 
   const cancelBooking = (input: TCancelBooking) => cancel(input);
@@ -115,6 +154,8 @@ const PetOwnerBookingProvider = ({
         getBooking,
         booking,
         isLoadingBooking,
+        payBooking,
+        isPayingBooking,
       }}
     >
       {children}

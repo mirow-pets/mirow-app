@@ -103,6 +103,12 @@ export default function PetOwnerTabsNavigation() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

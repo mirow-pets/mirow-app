@@ -20,11 +20,13 @@ import { UserDetailsCard } from "./booking-details/UserDetailsCard";
 export interface BookingDetailsProps {
   booking: TBooking;
   paymentButton?: ReactNode;
+  messageButton?: ReactNode;
 }
 
 export default function BookingDetails({
   booking,
   paymentButton,
+  messageButton,
 }: BookingDetailsProps) {
   const { isPetOwner } = useAuth();
 
@@ -107,22 +109,29 @@ export default function BookingDetails({
       </View>
 
       {/* Pet Owner Details Section */}
-      {booking.users && (
-        <UserDetailsCard title="Pet Owner" user={booking.users} />
+      {!!booking.users && !isPetOwner && (
+        <UserDetailsCard
+          title="Pet Owner"
+          user={booking.users}
+          actions={messageButton}
+        />
       )}
 
       {/* Caregiver Details Section */}
-      {booking.careGivers?.users && (
+      {!!booking.careGivers?.users && isPetOwner && (
         <UserDetailsCard
           title="Caregiver"
           user={booking.careGivers.users}
           actions={
-            isPetOwner ? (
-              <SetAsFavoriteCaregiver
-                isFavourite={booking.careGivers.isFavourite}
-                userId={booking.careGivers.usersId}
-              />
-            ) : null
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              {messageButton}
+              {isPetOwner ? (
+                <SetAsFavoriteCaregiver
+                  isFavourite={booking.careGivers.isFavourite}
+                  userId={booking.careGivers.usersId}
+                />
+              ) : null}
+            </View>
           }
         />
       )}

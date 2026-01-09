@@ -2,7 +2,7 @@ import { View } from "react-native";
 
 import { UserAvatar } from "@/components/image/UserAvatar";
 import { ThemedText } from "@/components/themed-text";
-import { redColor, whiteColor } from "@/constants/theme";
+import { blackColor, redColor, whiteColor } from "@/constants/theme";
 import { TUpdatePetOwnerProfile } from "@/features/profile/validations";
 import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -32,7 +32,7 @@ export const PetOwnerProfileDetailsCard = () => {
             updateProfile({ profileImage } as TUpdatePetOwnerProfile)
           }
           borderColor={
-            profileCompletion.isProfileImageAdded ? "unset" : redColor
+            profileCompletion.isProfileImageAdded ? blackColor : redColor
           }
         />
         <View>

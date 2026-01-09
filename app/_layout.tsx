@@ -13,7 +13,6 @@ import { ENV } from "@/env";
 import AuthProvider, { useAuth } from "@/hooks/use-auth";
 import ModalProvider from "@/hooks/use-modal";
 import { useNotificationObserver } from "@/hooks/use-notification-observer";
-import { UserRole } from "@/types";
 
 const queryClient = new QueryClient();
 
@@ -64,11 +63,8 @@ const RootLayoutNav = () => {
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Protected guard={!!userRole}>
-            {userRole === UserRole.PetOwner ? (
-              <Stack.Screen name="pet-owner" options={{ headerShown: false }} />
-            ) : (
-              <Stack.Screen name="caregiver" options={{ headerShown: false }} />
-            )}
+            <Stack.Screen name="pet-owner" options={{ headerShown: false }} />
+            <Stack.Screen name="caregiver" options={{ headerShown: false }} />
           </Stack.Protected>
         </Stack>
       </GestureHandlerRootView>

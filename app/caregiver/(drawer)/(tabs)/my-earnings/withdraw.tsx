@@ -110,7 +110,8 @@ export default function WithdrawScreen() {
   } = form;
 
   const { mutate: withdraw, isPending: isWithdrawing } = useMutation({
-    mutationFn: (amount: number) => Post("/v2/withdrawals/request", { amount }),
+    mutationFn: (amount: number) =>
+      Post("/v2/withdrawals/requests", { amount }),
     onSuccess: async () => {
       await queryClient.refetchQueries({
         queryKey: ["balance"],

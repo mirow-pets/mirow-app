@@ -27,7 +27,7 @@ export const DropdownInput = ({
   const error = errors[name];
 
   return (
-    <View>
+    <View style={{ width: "100%" }}>
       {label && <ThemedText style={styles.label}>{label}</ThemedText>}
       <View>
         <Controller

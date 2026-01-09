@@ -5,6 +5,7 @@ export interface ConfirmArgs {
   description?: string;
   confirmText?: string;
   cancelText?: string;
+  hideCancel?: boolean;
   onConfirm: () => void;
 }
 
@@ -13,16 +14,21 @@ export const confirm = ({
   description,
   confirmText,
   cancelText,
+  hideCancel,
   onConfirm,
 }: ConfirmArgs) => {
   Alert.alert(
     title,
     description,
     [
-      {
-        text: cancelText ?? "Cancel",
-        style: "cancel",
-      },
+      ...(hideCancel
+        ? []
+        : [
+            {
+              text: cancelText ?? "Cancel",
+              style: "cancel" as "cancel",
+            },
+          ]),
       {
         text: confirmText ?? "Confirm",
         onPress: onConfirm,

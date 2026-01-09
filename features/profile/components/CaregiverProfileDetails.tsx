@@ -2,7 +2,7 @@ import { View } from "react-native";
 
 import { UserAvatar } from "@/components/image/UserAvatar";
 import { ThemedText } from "@/components/themed-text";
-import { redColor, whiteColor } from "@/constants/theme";
+import { blackColor, redColor, whiteColor } from "@/constants/theme";
 import { TUpdateCaregiverProfile } from "@/features/profile/validations";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -32,7 +32,7 @@ export const CaregiverProfileDetailsCard = () => {
             updateProfile({ profileImage } as TUpdateCaregiverProfile)
           }
           borderColor={
-            profileCompletion?.isProfileImageAdded ? "unset" : redColor
+            profileCompletion?.isProfileImageAdded ? blackColor : redColor
           }
         />
         <View>

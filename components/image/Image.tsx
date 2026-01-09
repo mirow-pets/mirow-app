@@ -53,8 +53,11 @@ export const Image = ({
     },
   });
 
+  console.log("image", image);
+
   const imageComponent = (
     <View style={{ flexShrink: 1, position: "relative" }}>
+      <Text style={{ display: "none" }}>Image: {image}</Text>
       <View style={[styles.container, style]}>
         {source || image ? (
           <BaseImage
@@ -101,6 +104,7 @@ export const Image = ({
   if (!isEditable) return imageComponent;
 
   const handleSelect = async (image: BaseImagePicker.ImagePickerAsset) => {
+    console.log("uri", image.uri);
     setImage(image.uri);
 
     upload(image);

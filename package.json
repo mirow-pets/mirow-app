@@ -9,9 +9,11 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "android:build:dev": "dotenv -- eas build --platform android --local --profile development",
-    "android:build:prod": "dotenv -- eas build --platform android --local --profile production",
+    "android:build:prev": "eas build --platform android --profile preview",
+    "android:build:prod": "eas build --platform android --profile production",
     "ios:build:dev": "dotenv -- eas build --platform ios --local --profile development",
-    "ios:build:prod": "dotenv -- eas build --platform ios --local --profile production"
+    "ios:build:prev": "eas build --platform ios --profile preview",
+    "ios:build:prod": "eas build --platform ios --profile production"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -34,6 +36,7 @@
     "expo-image": "~3.0.11",
     "expo-image-picker": "~17.0.10",
     "expo-linking": "~8.0.11",
+    "expo-location": "~19.0.8",
     "expo-notifications": "~0.32.15",
     "expo-router": "~6.0.21",
     "expo-splash-screen": "~31.0.13",
@@ -46,6 +49,7 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.66.0",
     "react-native": "0.81.5",
+    "react-native-big-calendar": "^4.19.0",
     "react-native-confirmation-code-field": "^8.0.1",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-gifted-chat": "^2.4.0",

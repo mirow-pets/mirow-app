@@ -100,6 +100,18 @@ export default function CaregiverTabsNavigation() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="open-shifts"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

@@ -11,10 +11,13 @@ import {
 } from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
+import { Get } from "@/services/http-service";
 import { TCurrentUser, UserRole } from "@/types/users";
+import { confirm } from "@/utils";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 // import { postLogout } from "../Service/authSvc";
@@ -46,6 +49,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currUser, setCurrUser] = useState<TCurrentUser>();
   const [isInitializing, setIsInitializing] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const { data: user } = useQuery({
+    queryKey: ["user", currUser?.sessionId],
+    queryFn: () => Get("/v2/auth/user"),
+    enabled: !!token,
+  });
 
   const logout = useCallback(async () => {
     try {
@@ -103,6 +112,29 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     getUserAuthendication();
   }, [getUserAuthendication]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const check = async () => {
+      const fcmToken = await AsyncStorage.getItem("fcmToken");
+
+      if (
+        !user?.sessions?.some(
+          (session: { deviceToken?: string }) =>
+            session?.deviceToken === fcmToken
+        )
+      ) {
+        confirm({
+          title: "Session has expired",
+          description: "Please relogin",
+          onConfirm: logout,
+          hideCancel: true,
+        });
+      }
+    };
+    check();
+  }, [user, logout]);
 
   // useEffect(() => {
   //   if (hasToken) {

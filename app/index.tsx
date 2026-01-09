@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { Href, useRouter } from "expo-router";
+import { Href, Redirect, useRouter } from "expo-router";
 
 import { Button } from "@/components/button/Button";
 import AuthScreenLayout from "@/components/layout/AuthScreenLayout";
@@ -16,7 +16,7 @@ export default function SelectRoleScreen() {
     if (userRole) router.push(`/${userRole}` as Href);
   }, [userRole, router]);
 
-  if (userRole) return null;
+  if (userRole) return <Redirect href={`/${userRole}`} />;
 
   return (
     <AuthScreenLayout

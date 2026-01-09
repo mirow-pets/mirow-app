@@ -16,7 +16,7 @@ import { TLogin, loginSchema } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Post } from "@/services/http-service";
-import { TCurrentUser } from "@/types/users";
+import { TCurrentUser, UserRole } from "@/types/users";
 import { confirm, onError } from "@/utils";
 
 export interface LoginFormProps {
@@ -71,7 +71,7 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
   };
 
   const handleForgotPassword = () => {
-    router.push("/pet-owner/forgot-password");
+    router.push(`/${userRole as UserRole}/forgot-password`);
   };
 
   return (

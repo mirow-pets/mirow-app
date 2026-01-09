@@ -1,4 +1,5 @@
 export { TBooking } from "./bookings";
+export { TCalendarEvent } from "./calendar";
 export {
   TCaregiver,
   TCaregiverPreference,
