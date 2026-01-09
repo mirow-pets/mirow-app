@@ -1,8 +1,6 @@
 import {
   createContext,
-  Dispatch,
   ReactNode,
-  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -16,6 +14,7 @@ import { router } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { Get } from "@/services/http-service";
+import { authStore, SetAuthArgs } from "@/stores/auth.store";
 import { TCurrentUser, UserRole } from "@/types/users";
 import { confirm } from "@/utils";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -26,14 +25,14 @@ import { confirm } from "@/utils";
 export interface AuthContextValue {
   token?: string;
   currUser?: TCurrentUser;
-  setCurrUser: Dispatch<SetStateAction<TCurrentUser | undefined>>;
-  setToken: Dispatch<SetStateAction<string | undefined>>;
+  setAuth: (_input: SetAuthArgs) => Promise<void>;
   isInitializing: boolean;
   logout: () => void;
   isLoggingOut: boolean;
-  removeInformationsForLogout: () => void;
   userRole?: UserRole;
-  setUserRole: Dispatch<SetStateAction<UserRole | undefined>>;
+  setUserRole: (_userRole: UserRole) => void;
+  removeUserRole: () => Promise<void>;
+  setFcmToken: (_fcmToken: string) => Promise<void>;
   isPetOwner?: boolean;
 }
 
@@ -44,9 +43,18 @@ export interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [userRole, setUserRole] = useState<UserRole>();
-  const [token, setToken] = useState<string>();
-  const [currUser, setCurrUser] = useState<TCurrentUser>();
+  const {
+    token,
+    currUser,
+    userRole,
+    fcmToken,
+    setAuth,
+    setUserRole,
+    setFcmToken,
+    removeAuth,
+    removeUserRole,
+    removeFcmToken,
+  } = authStore();
   const [isInitializing, setIsInitializing] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -59,17 +67,22 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const logout = useCallback(async () => {
     try {
       setIsLoggingOut(true);
-      // const res = await postLogout({ sessionId: currUser?.sessionId });
-      // console.log("postLogout res", res);
-      // if (res?.message) {
-      await removeInformationsForLogout();
+      // await Post(
+      //   userRole === UserRole.PetOwner ? `/users/logout` : `/caregivers/logout`,
+      //   { sessionId: currUser?.sessionId }
+      // );
+      await Promise.all([removeAuth(), removeFcmToken()]);
+
+      // await GoogleSignin?.signOut();
+      // await GoogleSignin.revokeAccess();
+      router.replace("/");
       // }
     } catch (error) {
       console.log("error", await error);
     } finally {
       setIsLoggingOut(false);
     }
-  }, []);
+  }, [removeAuth, removeFcmToken]);
 
   const getUserAuthendication = useCallback(async () => {
     try {
@@ -86,55 +99,38 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsInitializing(false);
         return;
       }
-      if (accessToken) setToken(accessToken);
-      if (currUser) setCurrUser(currUser);
-      if (userRole) {
-        setUserRole(userRole as UserRole);
-      }
+      if (accessToken && currUser) setAuth({ token: accessToken, currUser });
+      if (userRole) setUserRole(userRole as UserRole);
     } catch (error) {
       console.log("error", error);
     } finally {
       setIsInitializing(false);
     }
-  }, [logout]);
-
-  const removeInformationsForLogout = async () => {
-    setToken(undefined);
-    setCurrUser(undefined);
-    await AsyncStorage.removeItem("accessToken");
-    await AsyncStorage.removeItem("currUser");
-    await AsyncStorage.removeItem("is2FAuthVerified");
-    // await GoogleSignin?.signOut();
-    // await GoogleSignin.revokeAccess();
-    router.replace("/");
-  };
+  }, [logout, setAuth, setUserRole]);
 
   useEffect(() => {
     getUserAuthendication();
   }, [getUserAuthendication]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !fcmToken) return;
 
     const check = async () => {
-      const fcmToken = await AsyncStorage.getItem("fcmToken");
+      const hasDeviceToken = user?.sessions?.some(
+        (session: { deviceToken?: string }) => session?.deviceToken === fcmToken
+      );
 
-      if (
-        !user?.sessions?.some(
-          (session: { deviceToken?: string }) =>
-            session?.deviceToken === fcmToken
-        )
-      ) {
-        confirm({
-          title: "Session has expired",
-          description: "Please relogin",
-          onConfirm: logout,
-          hideCancel: true,
-        });
-      }
+      if (hasDeviceToken) return;
+
+      confirm({
+        title: "Session has expired",
+        description: "Please relogin",
+        onConfirm: logout,
+        hideCancel: true,
+      });
     };
     check();
-  }, [user, logout]);
+  }, [fcmToken, user, logout]);
 
   // useEffect(() => {
   //   if (hasToken) {
@@ -149,15 +145,15 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       value={{
         token,
         currUser,
-        setCurrUser,
-        setToken,
+        setAuth,
         isInitializing,
         logout,
         isLoggingOut,
-        removeInformationsForLogout,
         userRole,
         setUserRole,
         isPetOwner,
+        removeUserRole,
+        setFcmToken,
       }}
     >
       {isInitializing ? <ThemedText>Loading...</ThemedText> : children}

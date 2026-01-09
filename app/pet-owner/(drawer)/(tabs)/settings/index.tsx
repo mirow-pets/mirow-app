@@ -44,13 +44,13 @@ export default function SettingsScreen() {
     //   label: "Two-factor authentication",
     //   onPress: () => router.push("/pet-owner/pets"),
     // },
-    {
-      icon: (
-        <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
-      ),
-      label: "Auto pay",
-      onPress: () => router.push("/pet-owner/settings/auto-pay"),
-    },
+    // {
+    //   icon: (
+    //     <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
+    //   ),
+    //   label: "Auto pay",
+    //   onPress: () => router.push("/pet-owner/settings/auto-pay"),
+    // },
     {
       icon: (
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />

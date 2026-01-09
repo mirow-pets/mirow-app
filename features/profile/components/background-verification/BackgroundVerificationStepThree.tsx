@@ -7,17 +7,17 @@ import { ThemedText } from "@/components/themed-text";
 import { centToMajorUnit, formatCurrency } from "@/utils";
 
 export interface BackgroungVerificationStepThreeProps {
-  promocode?: string;
+  promoCode?: string;
   loading?: boolean;
   backgroundCheckFee: number;
   convenienceFee: number;
   onPrev?: () => void;
   onNext: () => void;
-  onPromocodeChange: (_promocode?: string) => void;
+  onPromocodeChange: (_promoCode?: string) => void;
 }
 
 export const BackgroungVerificationStepThree = ({
-  promocode,
+  promoCode,
   loading,
   backgroundCheckFee,
   convenienceFee,
@@ -30,12 +30,12 @@ export const BackgroungVerificationStepThree = ({
   // Debounce in React Native using useRef and setTimeout
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handlePromocode = (promocode: string) => {
+  const handlePromocode = (promoCode: string) => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
     debounceRef.current = setTimeout(() => {
-      onPromocodeChange(promocode);
+      onPromocodeChange(promoCode);
     }, 300);
   };
 
@@ -66,9 +66,9 @@ export const BackgroungVerificationStepThree = ({
       <View>
         <Input
           name=""
-          placeholder="Promocode"
+          placeholder="Promo code"
           onChangeText={handlePromocode}
-          defaultValue={promocode}
+          defaultValue={promoCode}
         />
       </View>
     </FormStepsLayout>

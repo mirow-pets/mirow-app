@@ -8,16 +8,18 @@ export default function CaregiverLayout() {
 
   return (
     <CaregiverCaregiverProvider>
-      <Stack initialRouteName="login">
+      <Stack>
         <Stack.Protected guard={!!currUser}>
           <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
         </Stack.Protected>
-        <Stack.Screen name="sign-up" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="forgot-password"
-          options={{ title: "Forgot Password" }}
-        />
+        <Stack.Protected guard={!currUser}>
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+          <Stack.Screen name="sign-up" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="forgot-password"
+            options={{ title: "Forgot Password" }}
+          />
+        </Stack.Protected>
       </Stack>
     </CaregiverCaregiverProvider>
   );

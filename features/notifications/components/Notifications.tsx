@@ -18,6 +18,8 @@ export const Notifications = () => {
     setNotificationAsRead(notification.id);
     let href;
 
+    if (notification.title.includes("Withdrawal"))
+      href = `/${userRole as UserRole}/my-earnings/withdrawals`;
     if (notification.bookingsId)
       href = `/${userRole as UserRole}/bookings/${notification.bookingsId}`;
     if (notification.chatThreadsId)
@@ -34,6 +36,7 @@ export const Notifications = () => {
         contentContainerStyle={[styles.listContainer, { paddingBottom: 100 }]}
         style={{ height: 400 }}
         order="createdat DESC"
+        refetchInterval={10_000}
         renderItem={({ item, index }) => (
           <TouchableOpacity
             style={styles.item}

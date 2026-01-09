@@ -1,6 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect } from "react";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   UseMutateFunction,
   useMutation,
@@ -34,7 +33,7 @@ export interface NotificationProviderProps {
 }
 
 const NotificationProvider = ({ children }: NotificationProviderProps) => {
-  const { currUser } = useAuth();
+  const { currUser, setFcmToken } = useAuth();
 
   const queryClient = useQueryClient();
 
@@ -106,10 +105,16 @@ const NotificationProvider = ({ children }: NotificationProviderProps) => {
     if (!currUser) return;
     registerForPushNotificationsAsync().then(async (token) => {
       if (!token || !currUser?.sessionId) return;
-      await AsyncStorage.setItem("fcmToken", token);
-      mutate({ token, sessionId: currUser.sessionId });
+      mutate(
+        { token, sessionId: currUser.sessionId },
+        {
+          onSuccess: async () => {
+            await setFcmToken(token);
+          },
+        }
+      );
     });
-  }, [currUser, mutate]);
+  }, [currUser, mutate, setFcmToken]);
 
   return (
     <NotificationContext.Provider

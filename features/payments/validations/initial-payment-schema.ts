@@ -5,7 +5,7 @@ export const backgroundCheckBackgroundCheckInitialPaymentSchema = z.object({
   email: z.string(),
   name: z.string(),
   phone: z.string(),
-  promocode: z.string().optional(),
+  promoCode: z.string().optional(),
 });
 
 export type TBackgroundCheckInitialPayment = z.infer<

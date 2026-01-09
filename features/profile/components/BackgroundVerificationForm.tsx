@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { ScrollView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
 import {
   backgroundVerificationSchema,
@@ -25,8 +27,10 @@ import { BackgroungVerificationStepTwo } from "./background-verification/Backgro
 
 export default function BackgroundVerificationForm() {
   const [step, setStep] = useState(1);
-  const [promocode, setPromocode] = useState<string>();
+  const [promoCode, setPromocode] = useState<string>();
   const primaryColor = useThemeColor({}, "primary");
+  const queryClient = useQueryClient();
+
   const {
     settings,
     initiateBackgroundVerification,
@@ -58,9 +62,9 @@ export default function BackgroundVerificationForm() {
   const convenienceFee = Number(settings["convenience-fee"]);
 
   const { data: backgroundCheckFee } = useQuery({
-    queryKey: ["background-check-fee", promocode],
+    queryKey: ["background-check-fee", promoCode],
     queryFn: () =>
-      Get(addQueryParams("/v2/background-verifications/fee", { promocode })),
+      Get(addQueryParams("/v2/background-verifications/fee", { promoCode })),
   });
 
   const form = useForm({
@@ -95,18 +99,38 @@ export default function BackgroundVerificationForm() {
         country: values.country ?? "US",
       },
       () => {
-        createCheckrCandidate({
-          ...input,
-          firstName,
-          lastName,
-          email,
-          // TODO: Replace with actual number
-          phone,
-          address: firstAddress.address,
-          city: firstAddress.city,
-          state: firstAddress.state,
-          postalCode: firstAddress.postalCode,
-        });
+        createCheckrCandidate(
+          {
+            ...input,
+            firstName,
+            lastName,
+            email,
+            // TODO: Replace with actual number
+            phone,
+            address: firstAddress.address,
+            city: firstAddress.city,
+            state: firstAddress.state,
+            postalCode: firstAddress.postalCode,
+          },
+          {
+            onSuccess: async () => {
+              await queryClient.invalidateQueries({
+                queryKey: ["caregiver-profile"],
+              });
+              await queryClient.invalidateQueries({
+                queryKey: ["caregiver-profile-completion"],
+              });
+
+              form.reset();
+              router.replace("/caregiver/profile");
+
+              Toast.show({
+                type: "success",
+                text1: "Background check started successfully!",
+              });
+            },
+          }
+        );
       }
     );
   };
@@ -135,7 +159,7 @@ export default function BackgroundVerificationForm() {
         email,
         name: `${firstName} ${lastName}`,
         phone,
-        promocode,
+        promoCode,
       },
       (initialPay?: TInitialPay) => {
         if (initialPay) {
@@ -196,7 +220,7 @@ export default function BackgroundVerificationForm() {
           )}
           {step === 3 && (
             <BackgroungVerificationStepThree
-              promocode={promocode}
+              promoCode={promoCode}
               backgroundCheckFee={backgroundCheckFee}
               convenienceFee={convenienceFee}
               onNext={handlePayment}

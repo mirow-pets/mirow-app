@@ -1,6 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 import { ENV } from "@/env";
+import { authStore } from "@/stores/auth.store";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -9,7 +10,7 @@ const requestOptions = async (
   body?: unknown,
   contentType: string = "application/json"
 ) => {
-  const accessToken = await AsyncStorage.getItem("accessToken");
+  const accessToken = authStore.getState().token;
 
   const headers = {
     ...(accessToken
@@ -50,6 +51,15 @@ const request = async (
     }
     return result.json();
   } else {
+    if (!path.includes("/login") && result.status === 401) {
+      authStore.getInitialState().removeAuth();
+
+      Toast.show({
+        type: "error",
+        text1: "The account is disabled",
+      });
+    }
+
     const data = await result.json();
     console.log(`Error body on ${url}:`, data.error);
     if (data.error) throw data.error;

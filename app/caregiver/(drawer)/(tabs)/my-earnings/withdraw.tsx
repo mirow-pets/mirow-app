@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
@@ -63,7 +63,6 @@ const getSchema = (available: number) => {
 export default function WithdrawScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const queryClient = useQueryClient();
 
   // Expect available, currency, totalEarnings from params
   const available =
@@ -113,10 +112,8 @@ export default function WithdrawScreen() {
     mutationFn: (amount: number) =>
       Post("/v2/withdrawals/requests", { amount }),
     onSuccess: async () => {
-      await queryClient.refetchQueries({
-        queryKey: ["balance"],
-      });
       router.back();
+
       Toast.show({
         type: "success",
         text1: "Your withdrawal was successful!",
@@ -126,7 +123,7 @@ export default function WithdrawScreen() {
   });
 
   // Withdraw form submit handler
-  const onSubmit = (data: FormData) => {
+  const submit = (data: FormData) => {
     const num = majorToCentUnit(data.amount);
 
     confirm({
@@ -182,7 +179,7 @@ export default function WithdrawScreen() {
 
           <Button
             title="Withdraw"
-            onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmit(submit)}
             style={styles.cta}
             disabled={isWithdrawing || !isValid}
             loading={isWithdrawing}

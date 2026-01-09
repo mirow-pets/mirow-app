@@ -7,7 +7,10 @@ import Toast from "react-native-toast-message";
 
 import { TSendLocation } from "@/features/auth/validations";
 import { Patch } from "@/services/http-service";
+import { authStore } from "@/stores/auth.store";
 import { onError } from "@/utils";
+
+import { useAuth } from "./use-auth";
 
 // Explanation:
 // The error "[Error: Current location is unavailable. Make sure that location services are enabled]"
@@ -42,12 +45,15 @@ async function checkLocationServicesEnabled(): Promise<boolean> {
 }
 
 const LocationProvider = ({ children }: LocationProviderProps) => {
+  const { token } = useAuth();
   const { mutate: sendLocation } = useMutation({
     mutationFn: (input: TSendLocation) => Patch(`/users/location`, input),
     onError,
   });
 
   useEffect(() => {
+    if (!token) return;
+
     const getCurrentLocation = async () => {
       // 1. Request location permissions.
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -83,7 +89,11 @@ const LocationProvider = ({ children }: LocationProviderProps) => {
 
         if (loc) {
           const { latitude, longitude } = loc.coords;
-          sendLocation({ lat: latitude.toString(), lng: longitude.toString() });
+          if (authStore.getState().token)
+            sendLocation({
+              lat: latitude.toString(),
+              lng: longitude.toString(),
+            });
         } else {
           Toast.show({
             type: "error",
@@ -126,7 +136,7 @@ const LocationProvider = ({ children }: LocationProviderProps) => {
     };
 
     getCurrentLocation();
-  }, [sendLocation]);
+  }, [token, sendLocation]);
 
   return (
     <LocationContext.Provider value={null}>{children}</LocationContext.Provider>

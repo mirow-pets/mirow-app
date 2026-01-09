@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation } from "@tanstack/react-query";
 import { Href, useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
@@ -27,7 +26,7 @@ export interface LoginFormProps {
 export const LoginForm = ({ path, redirect }: LoginFormProps) => {
   const secondaryColor = useThemeColor({}, "secondary");
   const router = useRouter();
-  const { setToken, setCurrUser, userRole } = useAuth();
+  const { setAuth, userRole } = useAuth();
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -50,14 +49,11 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
         return;
       }
       if (!userRole) return;
-      await AsyncStorage.setItem("accessToken", token);
-      await AsyncStorage.setItem("currUser", JSON.stringify(user));
-      await AsyncStorage.setItem("userRole", userRole);
 
-      setToken(token);
-      setCurrUser(user);
+      await setAuth({ token, currUser: user });
 
       router.replace(redirect);
+
       Toast.show({
         type: "success",
         text1: "Logged in successfully!",

@@ -1,7 +1,12 @@
 import { ReactNode, useEffect } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image, ImageBackground, ImageSource } from "expo-image";
 import { Href, useRouter } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
@@ -28,11 +33,10 @@ export default function AuthScreenLayout({
   showSwitchRole,
 }: AuthScreenLayoutProps) {
   const router = useRouter();
-  const { currUser, userRole, setUserRole } = useAuth();
+  const { currUser, userRole, removeUserRole } = useAuth();
 
   const handleSwitchRole = async () => {
-    setUserRole(undefined);
-    await AsyncStorage.removeItem("userRole");
+    await removeUserRole();
     router.replace("/");
   };
 
@@ -41,49 +45,51 @@ export default function AuthScreenLayout({
   }, [currUser, userRole, router]);
 
   return (
-    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
-      <ImageBackground
-        source={bgImage || require("@/assets/images/pet-owner-login-bg.png")}
-        style={{ flex: 1 }}
-        contentFit="cover"
-      >
-        <View style={styles.container}>
-          {showSwitchRole && (
-            <TouchableOpacity
-              onPress={handleSwitchRole}
-              style={{ position: "absolute", top: 32 }}
-            >
-              <Text>Switch role</Text>
-            </TouchableOpacity>
-          )}
-          <View style={styles.topSection}>
-            <Image
-              source={require("@/assets/images/mirow-text-logo.png")}
-              style={{ width: 250, height: 80, objectFit: "fill" }}
-            />
-            <Image
-              source={image}
-              style={{ width: 250, height: 300, objectFit: "fill" }}
-            />
-          </View>
-          <View style={styles.bottomSection}>
-            <ThemedText type="title" style={styles.title}>
-              {title}
-            </ThemedText>
-            <View style={{ marginVertical: 4 }} />
-            {typeof subTitle === "string" ? (
-              <ThemedText type="subtitle" style={styles.subTitle}>
-                {subTitle}
-              </ThemedText>
-            ) : (
-              subTitle
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+        <ImageBackground
+          source={bgImage || require("@/assets/images/pet-owner-login-bg.png")}
+          style={{ flex: 1 }}
+          contentFit="cover"
+        >
+          <View style={styles.container}>
+            {showSwitchRole && (
+              <TouchableOpacity
+                onPress={handleSwitchRole}
+                style={{ position: "absolute", top: 32 }}
+              >
+                <Text>Switch role</Text>
+              </TouchableOpacity>
             )}
-            {/* <View style={{ marginVertical: 2 }} /> */}
-            <View style={{ width: "100%" }}>{children}</View>
+            <View style={styles.topSection}>
+              <Image
+                source={require("@/assets/images/mirow-text-logo.png")}
+                style={{ width: 250, height: 80, objectFit: "fill" }}
+              />
+              <Image
+                source={image}
+                style={{ width: 250, height: 300, objectFit: "fill" }}
+              />
+            </View>
+            <View style={styles.bottomSection}>
+              <ThemedText type="title" style={styles.title}>
+                {title}
+              </ThemedText>
+              <View style={{ marginVertical: 4 }} />
+              {typeof subTitle === "string" ? (
+                <ThemedText type="subtitle" style={styles.subTitle}>
+                  {subTitle}
+                </ThemedText>
+              ) : (
+                subTitle
+              )}
+              {/* <View style={{ marginVertical: 2 }} /> */}
+              <View style={{ width: "100%" }}>{children}</View>
+            </View>
           </View>
-        </View>
-      </ImageBackground>
-    </ScrollView>
+        </ImageBackground>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

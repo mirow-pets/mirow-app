@@ -1,8 +1,12 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  UseMutateFunction,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import * as BaseImagePicker from "expo-image-picker";
-import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 
 import { TCreateCheckrCandidate } from "@/features/profile/validations";
@@ -50,7 +54,11 @@ export interface CaregiverCaregiverContextValues {
     _onSuccess: () => void
   ) => void;
   isInitiatingBackgroundVerification: boolean;
-  createCheckrCandidate: (_input: TCreateCheckrCandidate) => void;
+  createCheckrCandidate: UseMutateFunction<
+    unknown,
+    Error,
+    TCreateCheckrCandidate
+  >;
   isCreatingCheckrCandidate: boolean;
   settings: Record<string, string>;
 }
@@ -186,21 +194,6 @@ const CaregiverCaregiverProvider = ({
         day: dateOfBirth.getDate(),
         month: dateOfBirth.getMonth() + 1,
         year: dateOfBirth.getFullYear(),
-      });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["caregiver-profile"],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["caregiver-profile-completion"],
-      });
-
-      router.push("/caregiver/profile");
-
-      Toast.show({
-        type: "success",
-        text1: "Background check started successfully!",
       });
     },
     onError,

@@ -14,7 +14,17 @@ import AuthProvider, { useAuth } from "@/hooks/use-auth";
 import ModalProvider from "@/hooks/use-modal";
 import { useNotificationObserver } from "@/hooks/use-notification-observer";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 0,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: true,
+      retry: 2,
+    },
+  },
+});
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

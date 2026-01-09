@@ -29,15 +29,15 @@ export default function PetOwnerDrawerLayout() {
       onPress: handleProfile,
     },
     {
-      label: "Settings",
-      onPress: handleSettings,
-    },
-    {
       label: "Pets",
       onPress: handlePets,
     },
     { label: "My Bookings", onPress: handleMyBookings },
     { label: "Calendar", onPress: handleCalendar },
+    {
+      label: "Settings",
+      onPress: handleSettings,
+    },
   ];
 
   return (

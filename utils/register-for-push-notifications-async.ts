@@ -5,7 +5,7 @@ import * as Notifications from "expo-notifications";
 
 export async function registerForPushNotificationsAsync() {
   if (!Device.isDevice) {
-    alert("Must use physical device for Push Notifications");
+    // alert("Must use physical device for Push Notifications");
     return "TEST";
   }
 

@@ -21,6 +21,7 @@ export interface InfiniteFlatListProps<T> {
   emptyText?: string;
   loadingText?: string;
   order?: string;
+  refetchInterval?: number;
 }
 
 export const InfiniteFlatList = <T extends object>({
@@ -34,6 +35,7 @@ export const InfiniteFlatList = <T extends object>({
   emptyText,
   loadingText,
   order,
+  refetchInterval,
 }: InfiniteFlatListProps<T>) => {
   const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery<T[]>(
     {
@@ -61,6 +63,7 @@ export const InfiniteFlatList = <T extends object>({
       meta: {
         onError,
       },
+      refetchInterval,
     }
   );
 
