@@ -9,6 +9,8 @@ export interface FormStepsLayoutProps {
   loading?: boolean;
   onPrev?: () => void;
   onNext: () => void;
+  nextDisabled?: boolean;
+  prevDisabled?: boolean;
 }
 
 export const FormStepsLayout = ({
@@ -16,6 +18,8 @@ export const FormStepsLayout = ({
   loading,
   onNext,
   onPrev,
+  nextDisabled,
+  prevDisabled,
 }: FormStepsLayoutProps) => {
   return (
     <>
@@ -25,8 +29,18 @@ export const FormStepsLayout = ({
           <ActivityIndicator size={24} />
         ) : (
           <>
-            {onPrev && <PrevButton onPress={onPrev} loading={loading} />}
-            <NextButton onPress={onNext} loading={loading} />
+            {onPrev && (
+              <PrevButton
+                onPress={onPrev}
+                loading={loading}
+                disabled={prevDisabled}
+              />
+            )}
+            <NextButton
+              onPress={onNext}
+              loading={loading}
+              disabled={nextDisabled}
+            />
           </>
         )}
       </View>

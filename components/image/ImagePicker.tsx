@@ -8,6 +8,7 @@ import Toast from "react-native-toast-message";
 
 import { Modal } from "@/components/modal/Modal";
 import { useModal } from "@/hooks/use-modal";
+import { randomUUID } from "@/utils";
 
 import type { PermissionResponse } from "expo-modules-core";
 
@@ -115,7 +116,7 @@ export const ImagePicker = ({
 
   return (
     <Modal
-      id="select-source"
+      id={`select-source-${randomUUID()}`}
       title="Select source"
       trigger={trigger}
       style={{ width: 300 }}

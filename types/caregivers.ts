@@ -16,6 +16,7 @@ export interface TCaregiver {
   repeatedBookings: number;
   users: TUser;
   serviceTypes?: TServiceType[];
+  careGiversServiceTypesLink?: TCareGiversServiceTypesLink[];
   petTypes?: TPetType[];
   careGiverPreferences?: TCaregiverPreference[];
   careGiverSkills?: TCaregiverSkill[];
@@ -75,6 +76,7 @@ export interface TCaregiverProfileCompletion {
   isPriceAdded: boolean;
   isBackgroundVerifyStatus: boolean;
   isAddress: boolean;
+  isPaymentMethod: boolean;
 }
 
 export interface THomeType {
@@ -116,4 +118,12 @@ export interface TCaregiverQueue {
   id: number;
   bookingsId: string;
   careGiversId: string;
+}
+
+export interface TCareGiversServiceTypesLink {
+  deletedAt: Date;
+  id: number;
+  serviceRate: number;
+  careGiversId: string;
+  serviceTypesId: number;
 }

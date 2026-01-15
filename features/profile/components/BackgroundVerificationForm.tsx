@@ -9,8 +9,8 @@ import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 
 import {
-  backgroundVerificationSchema,
-  TBackgroundVerification,
+  TUpdateCaregiverProfile,
+  updateCaregiverProfileSchema,
 } from "@/features/profile/validations";
 import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
 import { useCaregiverPayment } from "@/hooks/caregiver/use-caregiver-payment";
@@ -33,27 +33,10 @@ export default function BackgroundVerificationForm() {
 
   const {
     settings,
-    initiateBackgroundVerification,
-    createCheckrCandidate,
-    isCreatingCheckrCandidate,
-    isInitiatingBackgroundVerification,
+    startBackgroundVerification,
+    isStartingBackgroundVerification,
   } = useCaregiverCaregiver();
-  const {
-    profile: {
-      users: { firstName, lastName, email, phone, address },
-      ssn,
-      accHolderName,
-      accountNumber,
-      routingNumber,
-      driverLicenseState,
-      drivingLicense,
-      day,
-      month,
-      year,
-      customerId,
-      isBackgroundVerificationPaid,
-    },
-  } = useCaregiverProfile();
+  const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
   const {
     backgroundCheckInitialPayment,
     isLoadingBackgroundCheckInitialPayment,
@@ -68,16 +51,13 @@ export default function BackgroundVerificationForm() {
   });
 
   const form = useForm({
-    resolver: zodResolver(backgroundVerificationSchema),
+    resolver: zodResolver(updateCaregiverProfileSchema),
     defaultValues: {
-      ssn,
-      accHolderName,
-      accountNumber,
-      routingNumber,
-      driverLicenseState,
-      drivingLicense,
-      dateOfBirth: new Date(year, month - 1, day),
-      customerId,
+      ssn: profile.ssn,
+      driverLicenseState: profile.driverLicenseState,
+      drivingLicense: profile.drivingLicense,
+      dateOfBirth: new Date(profile.year, profile.month - 1, profile.day),
+      customerId: profile.customerId,
     },
   });
 
@@ -91,96 +71,62 @@ export default function BackgroundVerificationForm() {
     },
   });
 
-  const submit = async (input: TBackgroundVerification) => {
-    const firstAddress = address[0];
-    initiateBackgroundVerification(
+  const submit = () => {
+    startBackgroundVerification(
+      {},
       {
-        ...values,
-        country: values.country ?? "US",
-      },
-      () => {
-        createCheckrCandidate(
-          {
-            ...input,
-            firstName,
-            lastName,
-            email,
-            // TODO: Replace with actual number
-            phone,
-            address: firstAddress.address,
-            city: firstAddress.city,
-            state: firstAddress.state,
-            postalCode: firstAddress.postalCode,
-          },
-          {
-            onSuccess: async () => {
-              await queryClient.invalidateQueries({
-                queryKey: ["caregiver-profile"],
-              });
-              await queryClient.invalidateQueries({
-                queryKey: ["caregiver-profile-completion"],
-              });
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({
+            queryKey: ["caregiver-profile"],
+          });
+          await queryClient.invalidateQueries({
+            queryKey: ["caregiver-profile-completion"],
+          });
 
-              form.reset();
-              router.replace("/caregiver/profile");
+          form.reset();
+          router.replace("/caregiver/profile");
 
-              Toast.show({
-                type: "success",
-                text1: "Background check started successfully!",
-              });
-            },
-          }
-        );
+          Toast.show({
+            type: "success",
+            text1: "Background check started successfully!",
+          });
+        },
       }
     );
   };
 
   const handleNext = (fields: string[]) => async () => {
     const result = await form.trigger(
-      fields as unknown as keyof TBackgroundVerification
+      fields as unknown as keyof TUpdateCaregiverProfile
     );
     if (result)
       setStep((step) =>
-        step === 2 && isBackgroundVerificationPaid ? 4 : step + 1
+        step === 2 && profile.isBackgroundVerificationPaid ? 4 : step + 1
       );
+
+    updateProfile(form.getValues());
   };
 
   const handlePrev = () =>
     setStep((step) =>
-      step === 4 && isBackgroundVerificationPaid ? 2 : step - 1
+      step === 4 && profile.isBackgroundVerificationPaid ? 2 : step - 1
     );
 
   const handlePayment = () => {
-    const amount = +(backgroundCheckFee + convenienceFee * 100).toFixed();
-
     backgroundCheckInitialPayment(
       {
-        amount,
-        email,
-        name: `${firstName} ${lastName}`,
-        phone,
         promoCode,
       },
       (initialPay?: TInitialPay) => {
-        if (initialPay) {
-          form.setValue("customerId", initialPay.customerId);
-          initiateBackgroundVerification(
-            {
-              ...values,
-              country: values.country ?? "US",
-              customerId: initialPay.customerId,
-            },
-            () => setStep(4)
-          );
-        } else {
-          initiateBackgroundVerification(
-            {
-              ...values,
-              country: values.country ?? "US",
-            },
-            () => setStep(4)
-          );
-        }
+        form.setValue("customerId", initialPay?.customerId);
+        updateProfile(
+          {
+            ...values,
+            country: values.country ?? "US",
+            customerId: initialPay?.customerId,
+          },
+          { onSuccess: () => setStep(4) }
+        );
       }
     );
   };
@@ -208,13 +154,7 @@ export default function BackgroundVerificationForm() {
           )}
           {step === 2 && (
             <BackgroungVerificationStepTwo
-              onNext={handleNext([
-                "accHolderName",
-                "accNum",
-                "routingNumber",
-                "ssn",
-                "dateOfBirth",
-              ])}
+              onNext={handleNext(["ssn", "dateOfBirth"])}
               onPrev={handlePrev}
             />
           )}
@@ -231,10 +171,8 @@ export default function BackgroundVerificationForm() {
           )}
           {step === 4 && (
             <BackgroungVerificationStepFour
-              loading={
-                isCreatingCheckrCandidate || isInitiatingBackgroundVerification
-              }
-              onNext={form.handleSubmit(submit)}
+              loading={isStartingBackgroundVerification || isUpdatingProfile}
+              onNext={submit}
               onPrev={handlePrev}
             />
           )}

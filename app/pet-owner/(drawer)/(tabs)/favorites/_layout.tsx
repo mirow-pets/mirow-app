@@ -3,7 +3,7 @@ import { Stack } from "expo-router";
 import { defaultHeader } from "@/utils";
 import "react-native-reanimated";
 
-export default function PetsLayout() {
+export default function FavoritesLayout() {
   return (
     <Stack
       screenOptions={{

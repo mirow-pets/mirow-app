@@ -6,5 +6,6 @@ export interface TServiceType {
   display: string;
   fees: number;
   order: number;
+  minServiceRate: number;
   deletedAt: null;
 }

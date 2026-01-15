@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, TextInputProps, View } from "react-native";
 
-import { Controller, useFormContext, useFormState } from "react-hook-form";
+import { Controller, get, useFormContext, useFormState } from "react-hook-form";
 
 import { ThemedText } from "@/components/themed-text";
 import { blackColor, grayColor, redColor, whiteColor } from "@/constants/theme";
@@ -15,8 +15,6 @@ interface PlacesInputProps extends TextInputProps {
 export const PlacesInput = ({ label, ...props }: PlacesInputProps) => {
   const form = useFormContext();
   const { errors } = useFormState({ control: form.control, name: "city" });
-
-  const error = errors["city"];
 
   return (
     <View style={{ width: "100%", minHeight: 56 }}>
@@ -42,7 +40,7 @@ export const PlacesInput = ({ label, ...props }: PlacesInputProps) => {
         ></Controller>
       </View>
       <ThemedText style={styles.errorText}>
-        {error?.message?.toString()}
+        {get(errors, "city")?.message?.toString()}
       </ThemedText>
     </View>
   );

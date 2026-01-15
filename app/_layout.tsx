@@ -70,8 +70,10 @@ const RootLayoutNav = () => {
   return (
     <ThemeProvider value={DefaultTheme}>
       <GestureHandlerRootView>
-        <Stack>
+        <Stack initialRouteName="index">
           <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="home" options={{ headerShown: false }} />
+          <Stack.Screen name="select-role" options={{ headerShown: false }} />
           <Stack.Protected guard={!!userRole}>
             <Stack.Screen name="pet-owner" options={{ headerShown: false }} />
             <Stack.Screen name="caregiver" options={{ headerShown: false }} />

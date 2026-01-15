@@ -31,9 +31,11 @@ export const CaregiverProfileDetailsCard = () => {
           onChange={(profileImage) =>
             updateProfile({ profileImage } as TUpdateCaregiverProfile)
           }
-          borderColor={
-            profileCompletion?.isProfileImageAdded ? blackColor : redColor
-          }
+          style={{
+            borderColor: profileCompletion?.isProfileImageAdded
+              ? blackColor
+              : redColor,
+          }}
         />
         <View>
           <ThemedText

@@ -1,7 +1,7 @@
 import React from "react";
 import { Platform, StyleSheet, Text, TextInputProps, View } from "react-native";
 
-import { Controller, useFormContext, useFormState } from "react-hook-form";
+import { Controller, get, useFormContext, useFormState } from "react-hook-form";
 import {
   CodeField,
   Cursor,
@@ -74,7 +74,7 @@ export const OtpInput = ({
         ></Controller>
       </View>
       <ThemedText style={styles.errorText}>
-        {error?.message?.toString()}
+        {get(errors, name)?.message?.toString()}
       </ThemedText>
     </View>
   );

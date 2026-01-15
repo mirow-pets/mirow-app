@@ -68,7 +68,18 @@ const CaregiverPaymentProvider = ({
     mutationFn: (input: TAddBankAccount) =>
       Post("/payment-method/bank/connected-account", input),
     onSuccess: async () => {
-      await queryClient.refetchQueries({ queryKey: ["bank-accounts"] });
+      const queryKeys = [
+        ["bank-accounts"],
+        ["caregiver-profile-completion", currUser?.sessionId],
+      ];
+
+      await Promise.all(
+        queryKeys.map((queryKey) =>
+          queryClient.refetchQueries({
+            queryKey,
+          })
+        )
+      );
 
       Toast.show({
         type: "success",

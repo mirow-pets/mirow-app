@@ -1,0 +1,55 @@
+import { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
+
+import { Href, Redirect, useRouter } from "expo-router";
+
+import { Button } from "@/components/button/Button";
+import AuthScreenLayout from "@/components/layout/AuthScreenLayout";
+import { useAuth } from "@/hooks/use-auth";
+import { UserRole } from "@/types/users";
+
+export default function SelectRoleScreen() {
+  const { userRole, setUserRole } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (userRole) router.push(`/${userRole}` as Href);
+  }, [userRole, router]);
+
+  if (userRole) return <Redirect href={`/${userRole}`} />;
+
+  return (
+    <AuthScreenLayout
+      image={require("@/assets/images/select-role-image.png")}
+      title="LET'S GET YOU STARTED!"
+      subTitle="Hello there! Are you my"
+    >
+      <View style={styles.container}>
+        <Button
+          onPress={() => {
+            setUserRole(UserRole.PetOwner);
+            router.push("/pet-owner/login");
+          }}
+          style={{ minWidth: "80%" }}
+          title="Pet owner"
+          color="secondary"
+        />
+        <View style={{ marginVertical: 4 }} />
+        <Button
+          onPress={() => {
+            setUserRole(UserRole.CareGiver);
+            router.push("/caregiver/login");
+          }}
+          style={{ minWidth: "80%" }}
+          title="Pet Caregiver"
+          color="secondary"
+          variant="reversed"
+        />
+      </View>
+    </AuthScreenLayout>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { alignItems: "center", padding: 32 },
+});

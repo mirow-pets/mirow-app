@@ -61,6 +61,8 @@ export interface CaregiverCaregiverContextValues {
   >;
   isCreatingCheckrCandidate: boolean;
   settings: Record<string, string>;
+  startBackgroundVerification: UseMutateFunction<unknown, Error, unknown>;
+  isStartingBackgroundVerification: boolean;
 }
 
 export const CaregiverCaregiverContext =
@@ -199,6 +201,16 @@ const CaregiverCaregiverProvider = ({
     onError,
   });
 
+  const {
+    mutate: startBackgroundVerification,
+    isPending: isStartingBackgroundVerification,
+  } = useMutation<unknown, Error, unknown>({
+    mutationFn: () => {
+      return Post("/v2/background-verifications/start");
+    },
+    onError,
+  });
+
   const getCaregiver = (userId: TUser["id"]) => {
     setUserId(userId);
   };
@@ -242,6 +254,8 @@ const CaregiverCaregiverProvider = ({
         createCheckrCandidate,
         isCreatingCheckrCandidate,
         settings,
+        startBackgroundVerification,
+        isStartingBackgroundVerification,
       }}
     >
       {children}

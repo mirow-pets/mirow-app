@@ -11,6 +11,7 @@ import { Button } from "@/components/button/Button";
 import { Input } from "@/components/form/Input";
 import { PasswordInput } from "@/components/form/PasswordInput";
 import { ThemedText } from "@/components/themed-text";
+import { whiteColor } from "@/constants/theme";
 import { TLogin, loginSchema } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -24,6 +25,7 @@ export interface LoginFormProps {
 }
 
 export const LoginForm = ({ path, redirect }: LoginFormProps) => {
+  const primaryColor = useThemeColor({}, "primary");
   const secondaryColor = useThemeColor({}, "secondary");
   const router = useRouter();
   const { setAuth, userRole } = useAuth();
@@ -94,6 +96,38 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
           color="secondary"
           style={{ minWidth: "70%", marginTop: 18 }}
         />
+        <View style={{ alignItems: "center", marginTop: 32, gap: 4 }}>
+          <ThemedText style={{ fontWeight: "600", fontSize: 15 }}>
+            Having trouble?
+          </ThemedText>
+          <View
+            style={{ flexDirection: "row", alignItems: "flex-end", gap: 4 }}
+          >
+            <ThemedText style={{ fontSize: 14 }}>Contact Support:</ThemedText>
+            <TouchableOpacity
+              onPress={() => {
+                // Use Linking to open the email app with a pre-filled email address
+                import("react-native").then(({ Linking }) => {
+                  Linking.openURL("mailto:info@mirow.app");
+                });
+              }}
+            >
+              <ThemedText
+                style={{
+                  color: whiteColor,
+                  textDecorationLine: "underline",
+                  fontSize: 15,
+                  fontWeight: "500",
+                  marginTop: 2,
+                  letterSpacing: 0.2,
+                }}
+                selectable
+              >
+                info@mirow.app
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     </FormProvider>
   );

@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useFormContext } from "react-hook-form";
 
-import { PetAvatar } from "@/components/image/PetAvatar";
+import { UserAvatar } from "@/components/image/UserAvatar";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { InfiniteFlatList } from "@/components/list/InfiniteFlatList";
 import { ThemedText } from "@/components/themed-text";
@@ -61,7 +61,7 @@ export const AddBookingStepThree = ({
               ]}
               onPress={() => handleViewCaregiver(item.usersId)}
             >
-              <PetAvatar src={item.users.profileImage} size={40} />
+              <UserAvatar src={item.users.profileImage} size={40} />
               <View style={{ flex: 1 }}>
                 <ThemedText type="defaultSemiBold">
                   {item.users.firstName} {item.users.lastName}

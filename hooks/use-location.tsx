@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useEffect } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Platform } from "react-native";
 
 import { useMutation } from "@tanstack/react-query";
@@ -7,7 +13,6 @@ import Toast from "react-native-toast-message";
 
 import { TSendLocation } from "@/features/auth/validations";
 import { Patch } from "@/services/http-service";
-import { authStore } from "@/stores/auth.store";
 import { onError } from "@/utils";
 
 import { useAuth } from "./use-auth";
@@ -20,7 +25,14 @@ import { useAuth } from "./use-auth";
 //
 // Additionally, sometimes requesting a location too quickly after enabling, or missing required permissions, or running on an emulator without proper location simulation can cause this error.
 
-export const LocationContext = createContext<null>(null);
+export interface LocationContextValues {
+  lat?: number;
+  long?: number;
+}
+
+export const LocationContext = createContext<LocationContextValues | undefined>(
+  undefined
+);
 
 export interface LocationProviderProps {
   children: ReactNode;
@@ -50,10 +62,11 @@ const LocationProvider = ({ children }: LocationProviderProps) => {
     mutationFn: (input: TSendLocation) => Patch(`/users/location`, input),
     onError,
   });
+  const [coords, setCoords] = useState<
+    { lat: number; long: number } | undefined
+  >();
 
   useEffect(() => {
-    if (!token) return;
-
     const getCurrentLocation = async () => {
       // 1. Request location permissions.
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -89,7 +102,8 @@ const LocationProvider = ({ children }: LocationProviderProps) => {
 
         if (loc) {
           const { latitude, longitude } = loc.coords;
-          if (authStore.getState().token)
+          setCoords({ lat: latitude, long: longitude });
+          if (token)
             sendLocation({
               lat: latitude.toString(),
               lng: longitude.toString(),
@@ -139,7 +153,9 @@ const LocationProvider = ({ children }: LocationProviderProps) => {
   }, [token, sendLocation]);
 
   return (
-    <LocationContext.Provider value={null}>{children}</LocationContext.Provider>
+    <LocationContext.Provider value={coords ?? {}}>
+      {children}
+    </LocationContext.Provider>
   );
 };
 

@@ -42,9 +42,11 @@ export default function AddressScreen() {
     const result = await form.trigger(["address", "city", "postalCode"]);
     if (!result) return;
 
-    updateProfile(form.getValues(), () => {
-      form.reset();
-      router.replace("/caregiver/profile");
+    updateProfile(form.getValues(), {
+      onSuccess: () => {
+        form.reset();
+        router.replace("/caregiver/profile");
+      },
     });
   };
 

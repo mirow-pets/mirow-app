@@ -11,6 +11,10 @@ export {
   updateCaregiverProfileSchema,
 } from "./update-caregiver-profile-schema";
 export {
+  TUpdateCaregiverServices,
+  updateCaregiverServicesSchema,
+} from "./update-caregiver-services-schema";
+export {
   TUpdatePetOwnerProfile,
   updatePetOwnerProfileSchema,
 } from "./update-pet-owner-profile-schema";

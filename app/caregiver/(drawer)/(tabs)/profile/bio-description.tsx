@@ -42,9 +42,11 @@ export default function BioDescriptionScreen() {
         ...values,
         bioDescription: values.bioDescription,
       },
-      () => {
-        form.reset();
-        router.replace("/caregiver/profile");
+      {
+        onSuccess: () => {
+          form.reset();
+          router.replace("/caregiver/profile");
+        },
       }
     );
   };

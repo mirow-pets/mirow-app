@@ -36,9 +36,11 @@ export default function FullnameScreen() {
     const result = await form.trigger(["firstName", "lastName"]);
     if (!result) return;
 
-    updateProfile(form.getValues(), () => {
-      form.reset();
-      router.replace("/pet-owner/profile");
+    updateProfile(form.getValues(), {
+      onSuccess: () => {
+        form.reset();
+        router.replace("/pet-owner/profile");
+      },
     });
   };
 

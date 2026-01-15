@@ -1,90 +1,165 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Checkbox } from "expo-checkbox";
 import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { ScrollView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
 import { Button } from "@/components/button/Button";
-import { NumberInput } from "@/components/form/NumberInput";
 import { ThemedText } from "@/components/themed-text";
 import { primaryColor, secondaryColor } from "@/constants/theme";
-import { updateCaregiverProfileSchema } from "@/features/profile/validations";
+import { ServicesForm } from "@/features/profile/components/ServicesForm";
+import {
+  TUpdateCaregiverServices,
+  updateCaregiverServicesSchema,
+} from "@/features/profile/validations";
 import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
+import { useAuth } from "@/hooks/use-auth";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { TCaregiverPreference, THomeType, TTransportType } from "@/types";
-import { centToMajorUnit } from "@/utils";
+import { Patch } from "@/services/http-service";
+import { THomeType, TServiceType, TTransportType } from "@/types";
+import { TCareGiversServiceTypesLink } from "@/types/caregivers";
+import { centToMajorUnit, majorToCentUnit } from "@/utils";
 
 export default function ServiceTypesScreen() {
   const router = useRouter();
-  const {
-    serviceTypes,
-    serviceTypeOptions,
-    homeTypeOptions,
-    transportTypeOptions,
-  } = useCaregiverCaregiver();
-  const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
+  const { currUser } = useAuth();
+  const { serviceTypes, homeTypeOptions, transportTypeOptions } =
+    useCaregiverCaregiver();
+  const { profile } = useCaregiverProfile();
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (input: TUpdateCaregiverServices) =>
+      Patch("/v2/caregivers/services", {
+        ...input,
+        services: input.services.map((service) => ({
+          ...service,
+          serviceRate:
+            service.serviceRate && majorToCentUnit(service.serviceRate),
+        })),
+      }),
+    onSuccess: async () => {
+      form.reset();
+      await queryClient.refetchQueries({
+        queryKey: ["caregiver-profile", currUser?.sessionId],
+      });
+      router.replace("/caregiver/profile");
+
+      Toast.show({
+        type: "success",
+        text1: "Caregiver services updated successfully!",
+      });
+    },
+  });
+
+  const transportation = serviceTypes?.find(
+    ({ type }) => type === "transportation"
+  );
+  const transportId = transportation?.id;
+
+  const caregiverServiceTypeMapper = useMemo(() => {
+    const mapper: Record<number, TCareGiversServiceTypesLink> = [];
+
+    profile?.careGiversServiceTypesLink?.forEach((serviceType) => {
+      mapper[serviceType.serviceTypesId] = serviceType;
+    });
+
+    return mapper;
+  }, [profile.careGiversServiceTypesLink]);
+
+  const serviceTypeMapper = useMemo(() => {
+    const mapper: Record<number, TServiceType> = [];
+
+    serviceTypes?.forEach((serviceType) => {
+      mapper[serviceType.id] = serviceType;
+    });
+
+    return mapper;
+  }, [serviceTypes]);
+
+  const defaultServices =
+    serviceTypes?.map((service) => ({
+      id: service.id,
+      isActive: !!caregiverServiceTypeMapper[service.id],
+      serviceRate:
+        caregiverServiceTypeMapper[service.id]?.serviceRate &&
+        centToMajorUnit(caregiverServiceTypeMapper[service.id]?.serviceRate),
+    })) ?? [];
+
+  const validation = updateCaregiverServicesSchema
+    .superRefine(({ services, transportIds }, ctx) => {
+      // Ensure transportIds is required if "transportation" service is active
+      if (
+        !services?.some(
+          (service) => service.id === transportId && service.isActive
+        )
+      )
+        return;
+      if (transportIds && transportIds.length > 0) return;
+
+      ctx.addIssue({
+        code: "custom",
+        message: "Transport type is required",
+        path: ["transportIds"],
+      });
+    })
+    .superRefine(({ services }, ctx) => {
+      services.forEach((service, idx) => {
+        if (!service.isActive) return;
+        if (typeof service.serviceRate !== "number") {
+          ctx.addIssue({
+            code: "custom",
+            message: "Service rate is required",
+            path: ["services", idx, "serviceRate"],
+          });
+        }
+        const minServiceRate = centToMajorUnit(
+          serviceTypeMapper[service.id].minServiceRate
+        );
+        if (service.serviceRate && minServiceRate > service.serviceRate) {
+          ctx.addIssue({
+            code: "custom",
+            message: `Service rate must be at least ${minServiceRate}`,
+            path: ["services", idx, "serviceRate"],
+          });
+        }
+      });
+    });
 
   const form = useForm({
-    resolver: zodResolver(updateCaregiverProfileSchema),
+    resolver: zodResolver(validation),
     defaultValues: {
-      services: profile?.serviceTypes?.map(({ id }) => id) ?? [],
+      services: defaultServices,
       homeTypesIds: profile?.homeTypes?.map(({ id }) => id) ?? [],
       transportIds: profile?.transportType?.map(({ id }) => id) ?? [],
-      pricePerHour:
-        profile?.pricePerHour && centToMajorUnit(profile.pricePerHour),
-      pricePerMile:
-        profile?.pricePerMile && centToMajorUnit(profile.pricePerMile),
-      pricePerService:
-        profile?.pricePerService && centToMajorUnit(profile.pricePerService),
     },
   });
 
   const values = form.watch();
 
-  const enabledPrice = useMemo(() => {
-    const selectedServiceType = serviceTypes
-      ?.filter(({ id }) => values.services.includes(id))
-      ?.map((item) => item?.type);
-
-    return {
-      isPerHour: selectedServiceType?.some((v) =>
-        ["walking", "boarding", "sitting"].includes(v)
-      ),
-      isPerMile: selectedServiceType?.some((v) =>
-        ["transportation"].includes(v)
-      ),
-      isPerService: selectedServiceType?.some((v) =>
-        ["grooming", "meal-prep", "training"].includes(v)
-      ),
-    };
-  }, [values.services, serviceTypes]);
-
   const enabledTransportTypes = useMemo(() => {
-    const transportId = serviceTypes?.find(
-      (v) => v.type === "transportation"
-    )?.id;
     if (!transportId) return false;
 
-    if (values.services.includes(transportId)) {
-      return true;
-    } else {
+    const isTransportationExists = values.services.find(
+      (service) => service.id === transportId && service.isActive
+    );
+
+    if (isTransportationExists) return true;
+    else {
       form.setValue("transportIds", []);
       return false;
     }
-  }, [values.services, form, serviceTypes]);
+    // useEffect/useMemo dependencies cannot deeply compare arrays/objects,
+    // so use JSON.stringify for deep equals watching, or use a primitive selector
+  }, [values.services, JSON.stringify(values.services), form, transportId]);
 
-  const {
-    services,
-    homeTypesIds,
-    transportIds,
-    pricePerHour,
-    pricePerMile,
-    pricePerService,
-  } = values;
+  const { homeTypesIds, transportIds } = values;
 
   useExitFormRouteWarning({
     isDirty: form.formState.isDirty,
@@ -93,77 +168,16 @@ export default function ServiceTypesScreen() {
     },
   });
 
-  const handleSubmit = useCallback(async () => {
-    const result = await form.trigger([
-      "services",
-      "homeTypesIds",
-      ...(enabledTransportTypes ? ["transportIds"] : []),
-      ...(enabledPrice.isPerHour ? ["pricePerHour"] : []),
-      ...(enabledPrice.isPerMile ? ["pricePerMile"] : []),
-      ...(enabledPrice.isPerService ? ["pricePerService"] : []),
-    ] as
-      | "services"
-      | "homeTypesIds"
-      | "transportIds"
-      | "pricePerHour"
-      | "pricePerMile"
-      | "pricePerService"[]);
-    if (!result) return;
-
-    updateProfile(
-      {
-        ...values,
-        pricePerHour: pricePerHour && +pricePerHour,
-        pricePerMile: pricePerMile && +pricePerMile,
-        pricePerService: pricePerService && +pricePerService,
-      },
-      () => {
-        form.reset();
-        router.replace("/caregiver/profile");
-      }
-    );
-  }, [
-    values,
-    enabledPrice,
-    enabledTransportTypes,
-    form,
-    updateProfile,
-    pricePerHour,
-    pricePerMile,
-    pricePerService,
-    router,
-  ]);
+  const submit = (input: TUpdateCaregiverServices) => {
+    mutate(input);
+  };
 
   return (
     <FormProvider {...form}>
       <ScrollView>
         <View style={styles.container}>
           <ThemedText type="defaultSemiBold">Services:</ThemedText>
-          <View>
-            {serviceTypeOptions.map(({ label, value }, i) => {
-              const isChecked = services.includes(
-                value as TCaregiverPreference["id"]
-              );
-
-              const handleOnValueChange = (isChecked: boolean) => {
-                const newHomeTypes = isChecked
-                  ? [...services, value as TCaregiverPreference["id"]]
-                  : services.filter((serviceTypeId) => serviceTypeId !== value);
-                form.setValue("services", newHomeTypes);
-              };
-
-              return (
-                <View key={i} style={{ flexDirection: "row", gap: 8 }}>
-                  <Checkbox
-                    value={isChecked}
-                    onValueChange={handleOnValueChange}
-                    color={secondaryColor}
-                  />
-                  <ThemedText>{label}</ThemedText>
-                </View>
-              );
-            })}
-          </View>
+          <ServicesForm />
           <ThemedText type="error">
             {form.formState.errors.services?.message?.toString()}
           </ThemedText>
@@ -231,31 +245,10 @@ export default function ServiceTypesScreen() {
           <ThemedText type="error">
             {form.formState.errors.transportIds?.message?.toString()}
           </ThemedText>
-          {enabledPrice.isPerHour && (
-            <NumberInput
-              label="Price per hour"
-              name="pricePerHour"
-              placeholder="Price per hour"
-            />
-          )}
-          {enabledPrice.isPerMile && (
-            <NumberInput
-              label="Price per mile"
-              name="pricePerMile"
-              placeholder="Price per mile"
-            />
-          )}
-          {enabledPrice.isPerService && (
-            <NumberInput
-              label="Price per service"
-              name="pricePerService"
-              placeholder="Price per service"
-            />
-          )}
           <Button
             title="Save"
-            onPress={handleSubmit}
-            loading={isUpdatingProfile}
+            onPress={form.handleSubmit(submit)}
+            loading={isPending}
             color="secondary"
           />
         </View>

@@ -40,9 +40,11 @@ export default function SkillsScreen() {
     const result = await form.trigger("careGiverSkills");
     if (!result) return;
 
-    updateProfile(values, () => {
-      form.reset();
-      router.replace("/caregiver/profile");
+    updateProfile(values, {
+      onSuccess: () => {
+        form.reset();
+        router.replace("/caregiver/profile");
+      },
     });
   };
 

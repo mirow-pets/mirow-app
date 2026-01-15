@@ -1,6 +1,11 @@
 import { createContext, ReactNode, useContext } from "react";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  UseMutateFunction,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 
@@ -13,7 +18,7 @@ import {
   TOption,
 } from "@/types";
 import { TAuthCaregiver } from "@/types/caregivers";
-import { majorToCentUnit, onError } from "@/utils";
+import { onError } from "@/utils";
 
 import { useAuth } from "../use-auth";
 
@@ -28,10 +33,7 @@ export interface CaregiverProfileContextValues {
   isLoadingProfile: boolean;
   profileCompletion: TCaregiverProfileCompletion;
   isLoadingProfileCompletion: boolean;
-  updateProfile: (
-    _input: TUpdateCaregiverProfile,
-    _onSuccess?: () => void
-  ) => void;
+  updateProfile: UseMutateFunction<unknown, Error, TUpdateCaregiverProfile>;
   isUpdatingProfile: boolean;
   caregiverPreferenceOptions: TOption[];
   caregiverSkillOptions: TOption[];
@@ -81,14 +83,17 @@ const CaregiverProfileProvider = ({
       enabled: !!currUser,
     });
 
-  const { mutate: _updateProfile, isPending: isUpdatingProfile } = useMutation({
+  const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
     mutationFn: (input: TUpdateCaregiverProfile) =>
       Patch(`/care-givers`, {
         ...input,
-        pricePerHour: input.pricePerHour && majorToCentUnit(input.pricePerHour),
-        pricePerService:
-          input.pricePerService && majorToCentUnit(input.pricePerService),
-        pricePerMile: input.pricePerMile && majorToCentUnit(input.pricePerMile),
+        ...(input.dateOfBirth
+          ? {
+              day: input.dateOfBirth.getDate(),
+              month: input.dateOfBirth.getMonth() + 1,
+              year: input.dateOfBirth.getFullYear(),
+            }
+          : {}),
       }),
     onSuccess: async () => {
       const queryKeys = [
@@ -111,11 +116,6 @@ const CaregiverProfileProvider = ({
     },
     onError,
   });
-
-  const updateProfile = (
-    input: TUpdateCaregiverProfile,
-    onSuccess?: () => void
-  ) => _updateProfile(input, { onSuccess });
 
   const caregiverPreferenceOptions =
     caregiverProfileFormFields.careGiverPreferences.map(

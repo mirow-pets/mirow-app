@@ -59,9 +59,9 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const { data: user } = useQuery({
-    queryKey: ["user", currUser?.sessionId],
+    queryKey: ["user", currUser?.sessionId, token, fcmToken],
     queryFn: () => Get("/v2/auth/user"),
-    enabled: !!token,
+    enabled: !!token && !!fcmToken,
   });
 
   const logout = useCallback(async () => {

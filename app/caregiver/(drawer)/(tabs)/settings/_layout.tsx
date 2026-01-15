@@ -28,6 +28,10 @@ export default function SettingsLayout() {
         name="notification-preferences"
         options={{ presentation: "modal", title: "Notification Preferences" }}
       />
+      <Stack.Screen
+        name="deactivate-account"
+        options={{ presentation: "modal", title: "Deactivate Account" }}
+      />
     </Stack>
   );
 }

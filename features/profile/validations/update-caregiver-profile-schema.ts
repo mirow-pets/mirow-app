@@ -12,20 +12,6 @@ export const updateCaregiverProfileSchema = z.object({
   careGiverSkills: z.number().array().min(1, "Skill is required"),
   experience: z.coerce.number(),
   petTypes: z.number().array().min(1, "Pet type is required"),
-  services: z.number().array().min(1, "Service type is required"),
-  transportIds: z.number().array().min(1, "Transport type is required"),
-  homeTypesIds: z.number().array().min(1, "Home type is required"),
-  pricePerHour: z.coerce
-    .number({ message: "Price per hour is required" })
-    .min(0.01, { message: "Price per service is required" }),
-  pricePerService: z.coerce
-    .number({
-      message: "Price per service is required",
-    })
-    .min(0.01, { message: "Price per service is required" }),
-  pricePerMile: z.coerce
-    .number({ message: "Price per mile is required" })
-    .min(0.01, { message: "Price per service is required" }),
   profileImage: z.string(),
   bioDescription: z.string().optional(),
   address: z.string({ message: "Address is required" }),
@@ -33,6 +19,22 @@ export const updateCaregiverProfileSchema = z.object({
   state: z.string({ message: "State is required" }),
   country: z.string({ message: "Country is required" }),
   postalCode: z.string({ message: "Postal code is required" }),
+  drivingLicense: z.string({ message: "Driving license is required" }),
+  driverLicenseState: z.string({ message: "Driver license state is required" }),
+  ssn: z
+    .string({ message: "SSN number is required" })
+    .regex(
+      /^\d{3}-\d{2}-\d{4}$|^\d{9}$/,
+      "Invalid SSN format. Expected XXX-XX-XXXX"
+    ),
+  dateOfBirth: z
+    .date({ message: "Date of birth is required" })
+    .refine((val) => {
+      const eighteenYearsAgo = new Date();
+      eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+      return val <= eighteenYearsAgo;
+    }, "You must be at least 13 years old"),
+  customerId: z.string().optional(),
 });
 
 export type TUpdateCaregiverProfile = z.infer<

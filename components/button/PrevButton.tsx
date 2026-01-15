@@ -8,13 +8,14 @@ import { whiteColor } from "@/constants/theme";
 export interface PrevButtonProps {
   loading?: boolean;
   onPress: () => void;
+  disabled?: boolean;
 }
 
-export const PrevButton = ({ loading, onPress }: PrevButtonProps) => {
+export const PrevButton = ({ loading, onPress, disabled }: PrevButtonProps) => {
   return (
     <TouchableOpacity
       onPress={loading ? undefined : onPress}
-      disabled={loading}
+      disabled={loading || disabled}
     >
       <FontAwesome
         name="chevron-circle-left"
@@ -25,6 +26,7 @@ export const PrevButton = ({ loading, onPress }: PrevButtonProps) => {
           textShadowColor: "rgba(0,0,0,0.6)",
           textShadowRadius: 5,
           textShadowOffset: { width: 0, height: 2 },
+          opacity: disabled ? 0.5 : undefined,
         }}
       />
     </TouchableOpacity>

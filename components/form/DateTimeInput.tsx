@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { Controller, useFormContext, useFormState } from "react-hook-form";
+import { Controller, get, useFormContext, useFormState } from "react-hook-form";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import { ThemedText } from "@/components/themed-text";
@@ -60,6 +60,7 @@ export const DateTimeInput = ({
                     setOpen(false);
                   }}
                   onCancel={() => setOpen(false)}
+                  display="spinner"
                 />
               </View>
             </TouchableOpacity>
@@ -67,7 +68,7 @@ export const DateTimeInput = ({
         ></Controller>
       </View>
       <ThemedText style={styles.errorText}>
-        {error?.message?.toString()}
+        {get(errors, name)?.message?.toString()}
       </ThemedText>
     </View>
   );

@@ -19,6 +19,14 @@ export default function CaregiverLayout() {
             name="forgot-password"
             options={{ title: "Forgot Password" }}
           />
+          <Stack.Screen
+            name="terms-and-conditions"
+            options={{ title: "Terms and Conditions" }}
+          />
+          <Stack.Screen
+            name="privacy-policy"
+            options={{ title: "Privacy Policy" }}
+          />
         </Stack.Protected>
       </Stack>
     </CaregiverCaregiverProvider>

@@ -44,6 +44,7 @@ app-example
 /ios
 /android
 
+*.ipa
 *.apk
 
 google-services-private.json

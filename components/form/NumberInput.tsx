@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
 
-import { Controller, useFormContext, useFormState } from "react-hook-form";
+import { Controller, get, useFormContext, useFormState } from "react-hook-form";
 
 import { ThemedText } from "@/components/themed-text";
 import { blackColor, grayColor, redColor, whiteColor } from "@/constants/theme";
@@ -39,7 +39,7 @@ export const NumberInput = ({ label, name, ...props }: NumberInputProps) => {
         ></Controller>
       </View>
       <ThemedText style={styles.errorText}>
-        {error?.message?.toString()}
+        {get(errors, name)?.message?.toString()}
       </ThemedText>
     </View>
   );

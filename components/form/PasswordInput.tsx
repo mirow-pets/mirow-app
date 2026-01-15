@@ -8,7 +8,7 @@ import {
 } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Controller, useFormContext, useFormState } from "react-hook-form";
+import { Controller, get, useFormContext, useFormState } from "react-hook-form";
 // NOTE: You'll need to install an icon library if you don't have one.
 // e.g., using Expo: expo install @expo/vector-icons
 
@@ -71,7 +71,7 @@ export const PasswordInput = ({
         </Pressable>
       </View>
       <ThemedText style={styles.errorText}>
-        {error?.message?.toString()}
+        {get(errors, name)?.message?.toString()}
       </ThemedText>
     </View>
   );

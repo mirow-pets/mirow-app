@@ -48,7 +48,7 @@ export default function ProfileLayout() {
         name="gallery"
         options={{ presentation: "modal", title: "Gallery" }}
       />
-      <Stack.Screen name="banks" />
+      <Stack.Screen name="banks" options={{ headerShown: false }} />
       <Stack.Screen
         name="background-verification"
         options={{ presentation: "modal", title: "Background Verification" }}

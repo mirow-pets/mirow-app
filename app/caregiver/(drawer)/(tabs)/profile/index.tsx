@@ -81,8 +81,8 @@ export default function ProfileScreen() {
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
       label: "Payment Information",
-      isDone: true,
-      isDisabled: profileCompletion?.percentage !== 100,
+      isDone: profileCompletion.isPaymentMethod,
+      isDisabled: !profileCompletion?.isBackgroundVerifyStatus,
       onPress: () => router.push("/caregiver/profile/banks"),
     },
     {

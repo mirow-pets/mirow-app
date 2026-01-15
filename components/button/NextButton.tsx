@@ -8,11 +8,12 @@ import { whiteColor } from "@/constants/theme";
 export interface NextButtonProps {
   loading?: boolean;
   onPress: () => void;
+  disabled?: boolean;
 }
 
-export const NextButton = ({ loading, onPress }: NextButtonProps) => {
+export const NextButton = ({ loading, onPress, disabled }: NextButtonProps) => {
   return (
-    <TouchableOpacity onPress={onPress} disabled={loading}>
+    <TouchableOpacity onPress={onPress} disabled={loading || disabled}>
       <FontAwesome
         name="chevron-circle-right"
         size={56}
@@ -22,6 +23,7 @@ export const NextButton = ({ loading, onPress }: NextButtonProps) => {
           textShadowColor: "rgba(0,0,0,0.6)",
           textShadowRadius: 5,
           textShadowOffset: { width: 0, height: 2 },
+          opacity: disabled ? 0.5 : undefined,
         }}
       />
     </TouchableOpacity>

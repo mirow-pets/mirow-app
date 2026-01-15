@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
+import Fontisto from "@expo/vector-icons/Fontisto";
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
@@ -196,9 +197,17 @@ export const MyCalendar = () => {
         activeDate={activeDate}
         date={date}
         height={350}
-        renderEvent={() => (
+        renderEvent={(event) => (
           <View style={styles.alignItemsCenter}>
-            <MaterialIcons name="pets" size={25} color={primaryColor} />
+            {event.type === "booking" ? (
+              <MaterialIcons name="pets" size={25} color={primaryColor} />
+            ) : (
+              <Fontisto
+                name="injection-syringe"
+                size={24}
+                color={primaryColor}
+              />
+            )}
           </View>
         )}
         dayHeaderHighlightColor={primaryColor}

@@ -13,6 +13,7 @@ export const lightGrayColor = "#D3D3D3";
 export const redColor = "#ff0000";
 export const blueColor = "#0000ff";
 export const greenColor = "#00ff00";
+export const darkBlueColor = "#0073D0";
 
 export const Colors = {
   light: {

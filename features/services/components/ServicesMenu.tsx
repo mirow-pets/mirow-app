@@ -2,7 +2,6 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { useQuery } from "@tanstack/react-query";
 import { Image, ImageSource } from "expo-image";
-import { useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { primaryColor } from "@/constants/theme";
@@ -19,17 +18,15 @@ const imageMapper: Record<string, ImageSource> = {
   transportation: require("@/assets/images/services/transportation.png"),
 };
 
-export const ServicesMenu = () => {
-  const router = useRouter();
+export interface ServicesMenuProps {
+  onClick: (_type: TServiceType["type"]) => void;
+}
 
+export const ServicesMenu = ({ onClick }: ServicesMenuProps) => {
   const { data, isLoading } = useQuery<TServiceType[]>({
     queryKey: ["service-types"],
     queryFn: () => Get("/service-types"),
   });
-
-  const handleAddBooking = () => {
-    router.push("/pet-owner/bookings/add");
-  };
 
   return (
     <View style={{ marginHorizontal: 16 }}>
@@ -42,7 +39,7 @@ export const ServicesMenu = () => {
               <TouchableOpacity
                 key={i}
                 style={styles.gridItem}
-                onPress={handleAddBooking}
+                onPress={() => onClick(serviceType.type)}
               >
                 <Image
                   source={imageMapper[serviceType.type]}

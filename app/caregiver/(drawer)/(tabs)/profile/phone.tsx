@@ -35,9 +35,11 @@ export default function PhoneScreen() {
     const result = await form.trigger(["phone"]);
     if (!result) return;
 
-    updateProfile(form.getValues(), () => {
-      form.reset();
-      router.replace("/caregiver/profile");
+    updateProfile(form.getValues(), {
+      onSuccess: () => {
+        form.reset();
+        router.replace("/caregiver/profile");
+      },
     });
   };
 

@@ -23,6 +23,7 @@ export interface TAuthUser extends TUser {
   eFirstName: string;
   eLastName: string;
   ePhone: string;
+  relationshipName: string;
   notificationPreferences: TUserNotificationPreference[];
   isAutoPayout: boolean;
 }

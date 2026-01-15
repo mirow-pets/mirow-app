@@ -84,7 +84,7 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
           }
         />
         <Button
-          title="Edit"
+          title="Save"
           onPress={form.handleSubmit(editPet)}
           loading={isEditingPet}
           color="secondary"

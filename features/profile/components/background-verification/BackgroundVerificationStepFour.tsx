@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 
+import { router } from "expo-router";
 import { useFormContext } from "react-hook-form";
 
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
@@ -32,6 +33,11 @@ export const BackgroungVerificationStepFour = ({
 }: BackgroungVerificationStepFourProps) => {
   const form = useFormContext();
   const values = form.watch();
+
+  const handleDisclosureConsent = () => {
+    router.push(`/caregiver/profile/disclosure-consent`);
+  };
+
   return (
     <FormStepsLayout {...{ loading, onPrev, onNext }}>
       <ThemedText type="defaultSemiBold">
@@ -39,8 +45,17 @@ export const BackgroungVerificationStepFour = ({
       </ThemedText>
       <ThemedText>
         The details you provided will be used to run a background check through
-        our verification partner, Checkr.
+        our verification partner,{" "}
       </ThemedText>
+      <ThemedText
+        style={{
+          textDecorationLine: "underline",
+        }}
+        onPress={handleDisclosureConsent}
+      >
+        Checkr
+      </ThemedText>
+      <ThemedText>.</ThemedText>
       <ThemedText>
         Note: We check your background again every 12 months.
       </ThemedText>

@@ -163,6 +163,7 @@ export default function UserChat({ user, threadId }: UserChatProps) {
 
   const onImageSelected = useCallback(
     async (image: BaseImagePicker.ImagePickerAsset) => {
+      console.log("SELECTED IMAGE");
       socket.emit("send_message", {
         from: user.id,
         to: otherUser?.id,

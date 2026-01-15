@@ -6,7 +6,7 @@ import { ThemedText } from "@/components/themed-text";
 import { secondaryColor, whiteColor } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
-export default function HomeScreen() {
+export default function CaregiverHomeScreen() {
   const primaryColor = useThemeColor({}, "primary");
 
   return (

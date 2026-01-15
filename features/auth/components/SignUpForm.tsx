@@ -11,6 +11,7 @@ import { SignUpStepFour } from "@/features/auth/components/sign-up/SignUpStepFou
 import { SignUpStepOne } from "@/features/auth/components/sign-up/SignUpStepOne";
 import { SignUpStepThree } from "@/features/auth/components/sign-up/SignUpStepThree";
 import { SignUpStepTwo } from "@/features/auth/components/sign-up/SignUpStepTwo";
+import { SignUpStepZero } from "@/features/auth/components/sign-up/SignUpStepZero";
 import { TSignUp, signUpSchema } from "@/features/auth/validations";
 import { Post } from "@/services/http-service";
 import { TUser } from "@/types";
@@ -22,7 +23,7 @@ export interface SignUpFormProps {
 
 export const SignUpForm = ({ path, redirect }: SignUpFormProps) => {
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
 
   const { mutate, isPending } = useMutation<
     TUser & { token: string },
@@ -83,8 +84,14 @@ export const SignUpForm = ({ path, redirect }: SignUpFormProps) => {
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
+        {step === 0 && (
+          <SignUpStepZero onNext={() => setStep((step) => step + 1)} />
+        )}
         {step === 1 && (
-          <SignUpStepOne onNext={handleNext(["firstName", "lastName"])} />
+          <SignUpStepOne
+            onNext={handleNext(["firstName", "lastName"])}
+            onPrev={handlePrev}
+          />
         )}
         {step === 2 && (
           <SignUpStepTwo

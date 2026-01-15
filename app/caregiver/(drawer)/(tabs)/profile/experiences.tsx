@@ -49,9 +49,11 @@ export default function ExperiencesScreen() {
         ...values,
         experience: Number(values.experience),
       },
-      () => {
-        form.reset();
-        router.replace("/caregiver/profile");
+      {
+        onSuccess: () => {
+          form.reset();
+          router.replace("/caregiver/profile");
+        },
       }
     );
   };

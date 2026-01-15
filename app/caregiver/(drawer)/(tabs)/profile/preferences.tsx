@@ -46,9 +46,11 @@ export default function PreferencesScreen() {
     const result = await form.trigger("careGiverPreferences");
     if (!result) return;
 
-    updateProfile(values, () => {
-      form.reset();
-      router.replace("/caregiver/profile");
+    updateProfile(values, {
+      onSuccess: () => {
+        form.reset();
+        router.replace("/caregiver/profile");
+      },
     });
   };
 

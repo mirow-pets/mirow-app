@@ -31,9 +31,11 @@ export const PetOwnerProfileDetailsCard = () => {
           onChange={(profileImage) =>
             updateProfile({ profileImage } as TUpdatePetOwnerProfile)
           }
-          borderColor={
-            profileCompletion.isProfileImageAdded ? blackColor : redColor
-          }
+          style={{
+            borderColor: profileCompletion.isProfileImageAdded
+              ? blackColor
+              : redColor,
+          }}
         />
         <View>
           <ThemedText
