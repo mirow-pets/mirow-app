@@ -13,6 +13,9 @@ interface DropdownInputProps {
   name: string;
   options: { label: string; value?: string | number | boolean }[];
   placeholder?: string;
+  value?: unknown;
+  onChange?: (value: unknown) => void;
+  disabled?: boolean;
 }
 
 export const DropdownInput = ({
@@ -20,11 +23,12 @@ export const DropdownInput = ({
   name,
   options,
   placeholder,
+  value: _value,
+  onChange: _onChange,
+  disabled,
 }: DropdownInputProps) => {
   const form = useFormContext();
   const { errors } = useFormState({ control: form.control, name });
-
-  const error = errors[name];
 
   return (
     <View style={{ width: "100%" }}>
@@ -36,10 +40,17 @@ export const DropdownInput = ({
           render={({ field: { onChange, onBlur, value } }) => (
             <SelectDropdown
               searchPlaceHolderColor={grayColor}
-              defaultValue={options.find((option) => option.value === value)}
+              defaultValue={options.find(
+                (option) => option.value === (_value || value)
+              )}
+              disabled
               data={options}
               onBlur={onBlur}
-              onSelect={(selectedItem) => onChange(selectedItem.value)}
+              onSelect={(selectedItem) =>
+                _onChange
+                  ? _onChange(selectedItem.value)
+                  : onChange(selectedItem.value)
+              }
               renderButton={(selectedItem, isOpened) => (
                 <View style={styles.input}>
                   {selectedItem ? (

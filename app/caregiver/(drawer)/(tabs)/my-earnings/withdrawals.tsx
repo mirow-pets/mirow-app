@@ -1,31 +1,53 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { InfiniteFlatList } from "@/components/list/InfiniteFlatList";
+import { useQuery } from "@tanstack/react-query";
+import { FlatList } from "react-native-gesture-handler";
+
+import { ScrollViewWithRefresh } from "@/components/layout/ScrollViewWithRefresh";
 import { whiteColor } from "@/constants/theme";
-import { TWithdrawal } from "@/types";
+import { Get } from "@/services/http-service";
 import { formatCurrency } from "@/utils";
 
 export default function WithdrawalsScreen() {
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["payouts"],
+    queryFn: () => Get("/v2/caregivers/payouts"),
+  });
   return (
-    <View style={styles.container}>
-      <InfiniteFlatList<TWithdrawal>
-        url="/v2/withdrawals"
-        renderItem={({ item, index }) => (
-          <View key={index} style={styles.withdrawalCard}>
-            <Text style={styles.amount}>
-              {formatCurrency(item.amount / 100, item.currency || "usd")}
-            </Text>
-            <Text style={styles.status}>Status: {item.status}</Text>
-            {item.createdAt && (
-              <Text style={styles.date}>
-                Date: {new Date(item.createdAt).toLocaleString()}
+    <ScrollViewWithRefresh loading={isLoading} onRefresh={refetch}>
+      <View style={styles.container}>
+        <FlatList<{
+          amount: number;
+          currency: string;
+          arrival_date: number;
+          created: number;
+          status: number;
+        }>
+          data={data}
+          renderItem={({ item, index }) => (
+            <View key={index} style={styles.withdrawalCard}>
+              <Text style={styles.amount}>
+                {formatCurrency(item.amount / 100, item.currency || "usd")}
               </Text>
-            )}
-          </View>
-        )}
-      />
-    </View>
+              <Text style={styles.status}>Status: {item.status}</Text>
+              {item.created && (
+                <Text style={styles.date}>
+                  Date created: {new Date(item.created * 1000).toLocaleString()}
+                </Text>
+              )}
+              {item.arrival_date && (
+                <Text style={styles.date}>
+                  Date of arrival:{" "}
+                  {new Date(item.arrival_date * 1000).toLocaleString()}
+                </Text>
+              )}
+            </View>
+          )}
+          scrollEnabled={false}
+        />
+      </View>
+    </ScrollViewWithRefresh>
   );
 }
 

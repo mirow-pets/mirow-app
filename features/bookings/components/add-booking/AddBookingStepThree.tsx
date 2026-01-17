@@ -4,6 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useFormContext } from "react-hook-form";
 
+import { FilterButton } from "@/components/button/FilterButton";
 import { UserAvatar } from "@/components/image/UserAvatar";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { InfiniteFlatList } from "@/components/list/InfiniteFlatList";
@@ -15,6 +16,7 @@ import {
   whiteColor,
 } from "@/constants/theme";
 import { TAddBooking } from "@/features/bookings/validations";
+import { usePetOwnerCaregiverFilter } from "@/hooks/pet-owner/use-pet-owner-caregivers-filter";
 import { TCaregiver, TUser } from "@/types";
 
 export interface AddBookingStepThreeProps {
@@ -28,25 +30,44 @@ export const AddBookingStepThree = ({
   onPrev,
   loading,
 }: AddBookingStepThreeProps) => {
+  const router = useRouter();
+
+  const { filter } = usePetOwnerCaregiverFilter();
+
   const form = useFormContext<TAddBooking>();
 
   const values = form.watch();
-
-  const router = useRouter();
 
   const handleViewCaregiver = (userId: TUser["id"]) => {
     router.push(`/pet-owner/bookings/add/caregivers/${userId}`);
   };
 
+  const handleFilter = () => {
+    router.push(`/pet-owner/bookings/add/caregivers/filter`);
+  };
+
   return (
     <FormStepsLayout {...{ onNext, onPrev, loading }}>
-      <ThemedText type="defaultSemiBold">Pick your caregiver</ThemedText>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <ThemedText type="defaultSemiBold">Pick your caregiver</ThemedText>
+        <FilterButton onPress={handleFilter} />
+      </View>
       <View style={{ gap: 8, flex: 1 }}>
-        <InfiniteFlatList<TCaregiver>
-          url="/v2/users/caregivers"
-          queryParams={{
-            "serviceTypes[]": values.serviceTypesId.toString(),
-          }}
+        <InfiniteFlatList<{
+          usersId: TCaregiver["usersId"];
+          acceptanceRadius: TCaregiver["acceptanceRadius"];
+          experience: TCaregiver["experience"] | null;
+          averageStarRatings: TCaregiver["averageStarRatings"] | null;
+          totalStars: TCaregiver["totalStars"] | null;
+          totalReviews: TCaregiver["totalReviews"] | 0;
+          serviceCompleted: number;
+          firstName: TUser["firstName"];
+          lastName: TUser["lastName"];
+          profileImage: TUser["profileImage"];
+          distance: { text?: string };
+        }>
+          url="/v2/caregivers"
+          queryParams={filter}
           perPage={10}
           style={{ height: 400 }}
           contentContainerStyle={{ gap: 8 }}
@@ -61,10 +82,10 @@ export const AddBookingStepThree = ({
               ]}
               onPress={() => handleViewCaregiver(item.usersId)}
             >
-              <UserAvatar src={item.users.profileImage} size={40} />
+              <UserAvatar src={item.profileImage} size={40} />
               <View style={{ flex: 1 }}>
                 <ThemedText type="defaultSemiBold">
-                  {item.users.firstName} {item.users.lastName}
+                  {item.firstName} {item.lastName}
                 </ThemedText>
                 <ThemedText>
                   Distance: {item?.distance?.text ?? `0 mi`}

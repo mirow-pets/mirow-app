@@ -42,9 +42,9 @@ const getSchema = (available: number) => {
     .refine(
       (val) => {
         const num = parseFloat(val);
-        return num > 0;
+        return num >= 10;
       },
-      { message: "Amount must be greater than zero" }
+      { message: "Amount must be atleast $10" }
     )
     .refine(
       (val) => {
@@ -109,8 +109,7 @@ export default function WithdrawScreen() {
   } = form;
 
   const { mutate: withdraw, isPending: isWithdrawing } = useMutation({
-    mutationFn: (amount: number) =>
-      Post("/v2/withdrawals/requests", { amount }),
+    mutationFn: (amount: number) => Post("/payout/care-giver", { amount }),
     onSuccess: async () => {
       router.back();
 
@@ -176,6 +175,9 @@ export default function WithdrawScreen() {
           </View>
 
           <NumberInput name="amount" editable={!isWithdrawing} />
+          <Text style={{ color: "#888", fontSize: 13, marginTop: 6 }}>
+            Note: The minimum amount to withdraw is $10.
+          </Text>
 
           <Button
             title="Withdraw"

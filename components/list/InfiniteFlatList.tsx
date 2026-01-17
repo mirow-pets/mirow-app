@@ -13,7 +13,7 @@ export interface InfiniteFlatListProps<T> {
   perPage?: number;
   queryParams?: Record<
     string,
-    string | string[] | number | number[] | undefined
+    string | string[] | number | number[] | null | undefined
   >;
   renderItem: ListRenderItem<T>;
   contentContainerStyle?: StyleProp<ViewStyle>;
@@ -82,6 +82,7 @@ export const InfiniteFlatList = <T extends object>({
       contentContainerStyle={contentContainerStyle}
       style={style}
       renderItem={renderItem}
+      ListEmptyComponent={() => <ThemedText>No data found</ThemedText>}
     />
   );
 };

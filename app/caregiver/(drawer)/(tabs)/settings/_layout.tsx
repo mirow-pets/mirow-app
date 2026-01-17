@@ -32,6 +32,10 @@ export default function SettingsLayout() {
         name="deactivate-account"
         options={{ presentation: "modal", title: "Deactivate Account" }}
       />
+      <Stack.Screen
+        name="auto-payout"
+        options={{ presentation: "modal", title: "Auto Payout" }}
+      />
     </Stack>
   );
 }

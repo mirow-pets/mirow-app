@@ -4,7 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
 
 import { Button } from "@/components/button/Button";
+import { ScrollViewWithRefresh } from "@/components/layout/ScrollViewWithRefresh";
 import { ThemedText } from "@/components/themed-text";
+import { useRefetchQueries } from "@/hooks/use-refetch-queries";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Get } from "@/services/http-service";
 import { formatCurrency, onError } from "@/utils";
@@ -35,6 +37,8 @@ interface BalanceResponse {
 
 export default function MyEarningsScreen() {
   const primaryColor = useThemeColor({}, "primary");
+  const { refetch } = useRefetchQueries();
+
   const { data, isLoading, isError } = useQuery<BalanceResponse>({
     queryKey: ["balance"],
     queryFn: () => Get("/balance/care-giver"),
@@ -82,68 +86,76 @@ export default function MyEarningsScreen() {
     router.push("/caregiver/my-earnings/withdrawals");
   };
 
-  return (
-    <View style={styles.container}>
-      <ThemedText style={styles.title}>My Earnings</ThemedText>
-      <View style={styles.earningsCard}>
-        <ThemedText style={styles.label}>Available to Withdraw</ThemedText>
-        <ThemedText style={styles.amount}>
-          {available
-            ? formatCurrency(
-                +(available.amount / 100).toFixed(2),
-                available.currency
-              )
-            : "$0.00"}
-        </ThemedText>
-      </View>
+  const handleRefresh = async () => {
+    refetch([["balance"], ["/care-givers/bookings"]]);
+  };
 
-      <View style={styles.row}>
-        <View style={styles.miniCard}>
-          <ThemedText style={styles.miniLabel}>Pending</ThemedText>
-          <ThemedText style={styles.miniAmount}>
-            {pending
+  const handleGoToCompletedBookings = () => {
+    router.push("/caregiver/my-earnings/completed-bookings");
+  };
+
+  return (
+    <ScrollViewWithRefresh loading={isLoading} onRefresh={handleRefresh}>
+      <View style={styles.container}>
+        <ThemedText style={styles.title}>My Earnings</ThemedText>
+        <View style={styles.earningsCard}>
+          <ThemedText style={styles.label}>Available to Withdraw</ThemedText>
+          <ThemedText style={styles.amount}>
+            {available
               ? formatCurrency(
-                  +(pending.amount / 100).toFixed(2),
-                  pending.currency
+                  +(available.amount / 100).toFixed(2),
+                  available.currency
                 )
               : "$0.00"}
           </ThemedText>
         </View>
-        {/* <View style={styles.miniCard}>
-          <ThemedText style={styles.miniLabel}>Instantly Available</ThemedText>
-          <ThemedText style={styles.miniAmount}>
-            {totalEarnings
-              ? formatCurrency(
-                  +(totalEarnings.amount / 100).toFixed(2),
-                  totalEarnings.currency
-                )
-              : "$0.00"}
+
+        <View style={styles.row}>
+          <View style={styles.miniCard}>
+            <ThemedText style={styles.miniLabel}>Pending</ThemedText>
+            <ThemedText style={styles.miniAmount}>
+              {pending
+                ? formatCurrency(
+                    +(pending.amount / 100).toFixed(2),
+                    pending.currency
+                  )
+                : "$0.00"}
+            </ThemedText>
+          </View>
+        </View>
+
+        <View style={{ marginTop: 6 }}>
+          <ThemedText style={{ fontSize: 12, color: "#888" }}>
+            Note: If your Stripe account is new, funds typically remain pending
+            for 7–14 days while under risk review. After this initial period,
+            payouts become available in about 2 days.{"\n\n"}• You can only
+            withdraw if your available amount is at least $10.{"\n"}• All
+            earnings shown are after deducting the app fee.
           </ThemedText>
-        </View> */}
+        </View>
+
+        <Button
+          title="Withdraw"
+          style={{ marginTop: 16 }}
+          onPress={handleWithdraw}
+          disabled={!available.amount}
+        />
+
+        <Button
+          variant="reversed"
+          title="Completed Bookings"
+          style={{ marginTop: 16 }}
+          onPress={handleGoToCompletedBookings}
+        />
+
+        <Button
+          title="View Withdrawals"
+          style={{ marginTop: 12 }}
+          onPress={handleGoToWithdrawals}
+          variant="reversed"
+        />
       </View>
-
-      <View style={{ marginTop: 6 }}>
-        <ThemedText style={{ fontSize: 12, color: "#888" }}>
-          Note: If your Stripe account is new, funds typically remain pending
-          for 7–14 days while under risk review. After this initial period,
-          payouts become available in about 2 days.
-        </ThemedText>
-      </View>
-
-      <Button
-        title="Withdraw"
-        style={{ marginTop: 16 }}
-        onPress={handleWithdraw}
-        disabled={!available.amount}
-      />
-
-      <Button
-        title="View Withdrawals"
-        style={{ marginTop: 12 }}
-        onPress={handleGoToWithdrawals}
-        variant="reversed"
-      />
-    </View>
+    </ScrollViewWithRefresh>
   );
 }
 
@@ -152,6 +164,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: "#fff",
+    paddingBottom: 100,
   },
   loadingContainer: {
     flex: 1,

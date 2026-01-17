@@ -24,6 +24,10 @@ export default function MessagesLayout() {
         name="withdrawals"
         options={{ presentation: "modal", title: "Withdrawals" }}
       />
+      <Stack.Screen
+        name="completed-bookings"
+        options={{ presentation: "modal", title: "Completed Bookings" }}
+      />
     </Stack>
   );
 }

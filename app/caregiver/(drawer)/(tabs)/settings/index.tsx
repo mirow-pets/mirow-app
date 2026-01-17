@@ -48,6 +48,13 @@ export default function SettingsScreen() {
       icon: (
         <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
       ),
+      label: "Auto payout",
+      onPress: () => router.push("/caregiver/settings/auto-payout"),
+    },
+    {
+      icon: (
+        <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
+      ),
       label: "Deactivate Account",
       onPress: () => router.push("/caregiver/settings/deactivate-account"),
     },

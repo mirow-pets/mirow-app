@@ -21,6 +21,7 @@ import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useAuth } from "@/hooks/use-auth";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
+import { useRefetchQueries } from "@/hooks/use-refetch-queries";
 import { Patch } from "@/services/http-service";
 import { THomeType, TServiceType, TTransportType } from "@/types";
 import { TCareGiversServiceTypesLink } from "@/types/caregivers";
@@ -33,6 +34,7 @@ export default function ServiceTypesScreen() {
     useCaregiverCaregiver();
   const { profile } = useCaregiverProfile();
   const queryClient = useQueryClient();
+  const { refetch } = useRefetchQueries();
 
   const { mutate, isPending } = useMutation({
     mutationFn: (input: TUpdateCaregiverServices) =>
@@ -46,9 +48,12 @@ export default function ServiceTypesScreen() {
       }),
     onSuccess: async () => {
       form.reset();
-      await queryClient.refetchQueries({
-        queryKey: ["caregiver-profile", currUser?.sessionId],
-      });
+
+      await refetch([
+        ["caregiver-profile", currUser?.sessionId],
+        ["caregiver-profile-completion", currUser?.sessionId],
+      ]);
+
       router.replace("/caregiver/profile");
 
       Toast.show({

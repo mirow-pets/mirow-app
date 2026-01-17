@@ -10,7 +10,7 @@ import {
   ViewStyle,
 } from "react-native";
 
-import { whiteColor } from "@/constants/theme";
+import { blackColor, whiteColor } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 export interface ButtonProps extends BaseButtonProps {
@@ -56,7 +56,7 @@ export const Button = ({
     size === "sm" && styles.textSm,
     size === "lg" && styles.textLg,
     variant === "contained" && {
-      color: whiteColor,
+      color: color === "primary" ? whiteColor : blackColor,
     },
     variant === "reversed" && {
       color: buttonColor,

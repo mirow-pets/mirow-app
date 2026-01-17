@@ -24,6 +24,7 @@ export default function MyBookingsScreen() {
         url="/users/bookings"
         perPage={5}
         style={{ height: 400 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
         order="createdat DESC"
         renderItem={({ item }) => {
           const pet = item.pets?.[0];

@@ -7,9 +7,27 @@ import Toast from "react-native-toast-message";
 import { TUpdatePetOwnerProfile } from "@/features/profile/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { Get, Patch } from "@/services/http-service";
-import { TPetOwnerProfileCompletion } from "@/types";
+import {
+  TCaregiverPreference,
+  TCaregiverSkill,
+  THomeType,
+  TOption,
+  TPetOwnerProfileCompletion,
+  TServiceType,
+  TTransportType,
+} from "@/types";
+import { TPetType } from "@/types/pets";
 import { TAuthUser } from "@/types/users";
 import { onError } from "@/utils";
+
+interface TPetOwnerProfileFormFields {
+  careGiverPreferences: TCaregiverPreference[];
+  careGiverSkills: TCaregiverSkill[];
+  serviceTypes: TServiceType[];
+  petTypes: TPetType[];
+  homeTypes: THomeType[];
+  transportType: TTransportType[];
+}
 
 export interface PetOwnerProfileContextValues {
   profile?: TAuthUser;
@@ -21,6 +39,14 @@ export interface PetOwnerProfileContextValues {
     _onSuccess?: () => void
   ) => void;
   isUpdatingProfile: boolean;
+  petOwnerProfileFormFields: TPetOwnerProfileFormFields;
+  isLoadingPetOwnerProfileFormFields: boolean;
+  caregiverPreferenceOptions: TOption[];
+  caregiverSkillOptions: TOption[];
+  serviceTypeOptions: TOption[];
+  petTypeOptions: TOption[];
+  homeTypeOptions: TOption[];
+  transportationTypeOptions: TOption[];
 }
 
 export const PetOwnerProfileContext =
@@ -36,6 +62,22 @@ const PetOwnerProfileProvider = ({
   const { currUser, logout } = useAuth();
 
   const queryClient = useQueryClient();
+
+  const {
+    data: petOwnerProfileFormFields = {
+      careGiverPreferences: [],
+      careGiverSkills: [],
+      serviceTypes: [],
+      petTypes: [],
+      homeTypes: [],
+      transportType: [],
+    },
+    isLoading: isLoadingPetOwnerProfileFormFields,
+  } = useQuery<TPetOwnerProfileFormFields>({
+    queryKey: ["pet-owner-profile-fields"],
+    queryFn: () => Get("/fields/users/filters"),
+    enabled: !!currUser,
+  });
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery<TAuthUser>({
     queryKey: ["pet-owner-profile", currUser?.sessionId],
@@ -79,6 +121,49 @@ const PetOwnerProfileProvider = ({
     onSuccess?: () => void
   ) => _updateProfile(input, { onSuccess });
 
+  const caregiverPreferenceOptions =
+    petOwnerProfileFormFields.careGiverPreferences.map(
+      ({ preference, id }) => ({
+        label: preference,
+        value: id,
+      })
+    );
+
+  const caregiverSkillOptions = petOwnerProfileFormFields.careGiverSkills.map(
+    ({ skill, id }) => ({
+      label: skill,
+      value: id,
+    })
+  );
+
+  const serviceTypeOptions = petOwnerProfileFormFields.serviceTypes.map(
+    ({ display, id }) => ({
+      label: display,
+      value: id,
+    })
+  );
+
+  const petTypeOptions = petOwnerProfileFormFields.petTypes.map(
+    ({ display, id }) => ({
+      label: display,
+      value: id,
+    })
+  );
+
+  const homeTypeOptions = petOwnerProfileFormFields.homeTypes.map(
+    ({ display, id }) => ({
+      label: display,
+      value: id,
+    })
+  );
+
+  const transportationTypeOptions = petOwnerProfileFormFields.transportType.map(
+    ({ display, id }) => ({
+      label: display,
+      value: id,
+    })
+  );
+
   return (
     <PetOwnerProfileContext.Provider
       value={{
@@ -88,6 +173,14 @@ const PetOwnerProfileProvider = ({
         isLoadingProfileCompletion,
         updateProfile,
         isUpdatingProfile,
+        petOwnerProfileFormFields,
+        isLoadingPetOwnerProfileFormFields,
+        caregiverPreferenceOptions,
+        caregiverSkillOptions,
+        serviceTypeOptions,
+        petTypeOptions,
+        homeTypeOptions,
+        transportationTypeOptions,
       }}
     >
       {children}

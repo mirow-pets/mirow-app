@@ -109,6 +109,12 @@ export default function PetOwnerTabsNavigation() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="caregivers"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

@@ -1,20 +1,30 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { FlatList } from "react-native-gesture-handler";
 
+import { ScrollViewWithRefresh } from "@/components/layout/ScrollViewWithRefresh";
 import { ThemedText } from "@/components/themed-text";
 import { grayColor, redColor, whiteColor } from "@/constants/theme";
 import { CaregiverProfileDetailsCard } from "@/features/profile/components/CaregiverProfileDetails";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
+import { useAuth } from "@/hooks/use-auth";
+import { useRefetchQueries } from "@/hooks/use-refetch-queries";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function ProfileScreen() {
   const primaryColor = useThemeColor({}, "primary");
   const router = useRouter();
+  const { refetch } = useRefetchQueries();
+  const { currUser } = useAuth();
 
-  const { profile, profileCompletion } = useCaregiverProfile();
+  const {
+    profile,
+    profileCompletion,
+    isLoadingProfile,
+    isLoadingProfileCompletion,
+  } = useCaregiverProfile();
 
   const isBackgroundVerificationLeft = profileCompletion?.percentage === 80;
 
@@ -127,8 +137,20 @@ export default function ProfileScreen() {
     },
   ];
 
+  const handleRefresh = () => {
+    refetch([
+      ["caregiver-profile", currUser?.sessionId],
+      ["caregiver-profile-completion", currUser?.sessionId],
+    ]);
+  };
+
   return (
-    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+    <ScrollViewWithRefresh
+      nestedScrollEnabled
+      keyboardShouldPersistTaps="handled"
+      loading={isLoadingProfile || isLoadingProfileCompletion}
+      onRefresh={handleRefresh}
+    >
       <View style={styles.container}>
         <CaregiverProfileDetailsCard />
         <View
@@ -167,7 +189,7 @@ export default function ProfileScreen() {
         />
       </View>
       <View style={{ height: 100 }} />
-    </ScrollView>
+    </ScrollViewWithRefresh>
   );
 }
 

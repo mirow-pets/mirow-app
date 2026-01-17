@@ -7,6 +7,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { primaryColor } from "@/constants/theme";
 import { addBookingSchema, TAddBooking } from "@/features/bookings/validations";
 import { usePetOwnerBooking } from "@/hooks/pet-owner/use-pet-owner-booking";
+import { usePetOwnerCaregiverFilter } from "@/hooks/pet-owner/use-pet-owner-caregivers-filter";
 
 import { AddBookingStepOne } from "./add-booking/AddBookingStepOne";
 import { AddBookingStepThree } from "./add-booking/AddBookingStepThree";
@@ -14,11 +15,18 @@ import { AddBookingStepTwo } from "./add-booking/AddBookingStepTwo";
 
 export const AddBookingForm = () => {
   const { isAddingBooking, addBooking } = usePetOwnerBooking();
+  const { setFilter } = usePetOwnerCaregiverFilter();
   const [step, setStep] = useState(1);
+  const currentDate = new Date();
+
+  const startDate = new Date(
+    currentDate.setMinutes(currentDate.getMinutes() + 30)
+  );
 
   const form = useForm({
     resolver: zodResolver(addBookingSchema),
     defaultValues: {
+      startDate,
       pets: [],
       petTypes: [],
       serviceTypesId: 6,
@@ -37,8 +45,14 @@ export const AddBookingForm = () => {
   const handleStepTwoNext = (fields: string[]) => async () => {
     const result = await form.trigger(fields as unknown as keyof TAddBooking);
     if (!result) return;
-    if (!values.isOpenShift) setStep((step) => step + 1);
-    else addBooking(values);
+    if (!values.isOpenShift) {
+      setFilter((v) => ({
+        ...v,
+        petTypeIds: values.petTypes,
+        serviceTypeIds: [values.serviceTypesId],
+      }));
+      setStep((step) => step + 1);
+    } else addBooking(values);
   };
 
   return (
