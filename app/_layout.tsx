@@ -49,7 +49,7 @@ export default function RootLayout() {
         <ModalProvider>
           <AuthProvider>
             <RootLayoutNav />
-            <StatusBar style="auto" />
+            <StatusBar style="auto"  />
             <Toast />
           </AuthProvider>
         </ModalProvider>

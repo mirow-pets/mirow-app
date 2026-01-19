@@ -7,6 +7,7 @@ export { formatCurrency } from "./format-currency";
 export { formatNumber } from "./format-number";
 export { formatPhoneNumber } from "./format-phone-number";
 export { formatSsn } from "./format-ssn";
+export { getStatusBarHeight } from './get-status-bar-height';
 export { onError } from "./on-error";
 export { randomUUID } from "./random-uuid";
 export { registerForPushNotificationsAsync } from "./register-for-push-notifications-async";

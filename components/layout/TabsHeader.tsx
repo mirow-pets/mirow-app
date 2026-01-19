@@ -6,10 +6,10 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 
-import { whiteColor } from "@/constants/theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { UserRole } from "@/types";
+import { getStatusBarHeight } from "@/utils";
 
 import { NotificationButton } from "./NotificationButton";
 
@@ -18,15 +18,17 @@ export const TabsHeader = () => {
   const navigation = useNavigation();
   const { currUser, userRole } = useAuth();
 
+  const statusBarHeight = getStatusBarHeight();
+
   return (
     <View
       style={{
-        marginTop: 48,
         flexDirection: "row",
         padding: 24,
+        paddingTop: 24 + statusBarHeight,
         gap: 12,
         alignItems: "center",
-        backgroundColor: whiteColor,
+        backgroundColor: "white",
       }}
     >
       <TouchableOpacity
@@ -50,7 +52,7 @@ export const TabsHeader = () => {
       <View style={{ flex: 1 }}>
         <Text
           style={{
-            fontWeight: 600,
+            fontWeight: "600",
             fontSize: 10,
           }}
         >
@@ -59,7 +61,7 @@ export const TabsHeader = () => {
         <Text
           style={{
             color: primaryColor,
-            fontWeight: 600,
+            fontWeight: "600",
             textTransform: "uppercase",
           }}
         >
