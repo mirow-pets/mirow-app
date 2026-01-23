@@ -36,7 +36,7 @@ export interface PetOwnerProfileContextValues {
   isLoadingProfileCompletion: boolean;
   updateProfile: (
     _input: TUpdatePetOwnerProfile,
-    _onSuccess?: () => void
+    _onSuccess?: () => void,
   ) => void;
   isUpdatingProfile: boolean;
   petOwnerProfileFormFields: TPetOwnerProfileFormFields;
@@ -96,6 +96,9 @@ const PetOwnerProfileProvider = ({
       queryKey: ["pet-owner-completion", currUser?.sessionId],
       queryFn: () => Get(`/users/profile-completion`),
       enabled: !!currUser,
+      meta: {
+        onError,
+      },
     });
 
   const { mutate: _updateProfile, isPending: isUpdatingProfile } = useMutation({
@@ -118,7 +121,7 @@ const PetOwnerProfileProvider = ({
 
   const updateProfile = (
     input: TUpdatePetOwnerProfile,
-    onSuccess?: () => void
+    onSuccess?: () => void,
   ) => _updateProfile(input, { onSuccess });
 
   const caregiverPreferenceOptions =
@@ -126,42 +129,42 @@ const PetOwnerProfileProvider = ({
       ({ preference, id }) => ({
         label: preference,
         value: id,
-      })
+      }),
     );
 
   const caregiverSkillOptions = petOwnerProfileFormFields.careGiverSkills.map(
     ({ skill, id }) => ({
       label: skill,
       value: id,
-    })
+    }),
   );
 
   const serviceTypeOptions = petOwnerProfileFormFields.serviceTypes.map(
     ({ display, id }) => ({
       label: display,
       value: id,
-    })
+    }),
   );
 
   const petTypeOptions = petOwnerProfileFormFields.petTypes.map(
     ({ display, id }) => ({
       label: display,
       value: id,
-    })
+    }),
   );
 
   const homeTypeOptions = petOwnerProfileFormFields.homeTypes.map(
     ({ display, id }) => ({
       label: display,
       value: id,
-    })
+    }),
   );
 
   const transportationTypeOptions = petOwnerProfileFormFields.transportType.map(
     ({ display, id }) => ({
       label: display,
       value: id,
-    })
+    }),
   );
 
   return (
@@ -195,7 +198,7 @@ export const usePetOwnerProfile = () => {
 
   if (!profile) {
     throw new Error(
-      "Cannot access usePetOwnerProfile outside PetOwnerProfileProvider"
+      "Cannot access usePetOwnerProfile outside PetOwnerProfileProvider",
     );
   }
   return profile;

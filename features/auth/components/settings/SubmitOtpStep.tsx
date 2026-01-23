@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { ThemedText } from "@/components/themed-text";
 import { sendOtpSchema, TSendOtp } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
@@ -55,7 +55,8 @@ export const SubmitOtpStep = ({
   return (
     <FormProvider {...form}>
       <ThemedText>{description}</ThemedText>
-      <Input
+      <TextInputField
+        label="Email"
         name="email"
         placeholder="Email"
         readOnly={!!email}
@@ -63,11 +64,12 @@ export const SubmitOtpStep = ({
         autoCapitalize="none"
       />
       <Button
-        title="Continue"
         onPress={form.handleSubmit(submit)}
         loading={isSendingOtp}
         color="secondary"
-      />
+      >
+        Continue
+      </Button>
     </FormProvider>
   );
 };

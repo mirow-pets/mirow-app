@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Href, useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 
-import { SignUpStepFour } from "@/features/auth/components/sign-up/SignUpStepFour";
+import { Modal } from "@/components/modal/Modal";
+import { ThemedText } from "@/components/themed-text";
 import { SignUpStepOne } from "@/features/auth/components/sign-up/SignUpStepOne";
 import { SignUpStepThree } from "@/features/auth/components/sign-up/SignUpStepThree";
 import { SignUpStepTwo } from "@/features/auth/components/sign-up/SignUpStepTwo";
@@ -15,6 +17,7 @@ import { SignUpStepZero } from "@/features/auth/components/sign-up/SignUpStepZer
 import { TSignUp, signUpSchema } from "@/features/auth/validations";
 import { Post } from "@/services/http-service";
 import { TUser } from "@/types";
+import { formatDateToYMD } from "@/utils/date";
 
 export interface SignUpFormProps {
   path: string;
@@ -24,19 +27,20 @@ export interface SignUpFormProps {
 export const SignUpForm = ({ path, redirect }: SignUpFormProps) => {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const [isSuccessful, setIsSuccessful] = useState(false);
 
   const { mutate, isPending } = useMutation<
     TUser & { token: string },
     Error,
     TSignUp
   >({
-    mutationFn: ({ confirmPassword, ...input }: TSignUp) => Post(path, input),
+    mutationFn: ({ confirmPassword, ...input }: TSignUp) =>
+      Post(path, {
+        ...input,
+        dateOfBirth: formatDateToYMD(input.dateOfBirth),
+      }),
     onSuccess: async () => {
-      router.replace(`${redirect}/login` as Href);
-      Toast.show({
-        type: "success",
-        text1: "Sign up successfully!",
-      });
+      setIsSuccessful(true);
     },
     onError: (err) => {
       let message = err.message;
@@ -48,7 +52,6 @@ export const SignUpForm = ({ path, redirect }: SignUpFormProps) => {
         if (err.statusCode === 400) {
           const lowerCasedMessage = err.message.toLowerCase();
           if (lowerCasedMessage.includes("email")) {
-            setStep(3);
             form.setError("email", { message: "Email is already in used" });
           } else if (lowerCasedMessage.includes("username")) {
             form.setError("username", {
@@ -81,38 +84,60 @@ export const SignUpForm = ({ path, redirect }: SignUpFormProps) => {
 
   const handlePrev = () => setStep((step) => step - 1);
 
+  const handleContinue = () => {
+    setIsSuccessful(false);
+    // router.replace(`${redirect}/login` as Href);
+  };
+
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
         {step === 0 && (
-          <SignUpStepZero onNext={() => setStep((step) => step + 1)} />
+          <SignUpStepZero
+            onPrev={router.back}
+            onNext={() => setStep((step) => step + 1)}
+          />
         )}
         {step === 1 && (
           <SignUpStepOne
-            onNext={handleNext(["firstName", "lastName"])}
+            onNext={handleNext([
+              "firstName",
+              "lastName",
+              "gender",
+              "dateOfBirth",
+            ])}
             onPrev={handlePrev}
           />
         )}
         {step === 2 && (
           <SignUpStepTwo
-            onNext={handleNext(["address", "city", "postalCode"])}
+            onNext={handleNext(["phone", "address", "city", "postalCode"])}
             onPrev={handlePrev}
           />
         )}
         {step === 3 && (
           <SignUpStepThree
-            onNext={handleNext(["email", "phone"])}
-            onPrev={handlePrev}
-          />
-        )}
-        {step === 4 && (
-          <SignUpStepFour
             onNext={form.handleSubmit(submit)}
             onPrev={handlePrev}
             loading={isPending}
           />
         )}
       </View>
+      <Modal
+        id="sign-up-success-modal"
+        open={isSuccessful}
+        confirmText="Continue"
+        onConfirm={handleContinue}
+        hideCancel
+      >
+        <View style={{ alignItems: "center", gap: 16, paddingTop: 16 }}>
+          <Ionicons name="happy-outline" size={24} color="black" />
+          <ThemedText style={{ textAlign: "center", fontSize: 20 }}>
+            Sign Up Successful!
+          </ThemedText>
+          <ThemedText>Your account has been created!</ThemedText>
+        </View>
+      </Modal>
     </FormProvider>
   );
 };
@@ -121,5 +146,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     padding: 32,
+    flex: 1,
   },
 });

@@ -6,6 +6,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 
+import { whiteColor } from "@/constants/theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { UserRole } from "@/types";
@@ -28,7 +29,7 @@ export const TabsHeader = () => {
         paddingTop: 24 + statusBarHeight,
         gap: 12,
         alignItems: "center",
-        backgroundColor: "white",
+        backgroundColor: whiteColor,
       }}
     >
       <TouchableOpacity
@@ -44,7 +45,7 @@ export const TabsHeader = () => {
           shadowOpacity: 0.12,
           shadowRadius: 4,
           elevation: 3,
-          backgroundColor: "white",
+          backgroundColor: whiteColor,
         }}
       >
         <MaterialCommunityIcons name="account" size={32} color="black" />

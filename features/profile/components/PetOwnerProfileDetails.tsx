@@ -32,7 +32,7 @@ export const PetOwnerProfileDetailsCard = () => {
             updateProfile({ profileImage } as TUpdatePetOwnerProfile)
           }
           style={{
-            borderColor: profileCompletion.isProfileImageAdded
+            borderColor: profileCompletion?.isProfileImageAdded
               ? blackColor
               : redColor,
           }}
@@ -54,7 +54,7 @@ export const PetOwnerProfileDetailsCard = () => {
       </View>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <ThemedText>Profile progress</ThemedText>
-        <ThemedText>{profileCompletion.percentage}%</ThemedText>
+        <ThemedText>{profileCompletion?.percentage}%</ThemedText>
       </View>
     </View>
   );

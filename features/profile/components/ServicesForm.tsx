@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
 
-import { Checkbox } from "expo-checkbox";
 import { useFormContext } from "react-hook-form";
+import { Checkbox, HelperText } from "react-native-paper";
 
 import { NumberInput } from "@/components/form/NumberInput";
 import { ThemedText } from "@/components/themed-text";
-import { secondaryColor, whiteColor } from "@/constants/theme";
+import { whiteColor } from "@/constants/theme";
 import { TUpdateCaregiverServices } from "@/features/profile/validations";
 import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
 import { TServiceType } from "@/types";
@@ -32,7 +32,7 @@ export const ServicesForm = () => {
 
   return (
     <View>
-      <View style={{ gap: 16 }}>
+      <View>
         {services?.map(({ id, isActive, serviceRate }, i) => {
           const service = serviceMapper[id];
 
@@ -55,27 +55,30 @@ export const ServicesForm = () => {
                 style={{
                   flexDirection: "row",
                   gap: 8,
+                  alignItems: "center",
                 }}
               >
                 <Checkbox
-                  value={isActive}
-                  onValueChange={handleOnValueChange}
-                  color={secondaryColor}
+                  status={isActive ? "checked" : "unchecked"}
+                  onPress={() => handleOnValueChange(!isActive)}
                 />
                 <ThemedText>{service.display}</ThemedText>
               </View>
-              <NumberInput
-                name={`services.${i}.serviceRate`}
-                placeholder={labelMapper[service.priceType]}
-                defaultValue={serviceRate?.toString()}
-              />
+              {isActive && (
+                <NumberInput
+                  label={labelMapper[service.priceType]}
+                  name={`services.${i}.serviceRate`}
+                  placeholder={labelMapper[service.priceType]}
+                  defaultValue={serviceRate?.toString()}
+                />
+              )}
             </View>
           );
         })}
       </View>
-      <ThemedText type="error">
+      <HelperText type="error">
         {form.formState.errors.services?.message?.toString()}
-      </ThemedText>
+      </HelperText>
     </View>
   );
 };

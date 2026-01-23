@@ -14,11 +14,6 @@ export const updateCaregiverProfileSchema = z.object({
   petTypes: z.number().array().min(1, "Pet type is required"),
   profileImage: z.string(),
   bioDescription: z.string().optional(),
-  address: z.string({ message: "Address is required" }),
-  city: z.string({ message: "City is required" }),
-  state: z.string({ message: "State is required" }),
-  country: z.string({ message: "Country is required" }),
-  postalCode: z.string({ message: "Postal code is required" }),
   drivingLicense: z.string({ message: "Driving license is required" }),
   driverLicenseState: z.string({ message: "Driver license state is required" }),
   ssn: z
@@ -33,7 +28,7 @@ export const updateCaregiverProfileSchema = z.object({
       const eighteenYearsAgo = new Date();
       eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
       return val <= eighteenYearsAgo;
-    }, "You must be at least 13 years old"),
+    }, "You must be at least 18 years old"),
   customerId: z.string().optional(),
 });
 

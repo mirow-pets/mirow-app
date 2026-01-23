@@ -1,20 +1,23 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
 
+import Feather from "@expo/vector-icons/Feather";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 
-import { ThemedText } from "@/components/themed-text";
+import { Sidebar } from "@/components/layout/Sidebar";
 import CaregiverBookingProvider from "@/hooks/caregiver/use-caregiver-booking";
 import CaregiverPaymentProvider from "@/hooks/caregiver/use-caregiver-payment";
 import CaregiverPetProvider from "@/hooks/caregiver/use-caregiver-pet";
-import CaregiverProfileProvider from "@/hooks/caregiver/use-caregiver-profile";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import LocationProvider from "@/hooks/use-location";
 import NotificationProvider from "@/hooks/use-notifications";
 import SocketProvider from "@/hooks/use-socket";
 
-export default function CaregeiverDrawerLayout() {
+export default function CaregiverDrawerLayout() {
   const router = useRouter();
+  const { profile } = useCaregiverProfile();
 
   const handleProfile = () => router.push("/caregiver/profile");
   const handleMyBookings = () => router.push("/caregiver/bookings");
@@ -23,61 +26,102 @@ export default function CaregeiverDrawerLayout() {
   const handleMyEarnings = () => router.push("/caregiver/my-earnings");
   const handleSettings = () => router.push("/caregiver/settings");
 
-  const menu = [
+  const menus = [
     {
-      label: "Profile",
+      icon: (
+        <MaterialCommunityIcons
+          name="account-outline"
+          size={24}
+          color="black"
+        />
+      ),
+      label: "My Account",
       onPress: handleProfile,
     },
-    { label: "My Bookings", onPress: handleMyBookings },
-    { label: "Open Shifts", onPress: handleOpenShifts },
-    { label: "Calendar", onPress: handleCalendar },
-    { label: "My Earnings", onPress: handleMyEarnings },
-    { label: "Settings", onPress: handleSettings },
+    {
+      icon: (
+        <MaterialCommunityIcons
+          name="calendar-outline"
+          size={24}
+          color="black"
+        />
+      ),
+      label: "My Bookings",
+      onPress: handleMyBookings,
+    },
+    {
+      icon: <Feather name="clock" size={24} color="black" />,
+      label: "Open Shifts",
+      onPress: handleOpenShifts,
+    },
+    {
+      icon: <FontAwesome name="calendar" size={24} color="black" />,
+      label: "Calendar",
+      onPress: handleCalendar,
+    },
+    {
+      icon: (
+        <MaterialCommunityIcons name="bank-check" size={24} color="black" />
+      ),
+      label: "My Earnings",
+      onPress: handleMyEarnings,
+    },
+    {
+      icon: (
+        <MaterialCommunityIcons name="cog-outline" size={24} color="black" />
+      ),
+      label: "Settings",
+      onPress: handleSettings,
+    },
   ];
 
   return (
     <SocketProvider>
       <LocationProvider>
-        <CaregiverProfileProvider>
-          <NotificationProvider>
-            <CaregiverPaymentProvider>
-              <CaregiverPetProvider>
-                <CaregiverBookingProvider>
-                  <Drawer
-                    screenOptions={{ headerShown: false }}
-                    drawerContent={() => (
-                      <View>
-                        <ThemedText
-                          style={{
-                            paddingHorizontal: 16,
-                            paddingVertical: 24,
-                          }}
-                        >
-                          Mirow
-                        </ThemedText>
-                        {menu.map(({ label, onPress }, i) => (
-                          <TouchableOpacity
-                            key={i}
-                            style={{
-                              paddingVertical: 16,
-                              paddingHorizontal: 16,
-                            }}
-                            onPress={onPress}
-                          >
-                            <ThemedText>{label}</ThemedText>
-                          </TouchableOpacity>
-                        ))}
-                      </View>
-                    )}
-                    initialRouteName="(tabs)"
-                  >
-                    <Drawer.Screen name="(tabs)" />
-                  </Drawer>
-                </CaregiverBookingProvider>
-              </CaregiverPetProvider>
-            </CaregiverPaymentProvider>
-          </NotificationProvider>
-        </CaregiverProfileProvider>
+        <NotificationProvider>
+          <CaregiverPaymentProvider>
+            <CaregiverPetProvider>
+              <CaregiverBookingProvider>
+                <Drawer
+                  screenOptions={{ headerShown: false }}
+                  drawerContent={() => (
+                    <Sidebar
+                      profileImage={profile?.users?.profileImage}
+                      fullName={`${profile?.users?.firstName} ${profile?.users?.lastName}`}
+                      email={profile?.users?.email || ""}
+                      menus={menus}
+                    />
+                    // <View>
+                    //   <ThemedText
+                    //     style={{
+                    //       paddingHorizontal: 16,
+                    //       paddingVertical: 24,
+                    //     }}
+                    //   >
+                    //     Mirow
+                    //   </ThemedText>
+                    //   {menu.map(({ label, onPress }, i) => (
+                    //     <TouchableOpacity
+                    //       key={i}
+                    //       style={{
+                    //         paddingVertical: 16,
+                    //         paddingHorizontal: 16,
+                    //       }}
+                    //       onPress={onPress}
+                    //     >
+                    //       <ThemedText>{label}</ThemedText>
+                    //     </TouchableOpacity>
+                    //   ))}
+                    // </View>
+                  )}
+                  initialRouteName="(tabs)"
+                >
+                  <Drawer.Screen name="(tabs)" />
+                </Drawer>
+              </CaregiverBookingProvider>
+            </CaregiverPetProvider>
+          </CaregiverPaymentProvider>
+        </NotificationProvider>
       </LocationProvider>
     </SocketProvider>
   );

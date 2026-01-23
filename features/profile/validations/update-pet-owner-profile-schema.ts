@@ -1,8 +1,12 @@
 import { z } from "zod";
 
 export const updatePetOwnerProfileSchema = z.object({
-  firstName: z.string({ message: "First name is required" }),
-  lastName: z.string({ message: "Last name is required" }),
+  firstName: z
+    .string({ message: "First name is required" })
+    .min(1, { message: "First name is required" }),
+  lastName: z
+    .string({ message: "Last name is required" })
+    .min(1, { message: "Last name is required" }),
   phone: z.string({ message: "Phone number is required" }),
   eFirstName: z.string({ message: "First name is required" }),
   eLastName: z.string({ message: "Last name is required" }),

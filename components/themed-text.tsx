@@ -1,18 +1,17 @@
-import { StyleSheet, Text, type TextProps } from "react-native";
+import { StyleSheet, } from "react-native";
 
-import { redColor } from "@/constants/theme";
-import { useThemeColor } from "@/hooks/use-theme-color";
+import { Text, TextProps } from "react-native-paper";
 
-export type ThemedTextProps = TextProps & {
+
+export type ThemedTextProps = TextProps<unknown> & {
   lightColor?: string;
   darkColor?: string;
   type?:
-    | "default"
-    | "title"
-    | "defaultSemiBold"
-    | "subtitle"
-    | "link"
-    | "error";
+  | "default"
+  | "title"
+  | "defaultSemiBold"
+  | "subtitle"
+  | "link"
 };
 
 export function ThemedText({
@@ -22,18 +21,15 @@ export function ThemedText({
   type = "default",
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
   return (
     <Text
       style={[
-        { color },
         type === "default" ? styles.default : undefined,
         type === "title" ? styles.title : undefined,
         type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
         type === "subtitle" ? styles.subtitle : undefined,
         type === "link" ? styles.link : undefined,
-        type === "error" ? styles.error : undefined,
         style,
       ]}
       {...rest}
@@ -69,10 +65,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#0a7ea4",
     fontFamily: "Poppins-Bold",
-  },
-  error: {
-    color: redColor,
-    fontSize: 12,
-    height: 16,
   },
 });

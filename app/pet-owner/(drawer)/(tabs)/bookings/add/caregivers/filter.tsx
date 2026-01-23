@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Entypo } from "@expo/vector-icons";
-import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
+import { Checkbox } from "react-native-paper";
 
 import { Button } from "@/components/button/Button";
 import { DropdownInput } from "@/components/form/DropdownInput";
@@ -181,6 +181,8 @@ export default function CaregiversFilterScreen() {
                 form.setValue("homeTypeIds", homeTypeIds);
               };
 
+              const isChecked = values.homeTypeIds?.includes(value);
+
               return (
                 <View
                   key={i}
@@ -195,9 +197,8 @@ export default function CaregiversFilterScreen() {
                     <ThemedText>{item.label}</ThemedText>
                   </View>
                   <Checkbox
-                    value={values.homeTypeIds?.includes(value)}
-                    onValueChange={handleChange}
-                    color={primaryColor}
+                    status={isChecked ? "checked" : "unchecked"}
+                    onPress={() => handleChange(!isChecked)}
                   />
                 </View>
               );
@@ -216,6 +217,8 @@ export default function CaregiversFilterScreen() {
                 form.setValue("transportTypeIds", transportTypeIds);
               };
 
+              const isChecked = values.transportTypeIds?.includes(value);
+
               return (
                 <View
                   key={i}
@@ -230,8 +233,8 @@ export default function CaregiversFilterScreen() {
                     <ThemedText>{item.label}</ThemedText>
                   </View>
                   <Checkbox
-                    value={values.transportTypeIds?.includes(value)}
-                    onValueChange={handleChange}
+                    status={isChecked ? "checked" : "unchecked"}
+                    onPress={() => handleChange(!isChecked)}
                     color={primaryColor}
                   />
                 </View>
@@ -251,6 +254,8 @@ export default function CaregiversFilterScreen() {
                 form.setValue("caregiverPreferenceIds", caregiverPreferenceIds);
               };
 
+              const isChecked = values.caregiverPreferenceIds?.includes(value);
+
               return (
                 <View
                   key={i}
@@ -265,8 +270,8 @@ export default function CaregiversFilterScreen() {
                     <ThemedText>{item.label}</ThemedText>
                   </View>
                   <Checkbox
-                    value={values.caregiverPreferenceIds?.includes(value)}
-                    onValueChange={handleChange}
+                    status={isChecked ? "checked" : "unchecked"}
+                    onPress={() => handleChange(!isChecked)}
                     color={primaryColor}
                   />
                 </View>
@@ -286,6 +291,8 @@ export default function CaregiversFilterScreen() {
                 form.setValue("caregiverSkillIds", caregiverSkillIds);
               };
 
+              const isChecked = values.caregiverSkillIds?.includes(value);
+
               return (
                 <View
                   key={i}
@@ -303,8 +310,8 @@ export default function CaregiversFilterScreen() {
                   </View>
                   <View style={{ flexShrink: 0 }}>
                     <Checkbox
-                      value={values.caregiverSkillIds?.includes(value)}
-                      onValueChange={handleChange}
+                      status={isChecked ? "checked" : "unchecked"}
+                      onPress={() => handleChange(!isChecked)}
                       color={primaryColor}
                     />
                   </View>
@@ -313,20 +320,13 @@ export default function CaregiversFilterScreen() {
             })}
           </Collapsible>
 
-          <Button
-            title="Apply"
-            size="sm"
-            color="secondary"
-            onPress={form.handleSubmit(apply)}
-          />
+          <Button color="secondary" onPress={form.handleSubmit(apply)}>
+            Apply
+          </Button>
 
-          <Button
-            title="Reset"
-            size="sm"
-            color="primary"
-            variant="reversed"
-            onPress={() => form.reset()}
-          />
+          <Button color="white" onPress={() => form.reset()}>
+            Reset
+          </Button>
           <View style={{ height: 100 }}></View>
         </View>
       </ScrollViewWithRefresh>
@@ -339,8 +339,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 20,
-    width: "100%",
     gap: 16,
-    backgroundColor: primaryColor,
   },
 });

@@ -53,8 +53,6 @@ export const Image = ({
     },
   });
 
-  console.log("image", image);
-
   const imageComponent = (
     <View style={{ flexShrink: 1, position: "relative" }}>
       <Text style={{ display: "none" }}>Image: {image}</Text>

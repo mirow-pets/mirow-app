@@ -5,6 +5,12 @@ export enum UserRole {
   PetOwner = "pet-owner",
 }
 
+export enum Gender {
+  Male = "MALE",
+  Female = "FEMALE",
+  Others = "OTHERS",
+}
+
 export interface TUser {
   id: string;
   firstName: string;

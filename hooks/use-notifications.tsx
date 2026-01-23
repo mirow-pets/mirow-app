@@ -33,13 +33,16 @@ export interface NotificationProviderProps {
 }
 
 const NotificationProvider = ({ children }: NotificationProviderProps) => {
-  const { currUser, setFcmToken } = useAuth();
+  const { currUser, setFcmToken, logout } = useAuth();
 
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
     mutationFn: (input: { token: string; sessionId: string }) =>
       Patch("/users/firebase-token", input),
+    onError: () => {
+      logout();
+    },
   });
 
   const { data: notifications = [], isLoading: isLoadingNotifications } =

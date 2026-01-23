@@ -1,9 +1,12 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import { Input } from "@/components/form/Input";
+import { useTheme } from "react-native-paper";
+
+import { PhoneNumberInput } from "@/components/form/PhoneNumberInput";
 import { PlacesInput } from "@/components/form/PlacesInput";
-import { primaryColor } from "@/constants/theme";
+import { TextInputField } from "@/components/form/TextInputField";
+import { ThemedText } from "@/components/themed-text";
 
 import { FormStepsLayout } from "../../../../components/layout/FormStepsLayout";
 
@@ -13,14 +16,38 @@ export interface SignUpStepTwoProps {
 }
 
 export const SignUpStepTwo = ({ onNext, onPrev }: SignUpStepTwoProps) => {
+  const theme = useTheme();
+
   return (
-    <FormStepsLayout {...{ onNext, onPrev }}>
-      <Input name="address" placeholder="Address" />
+    <FormStepsLayout {...{ onNext, onPrev, progress: 0.4 }}>
+      <View style={{ marginBottom: 32 }}>
+        <ThemedText type="subtitle" style={{ fontSize: 24 }}>
+          Let&apos;s set you up!
+        </ThemedText>
+        <ThemedText>
+          We&apos;re so glad you&apos;re here! Just a few quick details about
+          you and your pets helps us make sure you find the best care in the
+          neighborhood.
+        </ThemedText>
+      </View>
+      <PhoneNumberInput
+        label="Phone"
+        name="phone"
+        placeholder="Phone"
+        mode="flat"
+      />
+      <TextInputField
+        label="Address"
+        name="address"
+        placeholder="Address"
+        mode="flat"
+      />
       <View
         style={{
-          backgroundColor: primaryColor,
+          backgroundColor: theme.colors.primary,
           padding: 16,
           borderRadius: 6,
+          marginBottom: 16,
         }}
       >
         <Text>
@@ -28,8 +55,13 @@ export const SignUpStepTwo = ({ onNext, onPrev }: SignUpStepTwoProps) => {
           appreciate your understanding and will expand access in the future
         </Text>
       </View>
-      <PlacesInput placeholder="Search City, State and Country" />
-      <Input name="postalCode" placeholder="Postal Code" />
+      <PlacesInput placeholder="Search City, State and Country" mode="flat" />
+      <TextInputField
+        label="Postal code"
+        name="postalCode"
+        placeholder="Postal Code"
+        mode="flat"
+      />
     </FormStepsLayout>
   );
 };

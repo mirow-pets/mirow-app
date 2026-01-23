@@ -49,7 +49,6 @@ export default function GalleryScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    width: "100%",
     gap: 16,
   },
   gridContainer: {

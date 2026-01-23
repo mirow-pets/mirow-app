@@ -1,10 +1,10 @@
 import React from "react";
-import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
+import { View } from "react-native";
 
 import { Controller, get, useFormContext, useFormState } from "react-hook-form";
+import { HelperText, TextInput, TextInputProps } from "react-native-paper";
 
-import { ThemedText } from "@/components/themed-text";
-import { blackColor, grayColor, redColor, whiteColor } from "@/constants/theme";
+import { grayColor } from "@/constants/theme";
 import { formatPhoneNumber } from "@/utils";
 
 interface PhoneNumberInputProps extends Omit<TextInputProps, "keyboardType"> {
@@ -13,58 +13,41 @@ interface PhoneNumberInputProps extends Omit<TextInputProps, "keyboardType"> {
 }
 
 export const PhoneNumberInput = ({
-  label,
   name,
+  mode = "outlined",
   ...props
 }: PhoneNumberInputProps) => {
   const form = useFormContext();
-  const { errors } = useFormState({ control: form.control, name });
 
-  const error = errors[name];
+  // Always get the latest error from useFormState directly
+  const error = get(
+    useFormState({ control: form.control, name }).errors,
+    name
+  )?.message;
 
   return (
-    <View style={{ width: "100%" }}>
-      {label && <ThemedText style={styles.label}>{label}</ThemedText>}
-      <View>
-        <Controller
-          control={form.control}
-          name={name}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              onBlur={onBlur}
-              onChangeText={(value) => onChange(formatPhoneNumber(value))}
-              value={value}
-              placeholderTextColor={grayColor}
-              {...props}
-              style={[styles.input, props.style]}
-              keyboardType="number-pad"
-            />
-          )}
-        ></Controller>
-      </View>
-      <ThemedText style={styles.errorText}>
-        {get(errors, name)?.message?.toString()}
-      </ThemedText>
-    </View>
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field: { onChange, onBlur, value } }) => (
+        <View style={{ width: "100%" }}>
+          <TextInput
+            onBlur={onBlur}
+            onChangeText={(value) => onChange(formatPhoneNumber(value))}
+            value={value}
+            placeholderTextColor={grayColor}
+            mode={mode}
+            {...props}
+            style={[
+              { backgroundColor: mode === "flat" ? "transparent" : undefined },
+              props.style,
+            ]}
+            keyboardType="number-pad"
+            error={!!error}
+          />
+          <HelperText type="error">{error?.toString()}</HelperText>
+        </View>
+      )}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  label: {
-    marginBottom: 5,
-  },
-  input: {
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: whiteColor,
-    fontWeight: 600,
-    fontSize: 16,
-    boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
-    color: blackColor,
-  },
-  errorText: {
-    color: redColor,
-    fontSize: 12,
-    height: 16,
-  },
-});

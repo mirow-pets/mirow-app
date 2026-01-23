@@ -6,9 +6,8 @@ import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/form/Input";
 import { NumberInput } from "@/components/form/NumberInput";
-import { primaryColor } from "@/constants/theme";
+import { TextInputField } from "@/components/form/TextInputField";
 import {
   addBankAccountSchema,
   TAddBankAccount,
@@ -43,7 +42,7 @@ export default function AddBankScreen() {
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
-        <Input
+        <TextInputField
           label="Account Holder Name"
           name="accHolderName"
           placeholder="Account Holder Name"
@@ -59,11 +58,12 @@ export default function AddBankScreen() {
           placeholder="Routing Number"
         />
         <Button
-          title="Save"
           onPress={form.handleSubmit(submit)}
           loading={isAddingBankAccount}
           color="secondary"
-        />
+        >
+          Add
+        </Button>
       </View>
     </FormProvider>
   );
@@ -73,8 +73,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     padding: 20,
-    width: "100%",
     gap: 16,
-    backgroundColor: primaryColor,
   },
 });

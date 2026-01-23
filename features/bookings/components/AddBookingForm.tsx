@@ -2,9 +2,9 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { primaryColor } from "@/constants/theme";
 import { addBookingSchema, TAddBooking } from "@/features/bookings/validations";
 import { usePetOwnerBooking } from "@/hooks/pet-owner/use-pet-owner-booking";
 import { usePetOwnerCaregiverFilter } from "@/hooks/pet-owner/use-pet-owner-caregivers-filter";
@@ -20,7 +20,7 @@ export const AddBookingForm = () => {
   const currentDate = new Date();
 
   const startDate = new Date(
-    currentDate.setMinutes(currentDate.getMinutes() + 30)
+    currentDate.setMinutes(currentDate.getMinutes() + 30),
   );
 
   const form = useForm({
@@ -60,6 +60,7 @@ export const AddBookingForm = () => {
       <View style={styles.container}>
         {step === 1 && (
           <AddBookingStepOne
+            onPrev={() => router.replace("/pet-owner")}
             onNext={handleNext(["pets", "startDate", "notes"])}
           />
         )}
@@ -94,7 +95,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: primaryColor,
     gap: 16,
   },
 });

@@ -7,17 +7,20 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { router } from "expo-router";
 
 import { Colors, primaryColor, tertiary, whiteColor } from "@/constants/theme";
+import { getStatusBarHeight } from "@/utils";
 
 export const HomeTabsHeader = () => {
   const colorScheme = "light";
   const handleSelectRole = () => router.push(`/select-role`);
 
+  const statusBarHeight = getStatusBarHeight();
+
   return (
     <View
       style={{
-        marginTop: 48,
         flexDirection: "row",
         padding: 24,
+        paddingTop: 24 + statusBarHeight,
         gap: 12,
         alignItems: "center",
         backgroundColor: whiteColor,
@@ -36,7 +39,7 @@ export const HomeTabsHeader = () => {
           shadowOpacity: 0.12,
           shadowRadius: 4,
           elevation: 3,
-          backgroundColor: "white",
+          backgroundColor: whiteColor,
         }}
       >
         <MaterialCommunityIcons name="account" size={32} color="black" />

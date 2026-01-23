@@ -1,133 +1,95 @@
-import React, { ReactNode } from "react";
-import {
-  ActivityIndicator,
-  ButtonProps as BaseButtonProps,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native";
+import React from "react";
 
-import { blackColor, whiteColor } from "@/constants/theme";
-import { useThemeColor } from "@/hooks/use-theme-color";
+import {
+  Button as BaseButton,
+  ButtonProps as BaseButtonProps,
+  useTheme,
+} from "react-native-paper";
+
+import { whiteColor } from "@/constants/theme";
+
+import { getContrastColor } from "../../utils/color";
 
 export interface ButtonProps extends BaseButtonProps {
-  variant?: "contained" | "reversed" | "outlined" | "ghost";
   size?: "sm" | "md" | "lg";
-  loading?: boolean;
-  icon?: ReactNode;
-  style?: StyleProp<ViewStyle>;
-  color?: "primary" | "secondary";
+  color?: "primary" | "secondary" | "white" | "error";
+  corner?: "square" | "rounded" | "pill";
 }
 
 export const Button = ({
-  title,
-  onPress,
-  variant = "contained",
   color = "primary",
   size = "md",
-  loading = false,
-  disabled = false,
-  icon = null,
+  corner = "pill",
   style,
   accessibilityLabel,
-  ...rest
+  children,
+  ...props
 }: ButtonProps) => {
-  const buttonColor = useThemeColor({}, color);
-  const isDisabled = disabled || loading;
+  const theme = useTheme();
+  const colors = {
+    ...theme.colors,
+    white: whiteColor,
+  };
 
-  const containerStyle = [
-    styles.base,
-    size === "sm" && styles.sm,
-    size === "lg" && styles.lg,
-    variant === "contained" && {
-      backgroundColor: buttonColor,
-    },
-    variant === "reversed" && {
-      backgroundColor: whiteColor,
-    },
-    style,
-  ];
+  const buttonSizeStyles = buttonSizes[size];
+  const contrastColor = getContrastColor(colors[color]);
 
-  const textStyle = [
-    styles.text,
-    size === "sm" && styles.textSm,
-    size === "lg" && styles.textLg,
-    variant === "contained" && {
-      color: color === "primary" ? whiteColor : blackColor,
-    },
-    variant === "reversed" && {
-      color: buttonColor,
-    },
-  ];
+  // Compute the borderRadius for "pill" as half of the estimated button height
+  let borderRadius;
+  if (corner === "pill") {
+    // Estimated height: fontSize + paddingVertical * 2 + extra fudge if needed
+    const height =
+      buttonSizeStyles.fontSize + buttonSizeStyles.paddingVertical * 2 + 4; // fudge factor to ensure rounding for larger text
+    borderRadius = height;
+  } else if (corner === "rounded") {
+    borderRadius = 8;
+  } else {
+    borderRadius = 0;
+  }
 
   return (
-    <TouchableOpacity
-      accessibilityLabel={accessibilityLabel || title}
-      accessibilityRole="button"
-      onPress={onPress}
-      disabled={isDisabled}
-      style={[containerStyle, isDisabled ? styles.disabled : {}]}
-      {...rest}
+    <BaseButton
+      {...props}
+      buttonColor={colors[color]}
+      textColor={contrastColor}
+      style={[
+        {
+          borderRadius,
+        },
+        style,
+      ]}
+      labelStyle={{
+        fontSize: buttonSizeStyles.fontSize,
+        paddingVertical: buttonSizeStyles.paddingVertical,
+        paddingHorizontal: buttonSizeStyles.paddingHorizontal,
+      }}
     >
-      <View style={styles.content}>
-        {loading ? (
-          <ActivityIndicator size={24} />
-        ) : (
-          <>
-            {icon ? <View style={styles.iconWrapper}>{icon}</View> : null}
-            <Text numberOfLines={1} ellipsizeMode="tail" style={textStyle}>
-              {title}
-            </Text>
-          </>
-        )}
-      </View>
-    </TouchableOpacity>
+      {children}
+    </BaseButton>
   );
 };
 
-const styles = StyleSheet.create({
-  base: {
-    minWidth: 140,
-    paddingVertical: 8,
-    paddingHorizontal: 24,
-    borderRadius: 56,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-    fontFamily: "Poppins-Bold",
-    fontWeight: 600,
-    lineHeight: 32,
-    textAlign: "center",
-  },
+export const buttonSizes = {
   sm: {
-    minWidth: 110,
+    paddingVertical: 2,
+    paddingHorizontal: 3,
+    fontSize: 10,
+  },
+  md: {
     paddingVertical: 6,
     paddingHorizontal: 8,
+    fontSize: 16,
   },
   lg: {
-    minWidth: 180,
-    paddingVertical: 16,
-    paddingHorizontal: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    fontSize: 20,
   },
-  text: {
-    fontSize: 24,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  textSm: { fontSize: 14 },
-  textLg: { fontSize: 18 },
-  content: { flexDirection: "row", alignItems: "center", gap: 8 },
-  iconWrapper: {
-    marginRight: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  disabled: { opacity: 0.85 },
-});
+};
+
+// No longer needed, but kept for reference, not used in Button anymore
+export const cornerRadii = {
+  square: 0,
+  rounded: 8,
+  pill: undefined,
+};

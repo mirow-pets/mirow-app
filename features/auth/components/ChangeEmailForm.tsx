@@ -15,7 +15,6 @@ import { changeEmailSchema, TChangeEmail } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
 import OtpProvider, { useOtp } from "@/hooks/use-otp";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { Patch } from "@/services/http-service";
 import { TAuthUser, UserRole } from "@/types/users";
 import { onError } from "@/utils";
@@ -60,8 +59,8 @@ const ChangeEmailStep = ({ user }: ChangeEmailStepProps) => {
           queryKeys.map((queryKey) =>
             queryClient.invalidateQueries({
               queryKey,
-            })
-          )
+            }),
+          ),
         );
 
         Toast.show({
@@ -78,11 +77,12 @@ const ChangeEmailStep = ({ user }: ChangeEmailStepProps) => {
     <FormProvider {...form}>
       <Input name="newEmail" label="New email" />
       <Button
-        title="Change email"
         onPress={form.handleSubmit(submit)}
         loading={isChangingEmail}
         color="secondary"
-      />
+      >
+        Change
+      </Button>
     </FormProvider>
   );
 };
@@ -92,14 +92,13 @@ export interface ChangeEmailFormProps {
 }
 
 export default function ChangeEmailForm({ user }: ChangeEmailFormProps) {
-  const primaryColor = useThemeColor({}, "primary");
   const [step, setStep] = useState(1);
 
   const handleNext = () => setStep((step) => step + 1);
 
   return (
     <OtpProvider>
-      <View style={[styles.container, { backgroundColor: primaryColor }]}>
+      <View style={styles.container}>
         {step === 1 && (
           <SubmitOtpStep
             description="We'll send you a one-time password (OTP) to help you change your email."

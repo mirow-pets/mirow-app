@@ -1,12 +1,13 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import {
-  Modal as BaseModal,
   StyleProp,
   StyleSheet,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
+
+import { Modal as BaseModal, Portal, useTheme } from "react-native-paper";
 
 import { whiteColor } from "@/constants/theme";
 import { useModal } from "@/hooks/use-modal";
@@ -15,15 +16,17 @@ import { ThemedText } from "../themed-text";
 
 export interface ModalProps {
   children: ReactNode;
-  trigger: ReactNode;
-  title: string;
+  trigger?: ReactNode;
+  title?: string;
   id: string;
   onConfirm?: () => void;
   style?: StyleProp<ViewStyle>;
   cancelText?: string;
   confirmText?: string;
+  hideCancel?: boolean;
   loading?: boolean;
   disabled?: boolean;
+  open?: boolean;
 }
 
 export const Modal = ({
@@ -35,29 +38,37 @@ export const Modal = ({
   style,
   cancelText,
   confirmText,
+  hideCancel,
   loading,
   disabled,
+  open,
 }: ModalProps) => {
+  const theme = useTheme();
   const { openId, setOpenId } = useModal();
+
+  useEffect(() => {
+    setOpenId(open ? id : "");
+  }, [id, open, setOpenId]);
 
   return (
     <>
-      <TouchableOpacity onPress={() => setOpenId(id)} disabled={disabled}>
-        {trigger}
-      </TouchableOpacity>
-      <BaseModal
-        transparent
-        visible={openId === id}
-        onRequestClose={() => {
-          setOpenId("");
-        }}
-        style={styles.container}
-      >
-        <View style={styles.centeredView}>
-          <View style={[styles.modalView, style]}>
-            <ThemedText style={styles.modalTitle}>{title}</ThemedText>
-            <View>{children}</View>
-            <View style={styles.modalFooter}>
+      {trigger && (
+        <TouchableOpacity onPress={() => setOpenId(id)} disabled={disabled}>
+          {trigger}
+        </TouchableOpacity>
+      )}
+
+      <Portal>
+        <BaseModal
+          visible={openId === id}
+          onDismiss={() => setOpenId("")}
+          style={{ alignItems: "center" }}
+          contentContainerStyle={[styles.modalView, style]}
+        >
+          {title && <ThemedText style={styles.modalTitle}>{title}</ThemedText>}
+          <View>{children}</View>
+          <View style={styles.modalFooter}>
+            {!hideCancel && (
               <TouchableOpacity
                 onPress={() => setOpenId("")}
                 disabled={loading}
@@ -66,41 +77,27 @@ export const Modal = ({
                   {cancelText || "Cancel"}
                 </ThemedText>
               </TouchableOpacity>
-              {onConfirm && (
-                <TouchableOpacity onPress={onConfirm} disabled={loading}>
-                  <ThemedText style={styles.footerText}>
-                    {confirmText || "Confirm"}
-                  </ThemedText>
-                </TouchableOpacity>
-              )}
-            </View>
+            )}
+            {onConfirm && (
+              <TouchableOpacity onPress={onConfirm} disabled={loading}>
+                <ThemedText
+                  style={[styles.footerText, { color: theme.colors.primary }]}
+                >
+                  {confirmText || "Confirm"}
+                </ThemedText>
+              </TouchableOpacity>
+            )}
           </View>
-        </View>
-      </BaseModal>
+        </BaseModal>
+      </Portal>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.05)",
-    padding: 16,
-  },
   modalView: {
     borderRadius: 10,
     padding: 16,
-    elevation: 5,
-    flexDirection: "column",
-    width: "100%",
-    maxHeight: 500,
     gap: 32,
     backgroundColor: whiteColor,
   },

@@ -5,7 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { DateInput } from "@/components/form/DateInput";
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { Modal } from "@/components/modal/Modal";
 import { useModal } from "@/hooks/use-modal";
 
@@ -48,7 +48,7 @@ export const AddVaccineModal = ({ onAdded }: AddVaccineModalProps) => {
         trigger={<Text>Add</Text>}
         onConfirm={form.handleSubmit(confirm)}
       >
-        <Input label="Vaccine name" name="vaccineName" />
+        <TextInputField label="Vaccine name" name="vaccineName" />
         <DateInput label="Given at" name="vaccinatedAt" />
         <DateInput label="Due date" name="nextDueDate" />
       </Modal>

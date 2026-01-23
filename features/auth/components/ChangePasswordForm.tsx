@@ -18,7 +18,6 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
 import OtpProvider, { useOtp } from "@/hooks/use-otp";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { Patch } from "@/services/http-service";
 import { TAuthUser, UserRole } from "@/types/users";
 import { onError } from "@/utils";
@@ -36,7 +35,7 @@ const ChangePasswordStep = ({ user }: ChangePasswordStepProps) => {
       mutationFn: ({ confirmPassword, ...input }: TChangePassword) =>
         Patch(`/v2/auth/change-password`, input),
       onError,
-    }
+    },
   );
 
   const form = useForm({
@@ -73,11 +72,12 @@ const ChangePasswordStep = ({ user }: ChangePasswordStepProps) => {
       <PasswordInput name="newPassword" label="New password" />
       <PasswordInput name="confirmPassword" label="Confirm password" />
       <Button
-        title="Change password"
         onPress={form.handleSubmit(submit)}
         loading={isChangingPassword}
         color="secondary"
-      />
+      >
+        Change password
+      </Button>
     </FormProvider>
   );
 };
@@ -87,14 +87,13 @@ export interface ChangePasswordFormProps {
 }
 
 export default function ChangePasswordForm({ user }: ChangePasswordFormProps) {
-  const primaryColor = useThemeColor({}, "primary");
   const [step, setStep] = useState(1);
 
   const handleNext = () => setStep((step) => step + 1);
 
   return (
     <OtpProvider>
-      <View style={[styles.container, { backgroundColor: primaryColor }]}>
+      <View style={styles.container}>
         {step === 1 && (
           <SubmitOtpStep
             description="We'll send you a one-time password (OTP) to help you change your password."

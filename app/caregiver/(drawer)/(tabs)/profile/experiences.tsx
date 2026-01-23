@@ -2,14 +2,13 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Checkbox } from "expo-checkbox";
 import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
+import { Checkbox, HelperText } from "react-native-paper";
 
 import { Button } from "@/components/button/Button";
 import { NumberInput } from "@/components/form/NumberInput";
 import { ThemedText } from "@/components/themed-text";
-import { primaryColor, secondaryColor } from "@/constants/theme";
 import { updateCaregiverProfileSchema } from "@/features/profile/validations";
 import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
@@ -54,7 +53,7 @@ export default function ExperiencesScreen() {
           form.reset();
           router.replace("/caregiver/profile");
         },
-      }
+      },
     );
   };
 
@@ -70,7 +69,7 @@ export default function ExperiencesScreen() {
         <View>
           {petTypeOptions.map(({ label, value }, i) => {
             const isChecked = petTypes.includes(
-              value as TCaregiverPreference["id"]
+              value as TCaregiverPreference["id"],
             );
 
             const handleOnValueChange = (isChecked: boolean) => {
@@ -81,26 +80,31 @@ export default function ExperiencesScreen() {
             };
 
             return (
-              <View key={i} style={{ flexDirection: "row", gap: 8 }}>
+              <View
+                key={i}
+                style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
+              >
                 <Checkbox
-                  value={isChecked}
-                  onValueChange={handleOnValueChange}
-                  color={secondaryColor}
+                  status={isChecked ? "checked" : "unchecked"}
+                  onPress={() => handleOnValueChange(!isChecked)}
                 />
-                <ThemedText>{label}</ThemedText>
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <ThemedText>{label}</ThemedText>
+                </View>
               </View>
             );
           })}
         </View>
-        <ThemedText type="error">
+        <HelperText type="error">
           {form.formState.errors.petTypes?.message?.toString()}
-        </ThemedText>
+        </HelperText>
         <Button
-          title="Save"
           onPress={handleSubmit}
           loading={isUpdatingProfile}
           color="secondary"
-        />
+        >
+          Save
+        </Button>
       </View>
     </FormProvider>
   );
@@ -110,8 +114,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     padding: 20,
-    width: "100%",
     gap: 16,
-    backgroundColor: primaryColor,
   },
 });

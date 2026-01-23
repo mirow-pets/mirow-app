@@ -9,9 +9,6 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "backgroundColor": "#ffffff",
-    "splash": {
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true,
       "backgroundColor": "#ffffff",
@@ -45,10 +42,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/mirow-color.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#37b2ff",
+          "image": "./assets/images/mirow-logo.png",
+          "imageWidth": 200
         }
       ],
       "expo-font",
@@ -65,7 +61,7 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
-      ]
+      ],
     ],
     "experiments": {
       "typedRoutes": true,

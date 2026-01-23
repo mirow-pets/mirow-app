@@ -1,10 +1,13 @@
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
+import { Image } from "expo-image";
 import { Href, Redirect, useRouter } from "expo-router";
 
 import { Button } from "@/components/button/Button";
 import AuthScreenLayout from "@/components/layout/AuthScreenLayout";
+import { ThemedText } from "@/components/themed-text";
+import { whiteColor } from "@/constants/theme";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/types/users";
 
@@ -20,31 +23,49 @@ export default function SelectRoleScreen() {
 
   return (
     <AuthScreenLayout
-      image={require("@/assets/images/select-role-image.png")}
-      title="LET'S GET YOU STARTED!"
-      subTitle="Hello there! Are you my"
+      bgImage={require("@/assets/images/select-role-bg.png")}
+      showLogo
     >
       <View style={styles.container}>
+        <Image
+          source={require("@/assets/images/select-role-image.png")}
+          style={{ width: 300, height: 300 }}
+        />
+        <ThemedText
+          type="title"
+          style={{ color: whiteColor, textAlign: "center" }}
+        >
+          LET&apos;S GET YOU STARTED!
+        </ThemedText>
+        <ThemedText
+          type="defaultSemiBold"
+          style={{ color: whiteColor, textAlign: "center", marginBottom: 16 }}
+        >
+          Hello there! Are you my
+        </ThemedText>
         <Button
           onPress={() => {
             setUserRole(UserRole.PetOwner);
             router.push("/pet-owner/login");
           }}
-          style={{ minWidth: "80%" }}
-          title="Pet owner"
+          style={{ width: "80%" }}
           color="secondary"
-        />
+          size="lg"
+        >
+          Pet Owner
+        </Button>
         <View style={{ marginVertical: 4 }} />
         <Button
           onPress={() => {
             setUserRole(UserRole.CareGiver);
             router.push("/caregiver/login");
           }}
-          style={{ minWidth: "80%" }}
-          title="Pet Caregiver"
-          color="secondary"
-          variant="reversed"
-        />
+          style={{ width: "80%" }}
+          color="white"
+          size="lg"
+        >
+          Pet Caregiver
+        </Button>
       </View>
     </AuthScreenLayout>
   );

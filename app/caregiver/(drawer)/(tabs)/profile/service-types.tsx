@@ -2,16 +2,15 @@ import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Checkbox } from "expo-checkbox";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { ScrollView } from "react-native-gesture-handler";
+import { Checkbox, HelperText } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
 import { Button } from "@/components/button/Button";
 import { ThemedText } from "@/components/themed-text";
-import { primaryColor, secondaryColor } from "@/constants/theme";
 import { ServicesForm } from "@/features/profile/components/ServicesForm";
 import {
   TUpdateCaregiverServices,
@@ -33,7 +32,6 @@ export default function ServiceTypesScreen() {
   const { serviceTypes, homeTypeOptions, transportTypeOptions } =
     useCaregiverCaregiver();
   const { profile } = useCaregiverProfile();
-  const queryClient = useQueryClient();
   const { refetch } = useRefetchQueries();
 
   const { mutate, isPending } = useMutation({
@@ -64,7 +62,7 @@ export default function ServiceTypesScreen() {
   });
 
   const transportation = serviceTypes?.find(
-    ({ type }) => type === "transportation"
+    ({ type }) => type === "transportation",
   );
   const transportId = transportation?.id;
 
@@ -102,7 +100,7 @@ export default function ServiceTypesScreen() {
       // Ensure transportIds is required if "transportation" service is active
       if (
         !services?.some(
-          (service) => service.id === transportId && service.isActive
+          (service) => service.id === transportId && service.isActive,
         )
       )
         return;
@@ -125,7 +123,7 @@ export default function ServiceTypesScreen() {
           });
         }
         const minServiceRate = centToMajorUnit(
-          serviceTypeMapper[service.id].minServiceRate
+          serviceTypeMapper[service.id].minServiceRate,
         );
         if (service.serviceRate && minServiceRate > service.serviceRate) {
           ctx.addIssue({
@@ -152,7 +150,7 @@ export default function ServiceTypesScreen() {
     if (!transportId) return false;
 
     const isTransportationExists = values.services.find(
-      (service) => service.id === transportId && service.isActive
+      (service) => service.id === transportId && service.isActive,
     );
 
     if (isTransportationExists) return true;
@@ -183,9 +181,9 @@ export default function ServiceTypesScreen() {
         <View style={styles.container}>
           <ThemedText type="defaultSemiBold">Services:</ThemedText>
           <ServicesForm />
-          <ThemedText type="error">
+          <HelperText type="error">
             {form.formState.errors.services?.message?.toString()}
-          </ThemedText>
+          </HelperText>
           <ThemedText type="defaultSemiBold">Home Types:</ThemedText>
           <View>
             {homeTypeOptions.map(({ label, value }, i) => {
@@ -199,20 +197,24 @@ export default function ServiceTypesScreen() {
               };
 
               return (
-                <View key={i} style={{ flexDirection: "row", gap: 8 }}>
+                <View
+                  key={i}
+                  style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
+                >
                   <Checkbox
-                    value={isChecked}
-                    onValueChange={handleOnValueChange}
-                    color={secondaryColor}
+                    status={isChecked ? "checked" : "unchecked"}
+                    onPress={() => handleOnValueChange(!isChecked)}
                   />
-                  <ThemedText>{label}</ThemedText>
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <ThemedText>{label}</ThemedText>
+                  </View>
                 </View>
               );
             })}
           </View>
-          <ThemedText type="error">
+          <HelperText type="error">
             {form.formState.errors.homeTypesIds?.message?.toString()}
-          </ThemedText>
+          </HelperText>
           {enabledTransportTypes && (
             <>
               <ThemedText type="defaultSemiBold">
@@ -221,41 +223,50 @@ export default function ServiceTypesScreen() {
               <View>
                 {transportTypeOptions.map(({ label, value }, i) => {
                   const isChecked = transportIds.includes(
-                    value as TTransportType["id"]
+                    value as TTransportType["id"],
                   );
 
                   const handleOnValueChange = (isChecked: boolean) => {
                     const newTransportationTypes = isChecked
                       ? [...transportIds, value as TTransportType["id"]]
                       : transportIds.filter(
-                          (transportId) => transportId !== value
+                          (transportId) => transportId !== value,
                         );
                     form.setValue("transportIds", newTransportationTypes);
                   };
 
                   return (
-                    <View key={i} style={{ flexDirection: "row", gap: 8 }}>
+                    <View
+                      key={i}
+                      style={{
+                        flexDirection: "row",
+                        gap: 8,
+                        alignItems: "center",
+                      }}
+                    >
                       <Checkbox
-                        value={isChecked}
-                        onValueChange={handleOnValueChange}
-                        color={secondaryColor}
+                        status={isChecked ? "checked" : "unchecked"}
+                        onPress={() => handleOnValueChange(!isChecked)}
                       />
-                      <ThemedText>{label}</ThemedText>
+                      <View style={{ flex: 1, minWidth: 0 }}>
+                        <ThemedText>{label}</ThemedText>
+                      </View>
                     </View>
                   );
                 })}
               </View>
             </>
           )}
-          <ThemedText type="error">
+          <HelperText type="error">
             {form.formState.errors.transportIds?.message?.toString()}
-          </ThemedText>
+          </HelperText>
           <Button
-            title="Save"
             onPress={form.handleSubmit(submit)}
             loading={isPending}
             color="secondary"
-          />
+          >
+            Save
+          </Button>
         </View>
         <View style={{ height: 100 }} />
       </ScrollView>
@@ -267,8 +278,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     padding: 20,
-    width: "100%",
     gap: 16,
-    backgroundColor: primaryColor,
   },
 });

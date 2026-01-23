@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { updateCaregiverProfileSchema } from "@/features/profile/validations";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
@@ -47,21 +47,14 @@ export default function BioDescriptionScreen() {
           form.reset();
           router.replace("/caregiver/profile");
         },
-      }
+      },
     );
   };
 
   return (
     <FormProvider {...form}>
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: primaryColor,
-          },
-        ]}
-      >
-        <Input
+      <View style={styles.container}>
+        <TextInputField
           label="Bio description"
           name="bioDescription"
           placeholder="Please enter anything about yourself"
@@ -69,11 +62,12 @@ export default function BioDescriptionScreen() {
           numberOfLines={3}
         />
         <Button
-          title="Save"
           onPress={handleSubmit}
           loading={isUpdatingProfile}
           color="secondary"
-        />
+        >
+          Save
+        </Button>
       </View>
     </FormProvider>
   );
@@ -83,7 +77,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     padding: 20,
-    width: "100%",
     gap: 16,
   },
 });

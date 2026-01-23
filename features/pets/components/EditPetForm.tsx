@@ -6,13 +6,10 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/button/Button";
 import { DropdownInput } from "@/components/form/DropdownInput";
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { PetAvatar } from "@/components/image/PetAvatar";
-import { primaryColor } from "@/constants/theme";
 import { editPetSchema, TEditPet } from "@/features/pets/validations";
 import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
-
-import { PetVaccinationsForm } from "./PetVaccinationsForm";
 
 export interface EditPetFormProps {
   defaultValues: TEditPet;
@@ -50,45 +47,63 @@ export const EditPetForm = ({ defaultValues }: EditPetFormProps) => {
             src={profileImage || undefined}
           />
         </View>
-        <Input name="name" placeholder="Name" autoCapitalize="none" />
+        <TextInputField
+          label="Name"
+          name="name"
+          placeholder="Name"
+          autoCapitalize="none"
+        />
         <DropdownInput
+          label="Pet type"
           name="petTypesId"
           placeholder="Select Pet Type"
           options={petTypeOptions}
         />
-        <Input name="breed" placeholder="Breed" />
-        <Input name="age" placeholder="Age" keyboardType="number-pad" />
+        <TextInputField label="Breed" name="breed" placeholder="Breed" />
+        <TextInputField
+          label="Age"
+          name="age"
+          placeholder="Age"
+          keyboardType="number-pad"
+        />
         <DropdownInput
+          label="Gender"
           name="gender"
           placeholder="Select Gender"
           options={genderOptions}
         />
         <DropdownInput
+          label="Pet weight"
           name="petWeightsId"
           placeholder="Select Weight"
           options={weightOptions}
         />
         <DropdownInput
+          label="Spayed or neutered"
           name="spayedOrNeutered"
           placeholder="Select spayer or neutered"
           options={spayedOrNeuteredOptions}
         />
-        <Input
+        <TextInputField
+          label="Special Instructions / Notes"
           name="careGiverNotes"
           placeholder="Special Instructions / Notes"
+          numberOfLines={3}
+          multiline
         />
-        <PetVaccinationsForm
-          value={petVaccinations ?? []}
+        {/* <PetVaccinationsForm
+          value={petVaccinations}
           onChange={(petVaccinations) =>
             form.setValue("petVaccinations", petVaccinations)
           }
-        />
+        /> */}
         <Button
-          title="Save"
           onPress={form.handleSubmit(editPet)}
           loading={isEditingPet}
           color="secondary"
-        />
+        >
+          Save
+        </Button>
       </View>
     </FormProvider>
   );
@@ -100,8 +115,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 100,
-    width: "100%",
     gap: 16,
-    backgroundColor: primaryColor,
   },
 });

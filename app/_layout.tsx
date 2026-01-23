@@ -1,14 +1,15 @@
-import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
-import { Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
+import { defaultTheme } from "@/constants/theme";
 import { ENV } from "@/env";
 import AuthProvider, { useAuth } from "@/hooks/use-auth";
 import ModalProvider from "@/hooks/use-modal";
@@ -36,6 +37,8 @@ Notifications.setNotificationHandler({
   }),
 });
 
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
   useNotificationObserver();
 
@@ -49,7 +52,7 @@ export default function RootLayout() {
         <ModalProvider>
           <AuthProvider>
             <RootLayoutNav />
-            <StatusBar style="auto"  />
+            <StatusBar style="auto" />
             <Toast />
           </AuthProvider>
         </ModalProvider>
@@ -69,7 +72,7 @@ const RootLayoutNav = () => {
   if (!fontsLoaded) return null;
 
   return (
-    <ThemeProvider value={DefaultTheme}>
+    <PaperProvider theme={defaultTheme}>
       <GestureHandlerRootView>
         <Stack initialRouteName="index">
           <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -81,6 +84,6 @@ const RootLayoutNav = () => {
           </Stack.Protected>
         </Stack>
       </GestureHandlerRootView>
-    </ThemeProvider>
+    </PaperProvider>
   );
 };

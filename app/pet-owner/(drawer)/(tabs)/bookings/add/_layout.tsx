@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 
 import PetOwnerCaregiverFilterProvider from "@/hooks/pet-owner/use-pet-owner-caregivers-filter";
-import { defaultHeader } from "@/utils";
 import "react-native-reanimated";
 
 export default function AddBookingLayout() {
@@ -9,7 +8,8 @@ export default function AddBookingLayout() {
     <PetOwnerCaregiverFilterProvider>
       <Stack
         screenOptions={{
-          header: defaultHeader,
+          // header: defaultHeader,
+          headerShadowVisible: false,
         }}
       >
         <Stack.Screen

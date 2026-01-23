@@ -3,10 +3,10 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 import { Controller, get, useFormContext, useFormState } from "react-hook-form";
+import { HelperText, TextInput, TextInputProps } from "react-native-paper";
 import SelectDropdown from "react-native-select-dropdown";
 
-import { ThemedText } from "@/components/themed-text";
-import { blackColor, grayColor, redColor, whiteColor } from "@/constants/theme";
+import { grayColor } from "@/constants/theme";
 
 interface DropdownInputProps {
   label?: string;
@@ -16,6 +16,8 @@ interface DropdownInputProps {
   value?: unknown;
   onChange?: (value: unknown) => void;
   disabled?: boolean;
+  inputStyle?: TextInputProps["style"];
+  mode?: "flat" | "outlined";
 }
 
 export const DropdownInput = ({
@@ -26,72 +28,79 @@ export const DropdownInput = ({
   value: _value,
   onChange: _onChange,
   disabled,
+  inputStyle,
+  mode = "outlined",
 }: DropdownInputProps) => {
   const form = useFormContext();
-  const { errors } = useFormState({ control: form.control, name });
+
+  // Always get the latest error from useFormState directly
+  const error = get(
+    useFormState({ control: form.control, name }).errors,
+    name
+  )?.message;
 
   return (
-    <View style={{ width: "100%" }}>
-      {label && <ThemedText style={styles.label}>{label}</ThemedText>}
-      <View>
-        <Controller
-          control={form.control}
-          name={name}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <SelectDropdown
-              searchPlaceHolderColor={grayColor}
-              defaultValue={options.find(
-                (option) => option.value === (_value || value)
-              )}
-              disabled
-              data={options}
-              onBlur={onBlur}
-              onSelect={(selectedItem) =>
-                _onChange
-                  ? _onChange(selectedItem.value)
-                  : onChange(selectedItem.value)
-              }
-              renderButton={(selectedItem, isOpened) => (
-                <View style={styles.input}>
-                  {selectedItem ? (
-                    <Text style={styles.dropdownButtonTxtStyle}>
-                      {selectedItem.label}
-                    </Text>
-                  ) : (
-                    <Text style={styles.dropdownPlaceholderTxtStyle}>
-                      {placeholder}
-                    </Text>
-                  )}
-                  <Ionicons
-                    name={isOpened ? "chevron-up" : "chevron-down"}
-                    style={styles.dropdownButtonArrowStyle}
-                  />
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field: { onChange, onBlur, value } }) => (
+        <View style={{ width: "100%" }}>
+          <SelectDropdown
+            searchPlaceHolderColor={grayColor}
+            defaultValue={options.find(
+              (option) => option.value === (_value || value)
+            )}
+            disabled={disabled}
+            data={options}
+            onBlur={onBlur}
+            onSelect={(selectedItem) =>
+              _onChange
+                ? _onChange(selectedItem.value)
+                : onChange(selectedItem.value)
+            }
+            renderButton={(selectedItem, isOpened) => (
+              <View style={styles.input}>
+                <TextInput
+                  label={label}
+                  value={selectedItem?.label}
+                  placeholder={placeholder}
+                  readOnly
+                  style={[
+                    {
+                      paddingRight: 30,
+                      backgroundColor:
+                        mode === "flat" ? "transparent" : undefined,
+                    },
+                    inputStyle,
+                  ]}
+                  error={!!error}
+                  mode={mode}
+                />
+                <Ionicons
+                  name={isOpened ? "chevron-up" : "chevron-down"}
+                  style={styles.dropdownButtonArrowStyle}
+                />
+              </View>
+            )}
+            renderItem={(item, index, isSelected) => {
+              return (
+                <View
+                  style={{
+                    ...styles.dropdownItemStyle,
+                    ...(isSelected && { backgroundColor: "#D2D9DF" }),
+                  }}
+                >
+                  <Text style={styles.dropdownItemTxtStyle}>{item.label}</Text>
                 </View>
-              )}
-              renderItem={(item, index, isSelected) => {
-                return (
-                  <View
-                    style={{
-                      ...styles.dropdownItemStyle,
-                      ...(isSelected && { backgroundColor: "#D2D9DF" }),
-                    }}
-                  >
-                    <Text style={styles.dropdownItemTxtStyle}>
-                      {item.label}
-                    </Text>
-                  </View>
-                );
-              }}
-              showsVerticalScrollIndicator={false}
-              dropdownStyle={styles.dropdownMenuStyle}
-            />
-          )}
-        ></Controller>
-      </View>
-      <ThemedText style={styles.errorText}>
-        {get(errors, name)?.message?.toString()}
-      </ThemedText>
-    </View>
+              );
+            }}
+            showsVerticalScrollIndicator={false}
+            dropdownStyle={styles.dropdownMenuStyle}
+          />
+          <HelperText type="error">{error?.toString()}</HelperText>
+        </View>
+      )}
+    />
   );
 };
 
@@ -100,21 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   input: {
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: whiteColor,
-    fontWeight: 600,
-    fontSize: 16,
-    boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
-    flexDirection: "row",
-    fontFamily: "Poppins-Bold",
-    alignItems: "center",
-    color: blackColor,
-  },
-  errorText: {
-    color: redColor,
-    fontSize: 12,
-    height: 16,
+    position: "relative",
   },
   dropdownButtonStyle: {
     width: 200,
@@ -126,21 +121,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 12,
   },
-  dropdownButtonTxtStyle: {
-    flex: 1,
-    fontFamily: "Poppins-Bold",
-  },
-  dropdownPlaceholderTxtStyle: {
-    flex: 1,
-    color: "#00000088",
-    fontFamily: "Poppins-Bold",
-  },
   dropdownButtonArrowStyle: {
     fontSize: 16,
-  },
-  dropdownButtonIconStyle: {
-    fontSize: 16,
-    marginRight: 8,
+    position: "absolute",
+    right: 16,
+    top: "50%",
+    transform: [{ translateY: "-50%" }],
   },
   dropdownMenuStyle: {
     borderRadius: 8,
@@ -155,9 +141,5 @@ const styles = StyleSheet.create({
   },
   dropdownItemTxtStyle: {
     flex: 1,
-  },
-  dropdownItemIconStyle: {
-    fontSize: 28,
-    marginRight: 8,
   },
 });

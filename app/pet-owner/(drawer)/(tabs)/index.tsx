@@ -4,8 +4,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { ThemedText } from "@/components/themed-text";
-import { secondaryColor, whiteColor } from "@/constants/theme";
+import { whiteColor } from "@/constants/theme";
 import { NearbyCaregivers } from "@/features/caregivers/components/NearbyCaregivers";
 import { PetPerks } from "@/features/pets/components/PetPerks";
 import { ServicesMenu } from "@/features/services/components/ServicesMenu";
@@ -29,58 +28,12 @@ export default function PetOwnerHomeScreen() {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View
-          style={{
-            backgroundColor: primaryColor,
-            padding: 16,
-            borderRadius: 8,
-            gap: 16,
-            marginHorizontal: 16,
-          }}
-        >
+        <View style={{ padding: 16 }}>
           <Image
-            source={require("@/assets/images/mirow-text-logo.png")}
-            style={{ width: 50, height: 16, objectFit: "fill" }}
+            source={require("@/assets/images/50-off-banner.png")}
+            style={{ width: '100%', height: 180, objectFit: "fill", }}
           />
-          <View>
-            <View style={{ flexDirection: "row" }}>
-              <ThemedText
-                style={{
-                  color: secondaryColor,
-                  boxShadow: `1px_2px_1px_rgba(0,0,0,0.6)`,
-                  textShadowColor: "rgba(0,0,0,0.4)",
-                  textShadowRadius: 1,
-                  textShadowOffset: { width: 1, height: 2 },
-                }}
-              >
-                50% Off{" "}
-              </ThemedText>
-              <ThemedText
-                style={{
-                  color: whiteColor,
-                  boxShadow: `1px_2px_1px_rgba(0,0,0,0.6)`,
-                  textShadowColor: "rgba(0,0,0,0.4)",
-                  textShadowRadius: 1,
-                  textShadowOffset: { width: 1, height: 2 },
-                }}
-              >
-                on first
-              </ThemedText>
-            </View>
-            <ThemedText
-              style={{
-                color: whiteColor,
-                boxShadow: `1px_2px_1px_rgba(0,0,0,0.6)`,
-                textShadowColor: "rgba(0,0,0,0.4)",
-                textShadowRadius: 1,
-                textShadowOffset: { width: 1, height: 2 },
-              }}
-            >
-              100 sign-ups!
-            </ThemedText>
-          </View>
         </View>
-
         <View>
           <Text
             style={{
@@ -104,7 +57,7 @@ export default function PetOwnerHomeScreen() {
           onSeeMore={handleViewCaregivers}
         />
 
-        <PetPerks onClick={() => {}} onSeeMore={() => {}} />
+        <PetPerks onClick={() => { }} onSeeMore={() => { }} />
         <View style={{ height: 100 }} />
       </View>
     </ScrollView>

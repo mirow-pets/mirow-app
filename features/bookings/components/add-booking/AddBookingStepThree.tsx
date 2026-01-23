@@ -18,6 +18,7 @@ import {
 import { TAddBooking } from "@/features/bookings/validations";
 import { usePetOwnerCaregiverFilter } from "@/hooks/pet-owner/use-pet-owner-caregivers-filter";
 import { TCaregiver, TUser } from "@/types";
+import { majorToCentUnit } from "@/utils";
 
 export interface AddBookingStepThreeProps {
   onPrev?: () => void;
@@ -47,7 +48,7 @@ export const AddBookingStepThree = ({
   };
 
   return (
-    <FormStepsLayout {...{ onNext, onPrev, loading }}>
+    <FormStepsLayout {...{ onNext, onPrev, loading, progress: 0.8 }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <ThemedText type="defaultSemiBold">Pick your caregiver</ThemedText>
         <FilterButton onPress={handleFilter} />
@@ -67,7 +68,10 @@ export const AddBookingStepThree = ({
           distance: { text?: string };
         }>
           url="/v2/caregivers"
-          queryParams={filter}
+          queryParams={{
+            ...filter,
+            price: filter.price && majorToCentUnit(filter.price),
+          }}
           perPage={10}
           style={{ height: 400 }}
           contentContainerStyle={{ gap: 8 }}

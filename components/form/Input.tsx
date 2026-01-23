@@ -14,9 +14,9 @@ interface InputProps extends TextInputProps {
 
 export const Input = ({ label, name, formatter, ...props }: InputProps) => {
   const form = useFormContext();
-  const { errors } = useFormState({ control: form.control, name });
 
-  const error = errors[name];
+  // Always get the latest error from useFormState directly
+  const error = get(useFormState({ control: form.control, name }).errors, name)?.message;
 
   return (
     <View style={{ width: "100%" }}>
@@ -42,7 +42,7 @@ export const Input = ({ label, name, formatter, ...props }: InputProps) => {
         ></Controller>
       </View>
       <ThemedText style={styles.errorText}>
-        {get(errors, name)?.message?.toString()}
+        {error?.toString()}
       </ThemedText>
     </View>
   );

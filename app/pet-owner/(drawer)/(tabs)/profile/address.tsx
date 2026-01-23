@@ -2,21 +2,31 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
+import Toast from "react-native-toast-message";
 
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/form/Input";
 import { PlacesInput } from "@/components/form/PlacesInput";
+import { TextInputField } from "@/components/form/TextInputField";
 import { ThemedText } from "@/components/themed-text";
-import { updatePetOwnerProfileSchema } from "@/features/profile/validations";
+import {
+  TUpdateAddress,
+  updatePetOwnerProfileSchema,
+} from "@/features/profile/validations";
 import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
+import { useAuth } from "@/hooks/use-auth";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
+import { useRefetchQueries } from "@/hooks/use-refetch-queries";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { Patch } from "@/services/http-service";
 
 export default function AddressScreen() {
   const router = useRouter();
-  const { profile, updateProfile, isUpdatingProfile } = usePetOwnerProfile();
+  const { currUser } = useAuth();
+  const { refetch } = useRefetchQueries();
+  const { profile } = usePetOwnerProfile();
   const primaryColor = useThemeColor({}, "primary");
   const address = profile?.address[0];
 
@@ -31,6 +41,26 @@ export default function AddressScreen() {
     },
   });
 
+  const { mutate, isPending } = useMutation<void, Error, TUpdateAddress>({
+    mutationFn: (input) => Patch("/users/address", input),
+    onSuccess: () => {
+      const queryKeys = [
+        ["caregiver-profile", currUser?.sessionId],
+        ["caregiver-profile-completion", currUser?.sessionId],
+      ];
+
+      refetch(queryKeys);
+
+      form.reset();
+      router.replace("/pet-owner/profile");
+
+      Toast.show({
+        type: "success",
+        text1: "Pet owner address updated successfully!",
+      });
+    },
+  });
+
   useExitFormRouteWarning({
     isDirty: form.formState.isDirty,
     onExit: () => {
@@ -42,23 +72,13 @@ export default function AddressScreen() {
     const result = await form.trigger(["address", "city", "postalCode"]);
     if (!result) return;
 
-    updateProfile(form.getValues(), () => {
-      form.reset();
-      router.replace("/caregiver/profile");
-    });
+    mutate(form.getValues());
   };
 
   return (
     <FormProvider {...form}>
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: primaryColor,
-          },
-        ]}
-      >
-        <Input name="address" placeholder="Address" />
+      <View style={styles.container}>
+        <TextInputField label="Address" name="address" placeholder="Address" />
         <View
           style={{
             backgroundColor: primaryColor,
@@ -73,13 +93,14 @@ export default function AddressScreen() {
           </ThemedText>
         </View>
         <PlacesInput placeholder="Search City, State and Country" />
-        <Input name="postalCode" placeholder="Postal Code" />
-        <Button
-          title="Save"
-          onPress={handleSubmit}
-          loading={isUpdatingProfile}
-          color="secondary"
+        <TextInputField
+          label="Postal code"
+          name="postalCode"
+          placeholder="Postal Code"
         />
+        <Button onPress={handleSubmit} loading={isPending} color="secondary">
+          Save
+        </Button>
       </View>
     </FormProvider>
   );
@@ -87,7 +108,7 @@ export default function AddressScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
     gap: 16,
   },

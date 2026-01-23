@@ -1,18 +1,17 @@
 import React, { useState } from "react";
-import { StyleSheet, Switch, SwitchChangeEvent, View } from "react-native";
+import { StyleSheet, SwitchChangeEvent, View } from "react-native";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Switch } from "react-native-paper";
 
 import { ThemedText } from "@/components/themed-text";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useAuth } from "@/hooks/use-auth";
 import OtpProvider from "@/hooks/use-otp";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { Patch } from "@/services/http-service";
 import { alert, onError } from "@/utils";
 
 export default function AutoPayoutScreen() {
-  const primaryColor = useThemeColor({}, "primary");
   const queryClient = useQueryClient();
   const { currUser } = useAuth();
   const { profile } = useCaregiverProfile();
@@ -41,7 +40,7 @@ export default function AutoPayoutScreen() {
 
   return (
     <OtpProvider>
-      <View style={[styles.container, { backgroundColor: primaryColor }]}>
+      <View style={styles.container}>
         <ThemedText type="defaultSemiBold">Auto payout setting</ThemedText>
         <ThemedText>
           When auto payout is enabled, your available earnings will be

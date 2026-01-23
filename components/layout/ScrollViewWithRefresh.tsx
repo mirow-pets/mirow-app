@@ -20,6 +20,8 @@ export const ScrollViewWithRefresh = ({
   const primaryColor = useThemeColor({}, "primary");
   return (
     <ScrollView
+      nestedScrollEnabled
+      keyboardShouldPersistTaps="handled"
       {...props}
       refreshControl={
         <RefreshControl

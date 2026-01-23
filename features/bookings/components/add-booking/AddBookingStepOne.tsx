@@ -1,13 +1,14 @@
 import { StyleSheet, View } from "react-native";
 
 import { useFormContext } from "react-hook-form";
+import { HelperText } from "react-native-paper";
 
 import { DateTimeInput } from "@/components/form/DateTimeInput";
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { ThemedText } from "@/components/themed-text";
-import { primaryColor, secondaryColor, whiteColor } from "@/constants/theme";
+import { secondaryColor, whiteColor } from "@/constants/theme";
 import { AddPetModal } from "@/features/bookings/components/AddPetModal";
 import { TAddBooking } from "@/features/bookings/validations";
 import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
@@ -62,32 +63,29 @@ export const AddBookingStepOne = ({
   );
 
   return (
-    <FormStepsLayout {...{ onNext, onPrev }}>
+    <FormStepsLayout {...{ onNext, onPrev, progress: 0 }}>
       <View>
         <AddPetModal trigger={addPetModalTrigger} onAdded={handlePetAdded} />
-        <ThemedText type="error">
+        <HelperText type="error">
           {errors?.pets?.message?.toString()}
-        </ThemedText>
+        </HelperText>
       </View>
       <DateTimeInput
         label="Service date"
         name="startDate"
         minimumDate={new Date()}
       />
-      <Input label="Special instructions / Notes" name="notes" />
+      <TextInputField
+        label="Special instructions / Notes"
+        name="notes"
+        numberOfLines={3}
+        multiline
+      />
     </FormStepsLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-    width: "100%",
-    gap: 16,
-    backgroundColor: primaryColor,
-  },
   selectPetContainer: {
     padding: 8,
     backgroundColor: secondaryColor,

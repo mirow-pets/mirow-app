@@ -10,9 +10,8 @@ import {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery } from "@tanstack/react-query";
-import { router } from "expo-router";
+import { router, SplashScreen } from "expo-router";
 
-import { ThemedText } from "@/components/themed-text";
 import { Get } from "@/services/http-service";
 import { authStore, SetAuthArgs } from "@/stores/auth.store";
 import { TCurrentUser, UserRole } from "@/types/users";
@@ -101,6 +100,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       }
       if (accessToken && currUser) setAuth({ token: accessToken, currUser });
       if (userRole) setUserRole(userRole as UserRole);
+      SplashScreen.hideAsync();
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -156,7 +156,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setFcmToken,
       }}
     >
-      {isInitializing ? <ThemedText>Loading...</ThemedText> : children}
+      {isInitializing ? null : children}
     </AuthContext.Provider>
   );
 };

@@ -32,7 +32,7 @@ const EventItem = ({ event }: { event: TCalendarEvent }) => {
   const handleClick = () => {
     if (event?.metadata?.bookingId) {
       router.push(
-        `/${userRole as UserRole}/bookings/${event.metadata.bookingId}`
+        `/${userRole as UserRole}/bookings/${event.metadata.bookingId}`,
       );
     }
     if (event?.metadata?.petId) {
@@ -105,7 +105,7 @@ export const MyCalendar = () => {
         addQueryParams("/v2/calendars/events", {
           month: values.month,
           year: values.year,
-        })
+        }),
       );
 
       return result.map((item) => ({
@@ -140,7 +140,7 @@ export const MyCalendar = () => {
 
   const activeMonth = useMemo(
     () => monthOptions.find((m) => m.value === values.month),
-    [values.month]
+    [values.month],
   );
 
   const date = useMemo(() => {
@@ -179,10 +179,18 @@ export const MyCalendar = () => {
           }}
         >
           <View style={{ width: 180 }}>
-            <DropdownInput name="month" options={monthOptions} />
+            <DropdownInput
+              name="month"
+              options={monthOptions}
+              inputStyle={{ fontSize: 11, height: 48 }}
+            />
           </View>
           <View style={{ width: 180 }}>
-            <DropdownInput name="year" options={yearOptions} />
+            <DropdownInput
+              name="year"
+              options={yearOptions}
+              inputStyle={{ fontSize: 11, height: 48 }}
+            />
           </View>
         </View>
       </FormProvider>

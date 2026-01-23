@@ -1,94 +1,60 @@
 import { ReactNode, useEffect } from "react";
-import {
-  KeyboardAvoidingView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 
 import { Image, ImageBackground, ImageSource } from "expo-image";
 import { Href, useRouter } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { ThemedText } from "@/components/themed-text";
 import { whiteColor } from "@/constants/theme";
 import { useAuth } from "@/hooks/use-auth";
 
 export interface AuthScreenLayoutProps {
-  image: ImageSource;
-  title: string;
-  subTitle?: ReactNode;
   children: ReactNode;
   bgImage?: ImageSource;
-  showSwitchRole?: boolean;
+  showLogo?: boolean;
 }
 
 export default function AuthScreenLayout({
-  image,
-  title,
-  subTitle,
   children,
   bgImage,
-  showSwitchRole,
+  showLogo,
 }: AuthScreenLayoutProps) {
   const router = useRouter();
-  const { currUser, userRole, removeUserRole } = useAuth();
-
-  const handleSwitchRole = async () => {
-    await removeUserRole();
-    router.replace("/");
-  };
+  const { currUser, userRole } = useAuth();
 
   useEffect(() => {
     if (currUser) router.push(`/${userRole}/(drawer)/(tabs)` as Href);
   }, [currUser, userRole, router]);
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
-      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
-        <ImageBackground
-          source={bgImage || require("@/assets/images/pet-owner-login-bg.png")}
-          style={{ flex: 1 }}
-          contentFit="cover"
-        >
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: whiteColor }}
+      behavior="height"
+    >
+      <ImageBackground
+        source={bgImage || require("@/assets/images/signup-bg.png")}
+        style={{ flex: 1 }}
+        contentFit="cover"
+      >
+        <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
           <View style={styles.container}>
-            {showSwitchRole && (
-              <TouchableOpacity
-                onPress={handleSwitchRole}
-                style={{ position: "absolute", top: 32 }}
-              >
-                <Text>Switch role</Text>
-              </TouchableOpacity>
+            {showLogo && (
+              <Image
+                source={require("@/assets/images/logo.png")}
+                style={{
+                  width: 250,
+                  height: 140,
+                  marginBottom: 10,
+                  marginTop: 40,
+                  resizeMode: "contain",
+                }}
+              />
             )}
-            <View style={styles.topSection}>
-              <Image
-                source={require("@/assets/images/mirow-text-logo.png")}
-                style={{ width: 250, height: 80, objectFit: "fill" }}
-              />
-              <Image
-                source={image}
-                style={{ width: 250, height: 300, objectFit: "fill" }}
-              />
-            </View>
-            <View style={styles.bottomSection}>
-              <ThemedText type="title" style={styles.title}>
-                {title}
-              </ThemedText>
-              <View style={{ marginVertical: 4 }} />
-              {typeof subTitle === "string" ? (
-                <ThemedText type="subtitle" style={styles.subTitle}>
-                  {subTitle}
-                </ThemedText>
-              ) : (
-                subTitle
-              )}
-              {/* <View style={{ marginVertical: 2 }} /> */}
-              <View style={{ width: "100%" }}>{children}</View>
-            </View>
+            <View style={{ width: "100%" }}>{children}</View>
           </View>
-        </ImageBackground>
-      </ScrollView>
+        </ScrollView>
+      </ImageBackground>
+      {/* </ScrollView > */}
     </KeyboardAvoidingView>
   );
 }
@@ -97,17 +63,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    width: "100%",
-  },
-  topSection: {
-    justifyContent: "flex-end",
-    marginTop: 180,
     alignItems: "center",
-    gap: 16,
-  },
-  bottomSection: {
-    alignItems: "center",
-    minHeight: "50%",
   },
   title: {
     textAlign: "center",

@@ -3,7 +3,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-import { whiteColor } from "@/constants/theme";
+import { ThemedText } from "@/components/themed-text";
+import { grayColor } from "@/constants/theme";
 import { TPetVaccination } from "@/types/pets";
 
 import { AddVaccineModal } from "./AddVaccineModal";
@@ -34,8 +35,9 @@ export const PetVaccinationsForm = ({
             key={i}
             style={{
               position: "relative",
-              backgroundColor: whiteColor,
               padding: 16,
+              borderWidth: 1,
+              borderColor: grayColor,
             }}
           >
             <TouchableOpacity
@@ -49,6 +51,9 @@ export const PetVaccinationsForm = ({
             <Text>Due Date: {vaccine.nextDueDate.toDateString()}</Text>
           </View>
         ))}
+        {!value?.length && (
+          <ThemedText style={{ color: grayColor }}>No vaccine</ThemedText>
+        )}
       </View>
     </>
   );

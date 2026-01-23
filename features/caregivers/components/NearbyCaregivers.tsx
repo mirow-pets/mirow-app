@@ -11,28 +11,26 @@ import { useLocation } from "@/hooks/use-location";
 import { addQueryParams, Get } from "@/services/http-service";
 import { TCaregiver } from "@/types";
 
-export interface NearbyCaregiversProps {
-  onClick: (_caregiverId: TCaregiver["usersId"]) => void;
-  onSeeMore?: () => void;
+interface CaregiverNearby {
+  id: string;
+  firstName: string;
+  lastName: string;
+  profileImage: string;
+  distanceInMiles: number;
+  overallRating: number;
+  totalReviews: number;
 }
 
-export const NearbyCaregivers = ({
+const CaregiversNearby = ({
   onClick,
   onSeeMore,
-}: NearbyCaregiversProps) => {
+}: {
+  onClick: (_caregiverId: TCaregiver["usersId"]) => void;
+  onSeeMore?: () => void;
+}) => {
   const { lat, long } = useLocation();
 
-  const { data: caregiversNearby, isLoading } = useQuery<
-    {
-      id: string;
-      firstName: string;
-      lastName: string;
-      profileImage: string;
-      distanceInMiles: number;
-      overallRating: number;
-      totalReviews: number;
-    }[]
-  >({
+  const { data: caregiversNearby, isLoading } = useQuery<CaregiverNearby[]>({
     queryKey: ["caregivers-nearby", lat, long],
     queryFn: () =>
       Get(
@@ -44,41 +42,24 @@ export const NearbyCaregivers = ({
     enabled: !!lat && !!long,
   });
 
-  if (isLoading) return <ActivityIndicator size={32} color={whiteColor} />;
+  if (isLoading || !lat || !long)
+    return <ActivityIndicator size={32} color={whiteColor} />;
+
+  if (!caregiversNearby?.length)
+    return (
+      <View style={{ height: 150 }}>
+        <ThemedText style={{ color: whiteColor, textAlign: "center" }}>
+          No caregivers nearby
+        </ThemedText>
+      </View>
+    );
 
   return (
     <View
       style={{
-        backgroundColor: primaryColor,
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16,
         gap: 32,
-        paddingVertical: 32,
       }}
     >
-      <View>
-        <ThemedText
-          type="title"
-          style={{
-            color: whiteColor,
-            fontFamily: "Karantina",
-            fontSize: 48,
-            textAlign: "center",
-          }}
-        >
-          MY LOCAL PET PRO
-        </ThemedText>
-        <Text
-          style={{
-            fontFamily: "Poppins",
-            textAlign: "center",
-            color: whiteColor,
-            fontWeight: "light",
-          }}
-        >
-          Nearby pet Caregivers
-        </Text>
-      </View>
       <ScrollView horizontal style={{ width: "100%", flexWrap: "wrap" }}>
         <View
           style={{
@@ -166,6 +147,53 @@ export const NearbyCaregivers = ({
           See more {">"}
         </ThemedText>
       </View>
+    </View>
+  );
+};
+
+export interface NearbyCaregiversProps {
+  onClick: (_caregiverId: TCaregiver["usersId"]) => void;
+  onSeeMore?: () => void;
+}
+
+export const NearbyCaregivers = ({
+  onClick,
+  onSeeMore,
+}: NearbyCaregiversProps) => {
+  return (
+    <View
+      style={{
+        backgroundColor: primaryColor,
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+        gap: 32,
+        paddingVertical: 32,
+      }}
+    >
+      <View>
+        <ThemedText
+          type="title"
+          style={{
+            color: whiteColor,
+            fontFamily: "Karantina",
+            fontSize: 48,
+            textAlign: "center",
+          }}
+        >
+          MY LOCAL PET PRO
+        </ThemedText>
+        <Text
+          style={{
+            fontFamily: "Poppins",
+            textAlign: "center",
+            color: whiteColor,
+            fontWeight: "light",
+          }}
+        >
+          Nearby Pet Caregivers
+        </Text>
+      </View>
+      <CaregiversNearby onClick={onClick} onSeeMore={onSeeMore} />
     </View>
   );
 };

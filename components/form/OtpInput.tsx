@@ -40,7 +40,8 @@ export const OtpInput = ({
     setValue,
   });
 
-  const error = errors[name];
+  // Always get the latest error from useFormState directly
+  const error = get(useFormState({ control: form.control, name }).errors, name)?.message;
 
   return (
     <View style={{ width: "100%" }}>
@@ -74,7 +75,7 @@ export const OtpInput = ({
         ></Controller>
       </View>
       <ThemedText style={styles.errorText}>
-        {get(errors, name)?.message?.toString()}
+        {error?.toString()}
       </ThemedText>
     </View>
   );

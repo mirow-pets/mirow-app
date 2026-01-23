@@ -14,7 +14,13 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 import { TBankAccount } from "@/types";
 import { confirm } from "@/utils";
 
-const Item = ({ bank }: { bank: TBankAccount }) => {
+const Item = ({
+  bank,
+  hideMenu,
+}: {
+  bank: TBankAccount;
+  hideMenu?: boolean;
+}) => {
   const primaryColor = useThemeColor({}, "primary");
   const [showMenu, setShowMenu] = useState(false);
   const { setAsDefault, deleteBankAccount } = useCaregiverPayment();
@@ -46,39 +52,41 @@ const Item = ({ bank }: { bank: TBankAccount }) => {
           Acc no: ********{bank.last4}
         </ThemedText>
       </View>
-      <Menu
-        isVisible={showMenu}
-        onDismiss={() => setShowMenu(false)}
-        anchor={
-          <TouchableOpacity
-            onPress={() => setShowMenu(true)}
-            style={{ width: 16 }}
-          >
-            <FontAwesome6 name="ellipsis-vertical" size={24} color="black" />
-          </TouchableOpacity>
-        }
-        options={[
-          ...(!bank.default_for_currency
-            ? [
-                {
-                  label: "Set as default",
-                  onPress: () => setAsDefault(bank.id),
-                },
-              ]
-            : []),
-          {
-            label: "Delete",
-            onPress: () =>
-              confirm({
-                title: "Delete bank",
-                description: `Are you sure that you want to delete this ${bank?.bank_name} (********${bank?.last4})`,
-                confirmText: "Delete",
-                onConfirm: () => deleteBankAccount(bank.id),
-              }),
-          },
-        ]}
-        position="bottom-right"
-      />
+      {!hideMenu && (
+        <Menu
+          isVisible={showMenu}
+          onDismiss={() => setShowMenu(false)}
+          anchor={
+            <TouchableOpacity
+              onPress={() => setShowMenu(true)}
+              style={{ width: 16 }}
+            >
+              <FontAwesome6 name="ellipsis-vertical" size={24} color="black" />
+            </TouchableOpacity>
+          }
+          options={[
+            ...(!bank.default_for_currency
+              ? [
+                  {
+                    label: "Set as default",
+                    onPress: () => setAsDefault(bank.id),
+                  },
+                ]
+              : []),
+            {
+              label: "Delete",
+              onPress: () =>
+                confirm({
+                  title: "Delete bank",
+                  description: `Are you sure that you want to delete this ${bank?.bank_name} (********${bank?.last4})`,
+                  confirmText: "Delete",
+                  onConfirm: () => deleteBankAccount(bank.id),
+                }),
+            },
+          ]}
+          position="bottom-right"
+        />
+      )}
     </View>
   );
 };
@@ -91,16 +99,20 @@ export default function BanksScreen() {
   return (
     <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
-        <Button
-          title="Add Bank"
-          size="sm"
-          onPress={() => router.push("/caregiver/profile/banks/add")}
-        />
+        <Button onPress={() => router.push("/caregiver/profile/banks/add")}>
+          Add Bank
+        </Button>
         <FlatList
           scrollEnabled={false}
           data={bankAccounts?.data ?? []}
           contentContainerStyle={{ gap: 16 }}
-          renderItem={({ item, index }) => <Item bank={item} key={index} />}
+          renderItem={({ item, index }) => (
+            <Item
+              bank={item}
+              key={index}
+              hideMenu={!!bankAccounts?.data?.length}
+            />
+          )}
         />
       </View>
     </ScrollView>

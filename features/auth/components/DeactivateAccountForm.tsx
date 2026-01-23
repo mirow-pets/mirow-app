@@ -45,7 +45,7 @@ export default function DeactivateAccountForm({
   }, [mutate]);
 
   return (
-    <View style={[styles.container, { backgroundColor: primaryColor }]}>
+    <View style={styles.container}>
       <UserAvatar src={user?.profileImage} size={72} />
       <ThemedText type="defaultSemiBold">
         {user?.firstName} {user?.lastName}
@@ -57,12 +57,9 @@ export default function DeactivateAccountForm({
         If you login within next 30 days, your account will remain active. If
         you do not log in, you will lose all your data by deleting your account.
       </ThemedText>
-      <Button
-        title="Deactivate account"
-        onPress={handleDeactivateAccount}
-        variant="contained"
-        color="secondary"
-      />
+      <Button onPress={handleDeactivateAccount} color="error">
+        Deactivate account
+      </Button>
     </View>
   );
 }

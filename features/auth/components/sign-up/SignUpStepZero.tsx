@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { View } from "react-native";
 
 import { Checkbox } from "expo-checkbox";
+import { Image } from "expo-image";
 import { Href, router } from "expo-router";
 
 import { FormField } from "@/components/form/FormField";
 import { ThemedText } from "@/components/themed-text";
-import { whiteColor } from "@/constants/theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
@@ -32,12 +32,21 @@ export const SignUpStepZero = ({ onPrev, onNext }: SignUpStepZeroProps) => {
 
   return (
     <FormStepsLayout {...{ onPrev, onNext, nextDisabled: !isChecked }}>
+      <Image
+        source={require("@/assets/images/logo.png")}
+        style={{
+          width: 250,
+          height: 140,
+          marginBottom: 10,
+          marginTop: 40,
+          resizeMode: "contain",
+        }}
+      />
       <FormField
         name="agree"
         render={() => (
           <View
             style={{
-              backgroundColor: whiteColor,
               padding: 16,
               borderRadius: 8,
               flexDirection: "row",
@@ -58,7 +67,7 @@ export const SignUpStepZero = ({ onPrev, onNext }: SignUpStepZeroProps) => {
               }}
             >
               <ThemedText style={{ fontSize: 12 }}>
-                By continuing, I confirm that I am at least 17 years old and
+                By continuing, I confirm that I am at least 18 years old and
                 agree to Mirow&apos;s
               </ThemedText>
               <ThemedText

@@ -3,10 +3,11 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useFormContext } from "react-hook-form";
+import { HelperText } from "react-native-paper";
 
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { ThemedText } from "@/components/themed-text";
-import { primaryColor, secondaryColor, whiteColor } from "@/constants/theme";
+import { grayColor, primaryColor, secondaryColor } from "@/constants/theme";
 import { TAddBooking } from "@/features/bookings/validations";
 
 export interface AddBookingStepTwoProps {
@@ -47,7 +48,7 @@ export const AddBookingStepTwo = ({
   ];
 
   return (
-    <FormStepsLayout {...{ onNext, onPrev, loading }}>
+    <FormStepsLayout {...{ onNext, onPrev, loading, progress: 0.4 }}>
       <ThemedText type="defaultSemiBold">How to pick your caregiver</ThemedText>
       {options.map(({ icon, label, description, value }, i) => (
         <TouchableOpacity
@@ -65,9 +66,9 @@ export const AddBookingStepTwo = ({
           </View>
         </TouchableOpacity>
       ))}
-      <ThemedText type="error">
+      <HelperText type="error">
         {errors?.isOpenShift?.message?.toString()}
-      </ThemedText>
+      </HelperText>
     </FormStepsLayout>
   );
 };
@@ -86,10 +87,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 16,
     alignItems: "center",
-    backgroundColor: whiteColor,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: "transparent",
+    borderColor: grayColor,
   },
   optionContainerActive: {
     borderColor: secondaryColor,

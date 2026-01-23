@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { StyleSheet, Switch, SwitchChangeEvent, View } from "react-native";
+import { StyleSheet, SwitchChangeEvent, View } from "react-native";
+
+import { Switch } from "react-native-paper";
 
 import { ThemedText } from "@/components/themed-text";
 import { useNotification } from "@/hooks/use-notifications";
 import OtpProvider from "@/hooks/use-otp";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { TNotificationPreference } from "@/types/notifications";
 import { TAuthUser } from "@/types/users";
 
@@ -19,8 +20,8 @@ const Preference = ({
 
   const [value, setValue] = useState(
     !!user?.notificationPreferences?.find(
-      (p) => p.notificationPreferencesId === preference.id
-    )?.isEnable
+      (p) => p.notificationPreferencesId === preference.id,
+    )?.isEnable,
   );
 
   const handleChange = async (e: SwitchChangeEvent) => {
@@ -47,12 +48,11 @@ export interface NotificationPreferencesFormProps {
 export default function NotificationPreferencesForm({
   user,
 }: NotificationPreferencesFormProps) {
-  const primaryColor = useThemeColor({}, "primary");
   const { notificationPreferences } = useNotification();
 
   return (
     <OtpProvider>
-      <View style={[styles.container, { backgroundColor: primaryColor }]}>
+      <View style={styles.container}>
         <ThemedText>
           Receive the latest news and updates, including new features,
           promotions and more.

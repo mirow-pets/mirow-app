@@ -1,87 +1,80 @@
 import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 import { Controller, get, useFormContext, useFormState } from "react-hook-form";
 import DateTimePickerModal, {
   DateTimePickerProps,
 } from "react-native-modal-datetime-picker";
-
-import { ThemedText } from "@/components/themed-text";
-import { blackColor, redColor, whiteColor } from "@/constants/theme";
+import { HelperText, TextInput } from "react-native-paper";
 
 interface DateInputProps
   extends Omit<DateTimePickerProps, "onConfirm" | "onCancel"> {
   label?: string;
   name: string;
+  placeholder?: string;
+  inputMode?: "outlined" | "flat";
 }
 
 function formatUserFriendlyDate(date?: Date) {
-  if (!date) return "-";
   // Format: Sep 28, 2024 (use user's locale)
-  return date.toLocaleDateString(undefined, {
+  return date?.toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric",
   });
 }
 
-export const DateInput = ({ label, name, ...props }: DateInputProps) => {
+export const DateInput = ({
+  label,
+  name,
+  placeholder,
+  inputMode = "outlined",
+  ...props
+}: DateInputProps) => {
   const form = useFormContext();
-  const { errors } = useFormState({ control: form.control, name });
   const [open, setOpen] = useState(false);
 
-  const error = errors[name];
+  // Always get the latest error from useFormState directly
+  const error = get(
+    useFormState({ control: form.control, name }).errors,
+    name
+  )?.message;
 
   return (
-    <View style={{ width: "100%" }}>
-      {label && <ThemedText style={styles.label}>{label}</ThemedText>}
-      <View>
-        <Controller
-          control={form.control}
-          name={name}
-          render={({ field: { onChange, value } }) => (
-            <TouchableOpacity onPress={() => setOpen(true)}>
-              <View style={styles.input}>
-                <ThemedText>{formatUserFriendlyDate(value)}</ThemedText>
-                <DateTimePickerModal
-                  {...props}
-                  isVisible={open}
-                  mode="date"
-                  onConfirm={(date) => {
-                    onChange(date);
-                    setOpen(false);
-                  }}
-                  onCancel={() => setOpen(false)}
-                  display="spinner"
-                />
-              </View>
-            </TouchableOpacity>
-          )}
-        ></Controller>
-      </View>
-      <ThemedText style={styles.errorText}>
-        {get(errors, name)?.message?.toString()}
-      </ThemedText>
-    </View>
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field: { onChange, value } }) => (
+        <TouchableOpacity
+          onPress={() => setOpen(true)}
+          style={{ width: "100%" }}
+        >
+          <TextInput
+            label={label}
+            value={formatUserFriendlyDate(value)}
+            placeholder={placeholder}
+            readOnly
+            style={{
+              paddingRight: 30,
+              backgroundColor: inputMode === "flat" ? "transparent" : undefined,
+            }}
+            error={!!error}
+            mode={inputMode}
+          />
+          <DateTimePickerModal
+            {...props}
+            isVisible={open}
+            mode="date"
+            onConfirm={(date) => {
+              onChange(date);
+              setOpen(false);
+            }}
+            onCancel={() => setOpen(false)}
+            display="spinner"
+          />
+          <HelperText type="error">{error?.toString()}</HelperText>
+        </TouchableOpacity>
+      )}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  label: {
-    marginBottom: 5,
-  },
-  input: {
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: whiteColor,
-    fontWeight: 600,
-    fontSize: 16,
-    boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
-    color: blackColor,
-  },
-  errorText: {
-    color: redColor,
-    fontSize: 12,
-    height: 16,
-  },
-});

@@ -1,19 +1,11 @@
 import React, { useState } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  TextInput,
-  TextInputProps,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Controller, get, useFormContext, useFormState } from "react-hook-form";
-// NOTE: You'll need to install an icon library if you don't have one.
-// e.g., using Expo: expo install @expo/vector-icons
+import { HelperText, TextInput, TextInputProps } from "react-native-paper";
 
-import { ThemedText } from "@/components/themed-text";
-import { blackColor, grayColor, redColor, whiteColor } from "@/constants/theme";
+import { grayColor } from "@/constants/theme";
 
 interface PasswordInputProps extends Omit<TextInputProps, "secureTextEntry"> {
   label?: string;
@@ -21,14 +13,17 @@ interface PasswordInputProps extends Omit<TextInputProps, "secureTextEntry"> {
 }
 
 export const PasswordInput = ({
-  label,
   name,
+  mode = "outlined",
   ...props
 }: PasswordInputProps) => {
   const form = useFormContext();
-  const { errors } = useFormState({ control: form.control, name });
 
-  const error = errors[name];
+  // Always get the latest error from useFormState directly
+  const error = get(
+    useFormState({ control: form.control, name }).errors,
+    name
+  )?.message;
 
   // 1. State to manage password visibility
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -42,38 +37,43 @@ export const PasswordInput = ({
   const iconName = isPasswordVisible ? "eye-off" : "eye";
 
   return (
-    <View style={{ width: "100%" }}>
-      {label && <ThemedText style={styles.label}>{label}</ThemedText>}
-      {/* 3. Wrapper for TextInput and Icon */}
-      <View style={styles.inputContainer}>
-        <Controller
-          control={form.control}
-          name={name}
-          render={({ field: { onChange, onBlur, value } }) => (
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field: { onChange, onBlur, value } }) => (
+        <View style={{ width: "100%" }}>
+          <View style={styles.inputContainer}>
             <TextInput
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
               placeholderTextColor={grayColor}
+              mode={mode}
               {...props}
-              // 4. Conditional secureTextEntry
               secureTextEntry={!isPasswordVisible}
-              // Set keyboard type and auto-caps explicitly for password fields
               keyboardType="default"
               autoCapitalize="none"
-              style={[styles.input, props.style]}
+              style={[
+                {
+                  paddingRight: 30,
+                  width: "100%",
+                  backgroundColor: mode === "flat" ? "transparent" : undefined,
+                },
+                props.style,
+              ]}
+              error={!!error}
             />
-          )}
-        />
-        {/* 2. Pressable Icon */}
-        <Pressable onPress={togglePasswordVisibility} style={styles.iconButton}>
-          <Ionicons name={iconName} size={20} color="gray" />
-        </Pressable>
-      </View>
-      <ThemedText style={styles.errorText}>
-        {get(errors, name)?.message?.toString()}
-      </ThemedText>
-    </View>
+            <Pressable
+              onPress={togglePasswordVisibility}
+              style={styles.iconButton}
+            >
+              <Ionicons name={iconName} size={20} color="gray" />
+            </Pressable>
+          </View>
+          <HelperText type="error">{error?.toString()}</HelperText>
+        </View>
+      )}
+    />
   );
 };
 
@@ -81,29 +81,17 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 5,
   },
-  // New style to wrap the TextInput and the icon
   inputContainer: {
     flexDirection: "row",
-    alignItems: "center",
     position: "relative",
-    boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
-    backgroundColor: whiteColor,
-    borderRadius: 12,
-  },
-  input: {
-    padding: 16,
-    fontWeight: 600,
-    flex: 1,
-    fontSize: 16,
-    color: blackColor,
+    width: "100%",
   },
   iconButton: {
     padding: 4,
     marginRight: 8,
-  },
-  errorText: {
-    color: redColor,
-    fontSize: 12,
-    height: 16,
+    position: "absolute",
+    right: 4,
+    top: "50%",
+    transform: [{ translateY: "-50%" }],
   },
 });

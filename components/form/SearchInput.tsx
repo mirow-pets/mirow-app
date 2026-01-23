@@ -1,13 +1,8 @@
-import React, { useRef } from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useRef, useState } from "react";
 
-import { blackColor, grayColor, whiteColor } from "@/constants/theme";
+import { Searchbar } from "react-native-paper";
+
+import { grayColor } from "@/constants/theme";
 
 interface SearchInputProps {
   value?: string;
@@ -16,63 +11,25 @@ interface SearchInputProps {
 }
 
 export const SearchInput = ({
-  value,
+  value: _value,
   placeholder,
   onChange,
 }: SearchInputProps) => {
+  const [value, setValue] = useState(_value || "");
   const timeoutRef = useRef(setTimeout(() => {}, 0));
 
   const handleChangeText = (text: string) => {
+    setValue(text);
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => onChange(text), 300);
   };
 
-  const handleClear = () => {
-    clearTimeout(timeoutRef.current);
-    onChange("");
-  };
-
   return (
-    <View style={styles.container}>
-      <TextInput
-        defaultValue={value}
-        onChangeText={handleChangeText}
-        style={styles.input}
-        placeholder={placeholder ?? "Search..."}
-        placeholderTextColor={grayColor}
-      />
-      {value ? (
-        <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
-          <Text style={styles.clearText}>✕</Text>
-        </TouchableOpacity>
-      ) : null}
-    </View>
+    <Searchbar
+      value={value}
+      onChangeText={handleChangeText}
+      placeholder={placeholder ?? "Search..."}
+      placeholderTextColor={grayColor}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 12,
-    backgroundColor: whiteColor,
-    fontWeight: 600,
-    fontSize: 16,
-    boxShadow: "inset 0px 3px 4px rgba(0, 0, 0, 0.5)",
-  },
-  input: {
-    flex: 1,
-    padding: 16,
-    fontWeight: "600",
-    fontSize: 16,
-    color: blackColor,
-  },
-  clearButton: {
-    marginHorizontal: 8,
-    padding: 4,
-  },
-  clearText: {
-    fontSize: 18,
-    color: grayColor,
-  },
-});

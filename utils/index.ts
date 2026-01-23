@@ -1,13 +1,13 @@
 export { alert } from "./alert";
 export { confirm } from "./confirm";
 export { centToMajorUnit, majorToCentUnit } from "./currency";
-export { formatDateToMDY } from "./date";
+export { formatDateToMDY, formatDateToYMD } from "./date";
 export { defaultHeader } from "./default-header";
 export { formatCurrency } from "./format-currency";
 export { formatNumber } from "./format-number";
 export { formatPhoneNumber } from "./format-phone-number";
 export { formatSsn } from "./format-ssn";
-export { getStatusBarHeight } from './get-status-bar-height';
+export { getStatusBarHeight } from "./get-status-bar-height";
 export { onError } from "./on-error";
 export { randomUUID } from "./random-uuid";
 export { registerForPushNotificationsAsync } from "./register-for-push-notifications-async";

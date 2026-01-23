@@ -11,6 +11,8 @@ export interface PlaceAutoCompleteProps {
   onChange: (_value: { city: string; state: string; country: string }) => void;
   style?: StyleProp<TextStyle>;
   placeholder?: string;
+  onBlur?: (e: any) => void;
+  onFocus?: (e: any) => void;
 }
 
 export const PlaceAutoComplete = ({
@@ -18,6 +20,8 @@ export const PlaceAutoComplete = ({
   style,
   placeholder,
   onChange,
+  onBlur,
+  onFocus,
 }: PlaceAutoCompleteProps) => {
   const handlePlaceSelect = (place: Place) => {
     const { details } = place;
@@ -59,6 +63,8 @@ export const PlaceAutoComplete = ({
         includedRegionCodes={["us"]}
         apiKey={ENV.GOOGLE_MAPS_API_KEY}
         onPlaceSelect={handlePlaceSelect}
+        onBlur={onBlur}
+        onFocus={onFocus}
         style={{
           input: style,
           suggestionsContainer: {

@@ -9,6 +9,7 @@ import Toast from "react-native-toast-message";
 
 import { Button } from "@/components/button/Button";
 import { PasswordInput } from "@/components/form/PasswordInput";
+import AuthScreenLayout from "@/components/layout/AuthScreenLayout";
 import { SubmitOtpStep } from "@/features/auth/components/settings/SubmitOtpStep";
 import { VerifyOtpStep } from "@/features/auth/components/settings/VerifyOtpStep";
 import {
@@ -18,7 +19,6 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
 import OtpProvider, { useOtp } from "@/hooks/use-otp";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { Patch } from "@/services/http-service";
 import { UserRole } from "@/types/users";
 import { onError } from "@/utils";
@@ -68,12 +68,10 @@ const ForgotPasswordStep = ({ email }: ForgotPasswordStepProps) => {
     });
   };
 
-  console.log(form.formState.errors);
-
   return (
     <FormProvider {...form}>
-      <PasswordInput name="password" label="New password" />
-      <PasswordInput name="confirmPassword" label="Confirm password" />
+      <PasswordInput name="password" label="New password" mode='outlined' />
+      <PasswordInput name="confirmPassword" label="Confirm password" mode='outlined' />
       <Button
         title="Reset password"
         onPress={form.handleSubmit(submit)}
@@ -85,7 +83,6 @@ const ForgotPasswordStep = ({ email }: ForgotPasswordStepProps) => {
 };
 
 export default function ForgotPasswordForm() {
-  const primaryColor = useThemeColor({}, "primary");
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState<string>();
 
@@ -93,24 +90,26 @@ export default function ForgotPasswordForm() {
 
   return (
     <OtpProvider>
-      <View style={[styles.container, { backgroundColor: primaryColor }]}>
-        {step === 1 && (
-          <SubmitOtpStep
-            description="We'll send you a one-time password (OTP) to help you reset your password."
-            type="password-update"
-            next={handleNext}
-            onEmailChange={setEmail}
-          />
-        )}
-        {step === 2 && (
-          <VerifyOtpStep
-            email={email}
-            type="password-update"
-            next={handleNext}
-          />
-        )}
-        {step === 3 && <ForgotPasswordStep email={email} />}
-      </View>
+      <AuthScreenLayout>
+        <View style={styles.container}>
+          {step === 1 && (
+            <SubmitOtpStep
+              description="We'll send you a one-time password (OTP) to help you reset your password."
+              type="password-update"
+              next={handleNext}
+              onEmailChange={setEmail}
+            />
+          )}
+          {step === 2 && (
+            <VerifyOtpStep
+              email={email}
+              type="password-update"
+              next={handleNext}
+            />
+          )}
+          {step === 3 && <ForgotPasswordStep email={email} />}
+        </View>
+      </AuthScreenLayout>
     </OtpProvider>
   );
 }

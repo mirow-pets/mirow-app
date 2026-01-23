@@ -66,7 +66,7 @@ export const VerifyOtpStep = ({ email, type, next }: VerifyOtpStepProps) => {
           setIsResendDisabled(true);
           setState("start");
         },
-      }
+      },
     );
   };
 
@@ -84,7 +84,7 @@ export const VerifyOtpStep = ({ email, type, next }: VerifyOtpStepProps) => {
     form.watch(),
     form.formState.errors,
     form.formState.isValid,
-    isVerifyingOtp
+    isVerifyingOtp,
   );
 
   return (
@@ -108,12 +108,13 @@ export const VerifyOtpStep = ({ email, type, next }: VerifyOtpStepProps) => {
         </View>
         <Button
           disabled={!form.formState.isValid || isVerifyingOtp}
-          title={isVerifyingOtp ? "Verifying..." : "Verify"}
           onPress={form.handleSubmit(submit)}
           loading={isVerifyingOtp}
           color="secondary"
           style={styles.button}
-        />
+        >
+          {isVerifyingOtp ? "Verifying..." : "Verify"}
+        </Button>
         <View style={styles.resendContainer}>
           <ThemedText style={styles.resendText}>
             Didn&apos;t receive the OTP?{" "}
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 12,
-    width: "90%",
+    width: "80%",
     alignSelf: "center",
   },
   resendContainer: {

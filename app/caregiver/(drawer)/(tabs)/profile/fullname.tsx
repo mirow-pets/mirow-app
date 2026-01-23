@@ -6,16 +6,14 @@ import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { updateCaregiverProfileSchema } from "@/features/profile/validations";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function FullnameScreen() {
   const router = useRouter();
   const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
-  const primaryColor = useThemeColor({}, "primary");
 
   const form = useForm({
     resolver: zodResolver(updateCaregiverProfileSchema),
@@ -39,22 +37,23 @@ export default function FullnameScreen() {
     updateProfile(form.getValues(), {
       onSuccess: () => {
         form.reset();
-        router.replace("/pet-owner/profile");
+        router.replace("/caregiver/profile");
       },
     });
   };
 
   return (
     <FormProvider {...form}>
-      <View style={[styles.container, { backgroundColor: primaryColor }]}>
-        <Input name="firstName" placeholder="First name" />
-        <Input name="lastName" placeholder="Last name" />
+      <View style={styles.container}>
+        <TextInputField name="firstName" placeholder="First name" />
+        <TextInputField name="lastName" placeholder="Last name" />
         <Button
-          title="Save"
           onPress={handleSubmit}
           loading={isUpdatingProfile}
           color="secondary"
-        />
+        >
+          Save
+        </Button>
       </View>
     </FormProvider>
   );
@@ -64,7 +63,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     padding: 20,
-    width: "100%",
     gap: 16,
   },
 });

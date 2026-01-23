@@ -8,7 +8,6 @@ import { PetAvatar } from "@/components/image/PetAvatar";
 import { ThemedText } from "@/components/themed-text";
 import { blackColor, blueColor, lightGrayColor } from "@/constants/theme";
 import { TPet } from "@/types";
-import { formatDateToMDY } from "@/utils";
 
 export interface PetDetailsProps {
   pet: TPet;
@@ -138,7 +137,7 @@ export const PetDetails = ({ pet, actions }: PetDetailsProps) => {
       )}
 
       {/* Vaccination Records Section */}
-      {pet?.petVaccinations?.length && (
+      {/* {pet?.petVaccinations?.length && (
         <View style={styles.card}>
           <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>
             Vaccination Records
@@ -159,7 +158,7 @@ export const PetDetails = ({ pet, actions }: PetDetailsProps) => {
             ))}
           </View>
         </View>
-      )}
+      )} */}
     </ScrollView>
   );
 };

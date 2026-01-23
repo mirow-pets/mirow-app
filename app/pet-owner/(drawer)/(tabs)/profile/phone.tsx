@@ -43,14 +43,19 @@ export default function PhoneScreen() {
 
   return (
     <FormProvider {...form}>
-      <View style={[styles.container, { backgroundColor: primaryColor }]}>
-        <PhoneNumberInput name="phone" placeholder="Phone number" />
+      <View style={styles.container}>
+        <PhoneNumberInput
+          label="Phone"
+          name="phone"
+          placeholder="Phone number"
+        />
         <Button
-          title="Save"
           onPress={handleSubmit}
           loading={isUpdatingProfile}
           color="secondary"
-        />
+        >
+          Save
+        </Button>
       </View>
     </FormProvider>
   );
@@ -60,7 +65,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     padding: 20,
-    width: "100%",
     gap: 16,
   },
 });

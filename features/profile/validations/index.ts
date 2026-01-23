@@ -18,3 +18,5 @@ export {
   TUpdatePetOwnerProfile,
   updatePetOwnerProfileSchema,
 } from "./update-pet-owner-profile-schema";
+
+export { TUpdateAddress, updateAddressSchema } from "./update-address-schema";

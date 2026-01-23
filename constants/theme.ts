@@ -1,10 +1,12 @@
+import { MD3LightTheme } from "react-native-paper";
+
 /**
  * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
 export const primaryColor = "#37b2ff";
-export const secondaryColor = "#ffe604";
+export const secondaryColor = "#FFE604";
 export const tertiary = "#8c222c";
 export const whiteColor = "#ffffff";
 export const blackColor = "#000000";
@@ -53,5 +55,26 @@ export const roleColors = {
       ...Colors.dark,
       primary: primaryColor,
     },
+  },
+};
+
+export const defaultTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: primaryColor,
+    secondary: secondaryColor,
+    black: blackColor,
+    white: whiteColor,
+  },
+};
+
+export const caregiverTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: "#6dcc78",
+    secondary: secondaryColor,
+    black: blackColor,
   },
 };

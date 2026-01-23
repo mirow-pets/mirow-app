@@ -6,17 +6,15 @@ import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/form/Input";
 import { PhoneNumberInput } from "@/components/form/PhoneNumberInput";
+import { TextInputField } from "@/components/form/TextInputField";
 import { updatePetOwnerProfileSchema } from "@/features/profile/validations";
 import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function EmergencyContactScreen() {
   const router = useRouter();
   const { profile, updateProfile, isUpdatingProfile } = usePetOwnerProfile();
-  const primaryColor = useThemeColor({}, "primary");
 
   const form = useForm({
     resolver: zodResolver(updatePetOwnerProfileSchema),
@@ -52,20 +50,34 @@ export default function EmergencyContactScreen() {
 
   return (
     <FormProvider {...form}>
-      <View style={[styles.container, { backgroundColor: primaryColor }]}>
-        <Input name="eFirstName" placeholder="First name" />
-        <Input name="eLastName" placeholder="Last name" />
-        <PhoneNumberInput name="ePhone" placeholder="Phone number" />
-        <Input
+      <View style={styles.container}>
+        <TextInputField
+          label="First name"
+          name="eFirstName"
+          placeholder="First name"
+        />
+        <TextInputField
+          label="Last name"
+          name="eLastName"
+          placeholder="Last name"
+        />
+        <PhoneNumberInput
+          label="Phone"
+          name="ePhone"
+          placeholder="Phone number"
+        />
+        <TextInputField
+          label="Relationship"
           name="relationshipName"
           placeholder="Relation, Ex: Brother, Friend, etc.,"
         />
         <Button
-          title="Save"
           onPress={handleSubmit}
           loading={isUpdatingProfile}
           color="secondary"
-        />
+        >
+          Save
+        </Button>
       </View>
     </FormProvider>
   );

@@ -1,18 +1,16 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { CardField } from "@stripe/stripe-react-native";
 import { Details } from "@stripe/stripe-react-native/lib/typescript/src/types/components/CardFieldInput";
 import Toast from "react-native-toast-message";
 
+import { Button } from "@/components/button/Button";
 import { Modal } from "@/components/modal/Modal";
-import { ThemedText } from "@/components/themed-text";
 import { blackColor } from "@/constants/theme";
 import { usePetOwnerPayment } from "@/hooks/pet-owner/use-pet-owner-payment";
-import { useThemeColor } from "@/hooks/use-theme-color";
 
 export const AddPaymentMethodButton = () => {
-  const primaryColor = useThemeColor({}, "primary");
   const { add, isAddingPaymentMethod } = usePetOwnerPayment();
   const [cardDetails, setCardDetails] = useState<Details>();
 
@@ -34,35 +32,7 @@ export const AddPaymentMethodButton = () => {
     <Modal
       title="Add Card"
       id="add-card"
-      trigger={
-        <View
-          style={{
-            borderRadius: 56,
-            alignItems: "center",
-            justifyContent: "center",
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.12,
-            shadowRadius: 4,
-            elevation: 3,
-            backgroundColor: primaryColor,
-            minWidth: 110,
-            paddingVertical: 6,
-            paddingHorizontal: 8,
-          }}
-        >
-          <ThemedText
-            style={{
-              fontFamily: "Poppins-Bold",
-              fontWeight: 600,
-              lineHeight: 32,
-              textAlign: "center",
-            }}
-          >
-            Add
-          </ThemedText>
-        </View>
-      }
+      trigger={<Button>Add</Button>}
       loading={isAddingPaymentMethod}
       onConfirm={handleConfirm}
     >

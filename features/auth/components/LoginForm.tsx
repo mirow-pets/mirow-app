@@ -5,16 +5,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Href, useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
+import { Button, useTheme } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
-import { Button } from "@/components/button/Button";
-import { Input } from "@/components/form/Input";
 import { PasswordInput } from "@/components/form/PasswordInput";
+import { TextInputField } from "@/components/form/TextInputField";
 import { ThemedText } from "@/components/themed-text";
-import { whiteColor } from "@/constants/theme";
+import { blackColor } from "@/constants/theme";
 import { TLogin, loginSchema } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { Post } from "@/services/http-service";
 import { TCurrentUser, UserRole } from "@/types/users";
 import { confirm, onError } from "@/utils";
@@ -22,11 +21,11 @@ import { confirm, onError } from "@/utils";
 export interface LoginFormProps {
   path: string;
   redirect: Href;
+  signUpPath: Href;
 }
 
-export const LoginForm = ({ path, redirect }: LoginFormProps) => {
-  const primaryColor = useThemeColor({}, "primary");
-  const secondaryColor = useThemeColor({}, "secondary");
+export const LoginForm = ({ path, redirect, signUpPath }: LoginFormProps) => {
+  const theme = useTheme();
   const router = useRouter();
   const { setAuth, userRole } = useAuth();
 
@@ -72,30 +71,83 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
     router.push(`/${userRole as UserRole}/forgot-password`);
   };
 
+  const handleSignUp = () => {
+    router.push(signUpPath);
+  };
+
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
-        <Input name="username" placeholder="Username" autoCapitalize="none" />
-        <PasswordInput name="password" placeholder="Password" />
+        <TextInputField
+          name="username"
+          label="Username"
+          placeholder="Username"
+          style={{ width: "100%" }}
+          mode="outlined"
+          autoCapitalize="none"
+        />
+
+        <PasswordInput
+          name="password"
+          label="Password"
+          placeholder="Password"
+          style={{ width: "100%" }}
+          mode="outlined"
+        />
+
         <View style={styles.forgotPasswordWrapper}>
-          <TouchableOpacity
-            onPress={handleForgotPassword}
-            style={styles.forgotPasswordTouchable}
-          >
-            <ThemedText
-              style={[styles.forgotPasswordText, { color: secondaryColor }]}
-            >
+          <TouchableOpacity onPress={handleForgotPassword}>
+            <ThemedText style={styles.forgotPasswordText}>
               Forgot password?
             </ThemedText>
           </TouchableOpacity>
         </View>
+
         <Button
-          title="Login"
           onPress={form.handleSubmit(submit)}
           loading={isPending}
-          color="secondary"
-          style={{ minWidth: "70%", marginTop: 18 }}
-        />
+          mode="contained"
+          buttonColor={theme.colors.secondary}
+          textColor={blackColor}
+          style={{ width: "90%", borderRadius: 28, marginTop: 56 }}
+          labelStyle={{
+            fontSize: 20,
+            height: 28,
+            alignItems: "center",
+            textAlignVertical: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            lineHeight: 28,
+            fontWeight: "bold",
+          }}
+        >
+          Log in
+        </Button>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 16,
+            gap: 4,
+          }}
+        >
+          <ThemedText style={{ fontWeight: "600", fontSize: 15 }}>
+            Don&apos;t have an account yet?
+          </ThemedText>
+          <ThemedText
+            style={{
+              fontSize: 15,
+              fontWeight: "bold",
+              marginTop: -3,
+            }}
+            selectable
+            onPress={handleSignUp}
+          >
+            Sign up
+          </ThemedText>
+        </View>
+
         <View style={{ alignItems: "center", marginTop: 32, gap: 4 }}>
           <ThemedText style={{ fontWeight: "600", fontSize: 15 }}>
             Having trouble?
@@ -104,7 +156,14 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
             style={{ flexDirection: "row", alignItems: "flex-end", gap: 4 }}
           >
             <ThemedText style={{ fontSize: 14 }}>Contact Support:</ThemedText>
-            <TouchableOpacity
+
+            <ThemedText
+              style={{
+                fontSize: 15,
+                fontWeight: "bold",
+                marginBottom: 3,
+              }}
+              selectable
               onPress={() => {
                 // Use Linking to open the email app with a pre-filled email address
                 import("react-native").then(({ Linking }) => {
@@ -112,20 +171,8 @@ export const LoginForm = ({ path, redirect }: LoginFormProps) => {
                 });
               }}
             >
-              <ThemedText
-                style={{
-                  color: whiteColor,
-                  textDecorationLine: "underline",
-                  fontSize: 15,
-                  fontWeight: "500",
-                  marginTop: 2,
-                  letterSpacing: 0.2,
-                }}
-                selectable
-              >
-                info@mirow.app
-              </ThemedText>
-            </TouchableOpacity>
+              info@mirow.app
+            </ThemedText>
           </View>
         </View>
       </View>
@@ -137,6 +184,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     padding: 32,
+    flex: 1,
   },
   forgotPasswordWrapper: {
     alignSelf: "flex-end",
@@ -144,12 +192,8 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     marginRight: 4,
   },
-  forgotPasswordTouchable: {
-    // Add touchable area expansion if desired
-  },
   forgotPasswordText: {
-    textDecorationLine: "underline",
     fontSize: 15,
-    fontWeight: "500",
+    fontWeight: "bold",
   },
 });

@@ -122,7 +122,6 @@ export default function BackgroundVerificationForm() {
         updateProfile(
           {
             ...values,
-            country: values.country ?? "US",
             customerId: initialPay?.customerId,
           },
           { onSuccess: () => setStep(4) }
