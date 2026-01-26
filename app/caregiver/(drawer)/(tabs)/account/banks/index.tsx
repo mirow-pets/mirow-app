@@ -99,7 +99,7 @@ export default function BanksScreen() {
   return (
     <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
-        <Button onPress={() => router.push("/caregiver/profile/banks/add")}>
+        <Button onPress={() => router.push("/caregiver/account/banks/add")}>
           Add Bank
         </Button>
         <FlatList
@@ -110,7 +110,7 @@ export default function BanksScreen() {
             <Item
               bank={item}
               key={index}
-              hideMenu={!!bankAccounts?.data?.length}
+              hideMenu={bankAccounts?.data?.length === 1}
             />
           )}
         />

@@ -27,7 +27,7 @@ import { useAuth } from "./use-auth";
 
 export interface LocationContextValues {
   lat?: number;
-  long?: number;
+  lng?: number;
 }
 
 export const LocationContext = createContext<LocationContextValues | undefined>(
@@ -63,7 +63,7 @@ const LocationProvider = ({ children }: LocationProviderProps) => {
     onError,
   });
   const [coords, setCoords] = useState<
-    { lat: number; long: number } | undefined
+    { lat: number; lng: number } | undefined
   >();
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const LocationProvider = ({ children }: LocationProviderProps) => {
 
         if (loc) {
           const { latitude, longitude } = loc.coords;
-          setCoords({ lat: latitude, long: longitude });
+          setCoords({ lat: latitude, lng: longitude });
           if (token)
             sendLocation({
               lat: latitude.toString(),

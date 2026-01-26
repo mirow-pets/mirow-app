@@ -135,25 +135,28 @@ export default function MyEarningsScreen() {
         </View>
 
         <Button
-          title="Withdraw"
           style={{ marginTop: 16 }}
           onPress={handleWithdraw}
           disabled={!available.amount}
-        />
+        >
+          Withdraw
+        </Button>
 
         <Button
-          variant="reversed"
-          title="Completed Bookings"
           style={{ marginTop: 16 }}
           onPress={handleGoToCompletedBookings}
-        />
+          color="white"
+        >
+          Completed Bookings
+        </Button>
 
         <Button
-          title="View Withdrawals"
           style={{ marginTop: 12 }}
           onPress={handleGoToWithdrawals}
-          variant="reversed"
-        />
+          color="white"
+        >
+          View Withdrawals
+        </Button>
       </View>
     </ScrollViewWithRefresh>
   );

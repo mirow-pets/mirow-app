@@ -19,7 +19,7 @@ export default function CaregiverDrawerLayout() {
   const router = useRouter();
   const { profile } = useCaregiverProfile();
 
-  const handleProfile = () => router.push("/caregiver/profile");
+  const handleProfile = () => router.push("/caregiver/account");
   const handleMyBookings = () => router.push("/caregiver/bookings");
   const handleOpenShifts = () => router.push("/caregiver/open-shifts");
   const handleCalendar = () => router.push("/caregiver/calendar");
@@ -91,28 +91,6 @@ export default function CaregiverDrawerLayout() {
                       email={profile?.users?.email || ""}
                       menus={menus}
                     />
-                    // <View>
-                    //   <ThemedText
-                    //     style={{
-                    //       paddingHorizontal: 16,
-                    //       paddingVertical: 24,
-                    //     }}
-                    //   >
-                    //     Mirow
-                    //   </ThemedText>
-                    //   {menu.map(({ label, onPress }, i) => (
-                    //     <TouchableOpacity
-                    //       key={i}
-                    //       style={{
-                    //         paddingVertical: 16,
-                    //         paddingHorizontal: 16,
-                    //       }}
-                    //       onPress={onPress}
-                    //     >
-                    //       <ThemedText>{label}</ThemedText>
-                    //     </TouchableOpacity>
-                    //   ))}
-                    // </View>
                   )}
                   initialRouteName="(tabs)"
                 >

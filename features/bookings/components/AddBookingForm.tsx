@@ -2,12 +2,12 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { addBookingSchema, TAddBooking } from "@/features/bookings/validations";
 import { usePetOwnerBooking } from "@/hooks/pet-owner/use-pet-owner-booking";
 import { usePetOwnerCaregiverFilter } from "@/hooks/pet-owner/use-pet-owner-caregivers-filter";
+import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
 
 import { AddBookingStepOne } from "./add-booking/AddBookingStepOne";
 import { AddBookingStepThree } from "./add-booking/AddBookingStepThree";
@@ -20,7 +20,7 @@ export const AddBookingForm = () => {
   const currentDate = new Date();
 
   const startDate = new Date(
-    currentDate.setMinutes(currentDate.getMinutes() + 30),
+    currentDate.setMinutes(currentDate.getMinutes() + 30)
   );
 
   const form = useForm({
@@ -55,12 +55,19 @@ export const AddBookingForm = () => {
     } else addBooking(values);
   };
 
+  const { handleGoBack } = useExitFormRouteWarning({
+    isDirty: form.formState.isDirty,
+    onExit: () => {
+      form.reset();
+    },
+  });
+
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
         {step === 1 && (
           <AddBookingStepOne
-            onPrev={() => router.replace("/pet-owner")}
+            onPrev={handleGoBack}
             onNext={handleNext(["pets", "startDate", "notes"])}
           />
         )}
@@ -78,13 +85,6 @@ export const AddBookingForm = () => {
             loading={isAddingBooking}
           />
         )}
-        {/* {step === 4 && (
-          <SignUpStepFour
-            onNext={form.handleSubmit(submit)}
-            onPrev={handlePrev}
-            loading={isPending}
-          />
-        )} */}
       </View>
       <View style={{ height: 100 }} />
     </FormProvider>

@@ -18,7 +18,7 @@ export default function PetOwnerDrawerLayout() {
   const { profile } = usePetOwnerProfile();
   const router = useRouter();
 
-  const handleProfile = () => router.push("/pet-owner/profile");
+  const handleProfile = () => router.push("/pet-owner/account");
   const handleSettings = () => router.push("/pet-owner/settings");
   const handlePets = () => router.push("/pet-owner/pets");
   const handleMyBookings = () => router.push("/pet-owner/bookings");
@@ -79,28 +79,6 @@ export default function PetOwnerDrawerLayout() {
                         email={profile?.email || ""}
                         menus={menus}
                       />
-                      // <View style={{ backgroundColor: whiteColor }}>
-                      //   <ThemedText
-                      //     style={{
-                      //       paddingHorizontal: 16,
-                      //       paddingVertical: 24,
-                      //     }}
-                      //   >
-                      //     Mirow
-                      //   </ThemedText>
-                      //   {menu.map(({ label, onPress }, i) => (
-                      //     <TouchableOpacity
-                      //       key={i}
-                      //       style={{
-                      //         paddingVertical: 16,
-                      //         paddingHorizontal: 16,
-                      //       }}
-                      //       onPress={onPress}
-                      //     >
-                      //       <ThemedText>{label}</ThemedText>
-                      //     </TouchableOpacity>
-                      //   ))}
-                      // </View>
                     )}
                     initialRouteName="(tabs)"
                   >

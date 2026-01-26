@@ -2,13 +2,14 @@ import { StripeProvider } from "@stripe/stripe-react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
-import { SplashScreen, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
+import { SplashScreen } from "@/components/SplashScreen";
 import { defaultTheme } from "@/constants/theme";
 import { ENV } from "@/env";
 import AuthProvider, { useAuth } from "@/hooks/use-auth";
@@ -37,8 +38,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
   useNotificationObserver();
 
@@ -49,38 +48,38 @@ export default function RootLayout() {
       urlScheme={ENV.URL_SCHEME}
     >
       <QueryClientProvider client={queryClient}>
-        <ModalProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <ModalProvider>
             <RootLayoutNav />
             <StatusBar style="auto" />
             <Toast />
-          </AuthProvider>
-        </ModalProvider>
+          </ModalProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </StripeProvider>
   );
 }
 
 const RootLayoutNav = () => {
-  const { userRole } = useAuth();
+  const { userRole, isInitializing } = useAuth();
   const [fontsLoaded] = useFonts({
     Karantina: require("@/assets/fonts/karantina/Karantina-Bold.ttf"),
     Poppins: require("@/assets/fonts/poppins/Poppins-Regular.ttf"),
     "Poppins-Bold": require("@/assets/fonts/poppins/Poppins-Bold.ttf"),
   });
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || isInitializing) return <SplashScreen />;
 
   return (
     <PaperProvider theme={defaultTheme}>
       <GestureHandlerRootView>
-        <Stack initialRouteName="index">
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="home" options={{ headerShown: false }} />
-          <Stack.Screen name="select-role" options={{ headerShown: false }} />
+        <Stack initialRouteName="index" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="home" />
+          <Stack.Screen name="select-role" />
           <Stack.Protected guard={!!userRole}>
-            <Stack.Screen name="pet-owner" options={{ headerShown: false }} />
-            <Stack.Screen name="caregiver" options={{ headerShown: false }} />
+            <Stack.Screen name="pet-owner" />
+            <Stack.Screen name="caregiver" />
           </Stack.Protected>
         </Stack>
       </GestureHandlerRootView>

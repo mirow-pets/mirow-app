@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { z } from "zod";
 
 import { PetAvatar } from "@/components/image/PetAvatar";
@@ -49,7 +49,7 @@ export const AddPetModal = ({ trigger, onAdded }: AddPetModalProps) => {
         trigger={trigger}
         onConfirm={form.handleSubmit(confirm)}
       >
-        <View style={{ height: 300 }}>
+        <GestureHandlerRootView style={{ height: 300 }}>
           <FlatList
             scrollEnabled={true}
             data={pets}
@@ -72,7 +72,7 @@ export const AddPetModal = ({ trigger, onAdded }: AddPetModalProps) => {
               </TouchableOpacity>
             )}
           />
-        </View>
+        </GestureHandlerRootView>
       </Modal>
     </FormProvider>
   );

@@ -1,7 +1,8 @@
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 
 import { ScrollView } from "react-native-gesture-handler";
 
+import { Chip } from "@/components/chip/Chip";
 import { ThemedText } from "@/components/themed-text";
 import { lightGrayColor } from "@/constants/theme";
 import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
@@ -35,24 +36,22 @@ export const PetTypesSelector = ({
       >
         <View style={{ flexDirection: "row", gap: 8, height: 32 }}>
           {petTypes.map((petType, i) => (
-            <TouchableOpacity
+            <Chip
               key={i}
               style={{
-                borderWidth: 1,
                 borderColor: value.includes(petType.id)
                   ? primaryColor
                   : lightGrayColor,
-                paddingHorizontal: 8,
-                paddingTop: 4,
-                paddingBottom: 2,
-                borderRadius: 8,
               }}
               onPress={handleToggle(petType.id)}
+              mode="outlined"
+              size="lg"
+              corner="rounded"
             >
-              <ThemedText style={{ fontSize: 14 }}>
+              <ThemedText style={{ fontSize: 12 }}>
                 {petType.display}
               </ThemedText>
-            </TouchableOpacity>
+            </Chip>
           ))}
         </View>
       </ScrollView>

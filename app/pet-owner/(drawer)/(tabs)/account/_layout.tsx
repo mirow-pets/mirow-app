@@ -13,7 +13,7 @@ export default function ProfileLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: "My Profile",
+          headerTitle: "My Account",
         }}
       />
       <Stack.Screen

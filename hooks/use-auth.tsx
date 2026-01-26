@@ -10,7 +10,7 @@ import {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery } from "@tanstack/react-query";
-import { router, SplashScreen } from "expo-router";
+import { router } from "expo-router";
 
 import { Get } from "@/services/http-service";
 import { authStore, SetAuthArgs } from "@/stores/auth.store";
@@ -83,7 +83,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [removeAuth, removeFcmToken]);
 
-  const getUserAuthendication = useCallback(async () => {
+  const getUserAuthentication = useCallback(async () => {
     try {
       setIsInitializing(true);
       const accessToken = await AsyncStorage.getItem("accessToken");
@@ -100,7 +100,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       }
       if (accessToken && currUser) setAuth({ token: accessToken, currUser });
       if (userRole) setUserRole(userRole as UserRole);
-      SplashScreen.hideAsync();
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -109,8 +108,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [logout, setAuth, setUserRole]);
 
   useEffect(() => {
-    getUserAuthendication();
-  }, [getUserAuthendication]);
+    getUserAuthentication();
+  }, [getUserAuthentication]);
 
   useEffect(() => {
     if (!user || !fcmToken) return;
@@ -156,7 +155,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setFcmToken,
       }}
     >
-      {isInitializing ? null : children}
+      {children}
     </AuthContext.Provider>
   );
 };

@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { Checkbox, HelperText } from "react-native-paper";
 
@@ -11,28 +11,22 @@ import { ThemedText } from "@/components/themed-text";
 import { updateCaregiverProfileSchema } from "@/features/profile/validations";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { TCaregiverPreference } from "@/types";
+import { TCaregiverSkill } from "@/types";
 
-export default function PreferencesScreen() {
-  const router = useRouter();
-  const {
-    caregiverPreferenceOptions,
-    profile,
-    updateProfile,
-    isUpdatingProfile,
-  } = useCaregiverProfile();
+export default function SkillsScreen() {
+  const { caregiverSkillOptions, profile, updateProfile, isUpdatingProfile } =
+    useCaregiverProfile();
 
   const form = useForm({
     resolver: zodResolver(updateCaregiverProfileSchema),
     defaultValues: {
-      careGiverPreferences:
-        profile?.careGiverPreferences?.map(({ id }) => id) ?? [],
+      careGiverSkills: profile?.careGiverSkills?.map(({ id }) => id) ?? [],
     },
   });
 
   const values = form.watch();
 
-  const { careGiverPreferences } = values;
+  const { careGiverSkills } = values;
 
   useExitFormRouteWarning({
     isDirty: form.formState.isDirty,
@@ -42,13 +36,13 @@ export default function PreferencesScreen() {
   });
 
   const handleSubmit = async () => {
-    const result = await form.trigger("careGiverPreferences");
+    const result = await form.trigger("careGiverSkills");
     if (!result) return;
 
     updateProfile(values, {
       onSuccess: () => {
         form.reset();
-        router.replace("/caregiver/profile");
+        router.replace("/caregiver/account");
       },
     });
   };
@@ -56,18 +50,16 @@ export default function PreferencesScreen() {
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
-        {caregiverPreferenceOptions.map(({ label, value }, i) => {
-          const isChecked = careGiverPreferences.includes(
-            value as TCaregiverPreference["id"],
+        {caregiverSkillOptions.map(({ label, value }, i) => {
+          const isChecked = careGiverSkills.includes(
+            value as TCaregiverSkill["id"]
           );
 
           const handleOnValueChange = (isChecked: boolean) => {
-            const newPreferences = isChecked
-              ? [...careGiverPreferences, value as TCaregiverPreference["id"]]
-              : careGiverPreferences.filter(
-                  (preferenceId) => preferenceId !== value,
-                );
-            form.setValue("careGiverPreferences", newPreferences);
+            const newSkills = isChecked
+              ? [...careGiverSkills, value as TCaregiverSkill["id"]]
+              : careGiverSkills.filter((skillId) => skillId !== value);
+            form.setValue("careGiverSkills", newSkills);
           };
 
           return (
@@ -86,7 +78,7 @@ export default function PreferencesScreen() {
           );
         })}
         <HelperText type="error">
-          {form.formState.errors.careGiverPreferences?.message?.toString()}
+          {form.formState.errors.careGiverSkills?.message?.toString()}
         </HelperText>
         <Button
           onPress={handleSubmit}

@@ -1,15 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Tabs } from "expo-router";
+import { router, Tabs, usePathname } from "expo-router";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { TabsHeader } from "@/components/layout/TabsHeader";
 import { blackColor, Colors, whiteColor } from "@/constants/theme";
+import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 
 export default function PetOwnerTabsNavigation() {
+  const { profileCompletion } = usePetOwnerProfile();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (
+      !profileCompletion ||
+      profileCompletion?.percentage === 100 ||
+      pathname.startsWith("/pet-owner/account") ||
+      pathname.startsWith("/pet-owner/pets")
+    ) {
+      return;
+    }
+
+    router.replace("/pet-owner/account");
+  }, [profileCompletion, profileCompletion?.percentage, pathname]);
+
   return (
     <Tabs
       screenOptions={{
@@ -86,7 +103,7 @@ export default function PetOwnerTabsNavigation() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="account"
         options={{
           href: null,
         }}

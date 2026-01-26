@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { View } from "react-native";
 
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { ThemedText } from "@/components/themed-text";
 import { centToMajorUnit, formatCurrency } from "@/utils";
@@ -40,7 +40,7 @@ export const BackgroungVerificationStepThree = ({
   };
 
   return (
-    <FormStepsLayout {...{ loading, onPrev, onNext }}>
+    <FormStepsLayout {...{ loading, onPrev, onNext, progress: 60 }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <ThemedText>Background check fee:</ThemedText>
         <ThemedText>
@@ -64,7 +64,8 @@ export const BackgroungVerificationStepThree = ({
         </ThemedText>
       </View>
       <View>
-        <Input
+        <TextInputField
+          label="Promo code"
           name=""
           placeholder="Promo code"
           onChangeText={handlePromocode}

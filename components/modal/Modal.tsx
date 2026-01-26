@@ -7,6 +7,10 @@ import {
   ViewStyle,
 } from "react-native";
 
+import {
+  GestureHandlerRootView,
+  ScrollView,
+} from "react-native-gesture-handler";
 import { Modal as BaseModal, Portal, useTheme } from "react-native-paper";
 
 import { whiteColor } from "@/constants/theme";
@@ -20,6 +24,7 @@ export interface ModalProps {
   title?: string;
   id: string;
   onConfirm?: () => void;
+  onCancel?: () => void;
   style?: StyleProp<ViewStyle>;
   cancelText?: string;
   confirmText?: string;
@@ -27,6 +32,7 @@ export interface ModalProps {
   loading?: boolean;
   disabled?: boolean;
   open?: boolean;
+  actions?: ReactNode;
 }
 
 export const Modal = ({
@@ -35,6 +41,7 @@ export const Modal = ({
   trigger,
   children,
   onConfirm,
+  onCancel,
   style,
   cancelText,
   confirmText,
@@ -42,6 +49,7 @@ export const Modal = ({
   loading,
   disabled,
   open,
+  actions,
 }: ModalProps) => {
   const theme = useTheme();
   const { openId, setOpenId } = useModal();
@@ -66,27 +74,44 @@ export const Modal = ({
           contentContainerStyle={[styles.modalView, style]}
         >
           {title && <ThemedText style={styles.modalTitle}>{title}</ThemedText>}
-          <View>{children}</View>
+          <GestureHandlerRootView style={styles.scrollContainer}>
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={true}
+            >
+              <View>{children}</View>
+            </ScrollView>
+          </GestureHandlerRootView>
+
           <View style={styles.modalFooter}>
-            {!hideCancel && (
-              <TouchableOpacity
-                onPress={() => setOpenId("")}
-                disabled={loading}
-              >
-                <ThemedText style={styles.footerText}>
-                  {cancelText || "Cancel"}
-                </ThemedText>
-              </TouchableOpacity>
-            )}
-            {onConfirm && (
-              <TouchableOpacity onPress={onConfirm} disabled={loading}>
-                <ThemedText
-                  style={[styles.footerText, { color: theme.colors.primary }]}
+            <View>{actions}</View>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 16,
+              }}
+            >
+              {!hideCancel && (
+                <TouchableOpacity
+                  onPress={onCancel ?? (() => setOpenId(""))}
+                  disabled={loading}
                 >
-                  {confirmText || "Confirm"}
-                </ThemedText>
-              </TouchableOpacity>
-            )}
+                  <ThemedText style={styles.footerText}>
+                    {cancelText || "Cancel"}
+                  </ThemedText>
+                </TouchableOpacity>
+              )}
+              {onConfirm && (
+                <TouchableOpacity onPress={onConfirm} disabled={loading}>
+                  <ThemedText
+                    style={[styles.footerText, { color: theme.colors.primary }]}
+                  >
+                    {confirmText || "Confirm"}
+                  </ThemedText>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </BaseModal>
       </Portal>
@@ -100,14 +125,27 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 32,
     backgroundColor: whiteColor,
+    minWidth: 300,
+    maxWidth: "90%",
+    maxHeight: "90%",
   },
   modalTitle: {
     fontWeight: 600,
   },
+  scrollContainer: {
+    flexShrink: 1,
+  },
+  scrollView: {
+    flexGrow: 0,
+  },
+  scrollContent: {
+    flexGrow: 0,
+  },
   modalFooter: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     gap: 16,
+    flexShrink: 0,
   },
   footerText: {
     fontWeight: 600,

@@ -1,11 +1,8 @@
 import React from "react";
 import { View } from "react-native";
 
-import { useFormContext } from "react-hook-form";
-
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
-import { TBackgroundVerification } from "@/features/profile/validations";
 // import { useCaregiver } from "@/hooks/use-caregiver";
 
 export interface BackgroungVerificationStepOneProps {
@@ -19,12 +16,10 @@ export const BackgroungVerificationStepOne = ({
 }: BackgroungVerificationStepOneProps) => {
   // const { documentTypeOptions } = useCaregiver();
 
-  const form = useFormContext<TBackgroundVerification>();
-
   // const documentUrl = form.watch("documentUrl");
 
   return (
-    <FormStepsLayout {...{ onPrev, onNext }}>
+    <FormStepsLayout {...{ onPrev, onNext, progress: 0 }}>
       <View style={{ gap: 16 }}>
         {/* <ThemedText>
           Please provide one of the following valid document
@@ -50,12 +45,12 @@ export const BackgroungVerificationStepOne = ({
         {/* <ThemedText type="error">
           {form.formState.errors.documentUrl?.message?.toString()}
         </ThemedText> */}
-        <Input
+        <TextInputField
           label="Driver license"
           name="drivingLicense"
           placeholder="A2355578"
         />
-        <Input
+        <TextInputField
           label="Driver license state"
           name="driverLicenseState"
           placeholder="Ex., CA, FL, NY..."

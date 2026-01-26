@@ -86,7 +86,7 @@ export const SignUpForm = ({ path, redirect }: SignUpFormProps) => {
 
   const handleContinue = () => {
     setIsSuccessful(false);
-    // router.replace(`${redirect}/login` as Href);
+    router.replace(`${redirect}/login` as Href);
   };
 
   return (

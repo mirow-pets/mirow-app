@@ -32,7 +32,7 @@ export const ServicesForm = () => {
 
   return (
     <View>
-      <View>
+      <View style={{ gap: 4 }}>
         {services?.map(({ id, isActive, serviceRate }, i) => {
           const service = serviceMapper[id];
 

@@ -70,14 +70,19 @@ const ForgotPasswordStep = ({ email }: ForgotPasswordStepProps) => {
 
   return (
     <FormProvider {...form}>
-      <PasswordInput name="password" label="New password" mode='outlined' />
-      <PasswordInput name="confirmPassword" label="Confirm password" mode='outlined' />
+      <PasswordInput name="password" label="New password" mode="outlined" />
+      <PasswordInput
+        name="confirmPassword"
+        label="Confirm password"
+        mode="outlined"
+      />
       <Button
-        title="Reset password"
         onPress={form.handleSubmit(submit)}
         loading={isChangingPassword}
         color="secondary"
-      />
+      >
+        Reset password
+      </Button>
     </FormProvider>
   );
 };

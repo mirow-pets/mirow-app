@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
-import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 
 import {
@@ -16,7 +15,6 @@ import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver
 import { useCaregiverPayment } from "@/hooks/caregiver/use-caregiver-payment";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { addQueryParams, Get } from "@/services/http-service";
 import { TInitialPay } from "@/types/payments";
 
@@ -28,7 +26,6 @@ import { BackgroungVerificationStepTwo } from "./background-verification/Backgro
 export default function BackgroundVerificationForm() {
   const [step, setStep] = useState(1);
   const [promoCode, setPromocode] = useState<string>();
-  const primaryColor = useThemeColor({}, "primary");
   const queryClient = useQueryClient();
 
   const {
@@ -56,7 +53,9 @@ export default function BackgroundVerificationForm() {
       ssn: profile.ssn,
       driverLicenseState: profile.driverLicenseState,
       drivingLicense: profile.drivingLicense,
-      dateOfBirth: new Date(profile.year, profile.month - 1, profile.day),
+      dateOfBirth: profile.users.dateOfBirth
+        ? new Date(profile.users.dateOfBirth.toString().substring(0, 10))
+        : undefined,
       customerId: profile.customerId,
     },
   });
@@ -84,7 +83,7 @@ export default function BackgroundVerificationForm() {
           });
 
           form.reset();
-          router.replace("/caregiver/profile");
+          router.replace("/caregiver/account");
 
           Toast.show({
             type: "success",
@@ -131,53 +130,45 @@ export default function BackgroundVerificationForm() {
   };
 
   return (
-    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
-      <FormProvider {...form}>
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: primaryColor,
-            },
-          ]}
-        >
-          {step === 1 && (
-            <BackgroungVerificationStepOne
-              onNext={handleNext([
-                // "documentTypes",
-                // "documentUrl",
-                "drivingLicense",
-                "driverLicenseState",
-              ])}
-            />
-          )}
-          {step === 2 && (
-            <BackgroungVerificationStepTwo
-              onNext={handleNext(["ssn", "dateOfBirth"])}
-              onPrev={handlePrev}
-            />
-          )}
-          {step === 3 && (
-            <BackgroungVerificationStepThree
-              promoCode={promoCode}
-              backgroundCheckFee={backgroundCheckFee}
-              convenienceFee={convenienceFee}
-              onNext={handlePayment}
-              onPrev={handlePrev}
-              loading={isLoadingBackgroundCheckInitialPayment}
-              onPromocodeChange={setPromocode}
-            />
-          )}
-          {step === 4 && (
-            <BackgroungVerificationStepFour
-              loading={isStartingBackgroundVerification || isUpdatingProfile}
-              onNext={submit}
-              onPrev={handlePrev}
-            />
-          )}
-        </View>
-      </FormProvider>
-    </ScrollView>
+    <FormProvider {...form}>
+      <View style={styles.container}>
+        {step === 1 && (
+          <BackgroungVerificationStepOne
+            onPrev={router.back}
+            onNext={handleNext([
+              // "documentTypes",
+              // "documentUrl",
+              "drivingLicense",
+              "driverLicenseState",
+            ])}
+          />
+        )}
+        {step === 2 && (
+          <BackgroungVerificationStepTwo
+            onNext={handleNext(["ssn", "dateOfBirth"])}
+            onPrev={handlePrev}
+          />
+        )}
+        {step === 3 && (
+          <BackgroungVerificationStepThree
+            promoCode={promoCode}
+            backgroundCheckFee={backgroundCheckFee}
+            convenienceFee={convenienceFee}
+            onNext={handlePayment}
+            onPrev={handlePrev}
+            loading={isLoadingBackgroundCheckInitialPayment}
+            onPromocodeChange={setPromocode}
+          />
+        )}
+        {step === 4 && (
+          <BackgroungVerificationStepFour
+            loading={isStartingBackgroundVerification || isUpdatingProfile}
+            onNext={submit}
+            onPrev={handlePrev}
+          />
+        )}
+      </View>
+    </FormProvider>
   );
 }
 
@@ -185,7 +176,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     padding: 20,
-    width: "100%",
     gap: 16,
   },
 });

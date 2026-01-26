@@ -13,7 +13,7 @@ export default function ProfileLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: "My Profile",
+          headerTitle: "My Account",
         }}
       />
       <Stack.Screen
@@ -60,6 +60,10 @@ export default function ProfileLayout() {
       <Stack.Screen
         name="address"
         options={{ presentation: "modal", title: "Address" }}
+      />
+      <Stack.Screen
+        name="location"
+        options={{ presentation: "modal", title: "Service Area" }}
       />
     </Stack>
   );

@@ -6,20 +6,21 @@ import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/button/Button";
-import { TextInputField } from "@/components/form/TextInputField";
-import { updateCaregiverProfileSchema } from "@/features/profile/validations";
-import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
+import { PhoneNumberInput } from "@/components/form/PhoneNumberInput";
+import { updatePetOwnerProfileSchema } from "@/features/profile/validations";
+import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
-export default function FullnameScreen() {
+export default function PhoneScreen() {
   const router = useRouter();
-  const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
+  const { profile, updateProfile, isUpdatingProfile } = usePetOwnerProfile();
+  const primaryColor = useThemeColor({}, "primary");
 
   const form = useForm({
-    resolver: zodResolver(updateCaregiverProfileSchema),
+    resolver: zodResolver(updatePetOwnerProfileSchema),
     defaultValues: {
-      firstName: profile?.users?.firstName,
-      lastName: profile?.users?.lastName,
+      phone: profile?.phone,
     },
   });
 
@@ -31,22 +32,23 @@ export default function FullnameScreen() {
   });
 
   const handleSubmit = async () => {
-    const result = await form.trigger(["firstName", "lastName"]);
+    const result = await form.trigger(["phone"]);
     if (!result) return;
 
-    updateProfile(form.getValues(), {
-      onSuccess: () => {
-        form.reset();
-        router.replace("/caregiver/profile");
-      },
+    updateProfile(form.getValues(), () => {
+      form.reset();
+      router.replace("/pet-owner/account");
     });
   };
 
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
-        <TextInputField name="firstName" placeholder="First name" />
-        <TextInputField name="lastName" placeholder="Last name" />
+        <PhoneNumberInput
+          label="Phone"
+          name="phone"
+          placeholder="Phone number"
+        />
         <Button
           onPress={handleSubmit}
           loading={isUpdatingProfile}

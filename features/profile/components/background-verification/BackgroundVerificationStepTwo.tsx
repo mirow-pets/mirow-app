@@ -1,7 +1,7 @@
 import React from "react";
 
 import { DateInput } from "@/components/form/DateInput";
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { formatSsn } from "@/utils";
 
@@ -19,8 +19,8 @@ export const BackgroungVerificationStepTwo = ({
   eighteenYearsAgo.setDate(eighteenYearsAgo.getDate() - 1);
 
   return (
-    <FormStepsLayout {...{ onPrev, onNext }}>
-      <Input
+    <FormStepsLayout {...{ onPrev, onNext, progress: 40 }}>
+      <TextInputField
         label="SSN number"
         name="ssn"
         placeholder="SSN Number"

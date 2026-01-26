@@ -1,85 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Entypo } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
-import { Checkbox } from "react-native-paper";
+import { Checkbox, IconButton } from "react-native-paper";
 
-import { Button } from "@/components/button/Button";
 import { DropdownInput } from "@/components/form/DropdownInput";
 import { SliderInput } from "@/components/form/SliderInput";
-import { ScrollViewWithRefresh } from "@/components/layout/ScrollViewWithRefresh";
+import { Modal } from "@/components/modal/Modal";
 import { ThemedText } from "@/components/themed-text";
 import { primaryColor } from "@/constants/theme";
-import {
-  CaregiversFilter,
-  usePetOwnerCaregiverFilter,
-} from "@/hooks/pet-owner/use-pet-owner-caregivers-filter";
 import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
+import { useModal } from "@/hooks/use-modal";
+import { TCaregiversFilter } from "@/types/caregivers";
 
-type CollapsibleProps = {
-  title: string;
-  children: React.ReactNode;
-  initiallyOpen?: boolean;
-};
+import { CaregiversFilterCollapsible } from "./CaregiversFilterCollapsible";
 
-const Collapsible = ({
-  title,
-  children,
-  initiallyOpen = false,
-}: CollapsibleProps) => {
-  const [open, setOpen] = useState(initiallyOpen);
-
-  return (
-    <View style={collapsibleStyles.container}>
-      <TouchableOpacity
-        activeOpacity={0.7}
-        style={collapsibleStyles.header}
-        onPress={() => setOpen((o) => !o)}
-      >
-        <ThemedText style={collapsibleStyles.title}>{title}</ThemedText>
-        <Entypo
-          name={open ? "chevron-up" : "chevron-down"}
-          size={20}
-          color="#1E90FF"
-        />
-      </TouchableOpacity>
-      {open ? <View style={collapsibleStyles.content}>{children}</View> : null}
-    </View>
-  );
-};
-
-const collapsibleStyles = StyleSheet.create({
-  container: {
-    marginVertical: 8,
-    borderRadius: 8,
-    backgroundColor: "#F7F9FB",
-    overflow: "hidden",
-  },
-  header: {
-    padding: 8,
-    paddingRight: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#e0e0e0",
-  },
-  title: {
-    fontWeight: "600",
-    fontSize: 16,
-    color: "#333",
-  },
-  content: {
-    padding: 14,
-    paddingTop: 6,
-  },
-});
-
-export default function CaregiversFilterScreen() {
-  const { filter, setFilter } = usePetOwnerCaregiverFilter();
-
+export const CaregiversFilterModal = ({
+  disabledFields,
+  filter,
+  onChange,
+}: {
+  disabledFields?: (keyof TCaregiversFilter)[];
+  filter: TCaregiversFilter;
+  onChange: (_filter: TCaregiversFilter) => void;
+}) => {
   const {
     serviceTypeOptions,
     petTypeOptions,
@@ -88,21 +33,67 @@ export default function CaregiversFilterScreen() {
     caregiverPreferenceOptions,
     caregiverSkillOptions,
   } = usePetOwnerProfile();
+  const { setOpenId } = useModal();
 
-  const form = useForm<CaregiversFilter>({
+  // UseForm with defaultValues.
+  const form = useForm<TCaregiversFilter>({
     defaultValues: filter,
   });
 
   const values = form.watch();
 
-  const apply = (input: CaregiversFilter) => {
-    setFilter(input);
-    router.back();
+  /**
+   * Resets the form to its *initial* default values (from props.filter),
+   * as typical in "reset filter" pattern.
+   */
+  const reset = () => {
+    form.setValue("price", 0);
+    form.setValue("radius", 0);
+    form.setValue("starrating", 0);
+    form.setValue(
+      "serviceTypeIds",
+      disabledFields?.includes("serviceTypeIds")
+        ? filter.serviceTypeIds
+        : undefined
+    );
+    form.setValue(
+      "petTypeIds",
+      disabledFields?.includes("petTypeIds") ? filter.petTypeIds : undefined
+    );
+    form.setValue("caregiverPreferenceIds", undefined);
+    form.setValue("caregiverSkillIds", undefined);
+    form.setValue("transportTypeIds", undefined);
+    form.setValue("homeTypeIds", undefined);
+  };
+
+  console.log("values", values);
+
+  const cancel = () => {
+    form.reset();
+    setOpenId("");
+  };
+
+  const apply = () => {
+    onChange(form.getValues());
+    setOpenId("");
   };
 
   return (
-    <FormProvider {...form}>
-      <ScrollViewWithRefresh>
+    <Modal
+      id="caregivers-filter"
+      title="Caregivers Filter"
+      trigger={<IconButton icon="filter-outline" />}
+      style={{ width: "90%", maxWidth: 480, minHeight: 500 }}
+      onConfirm={apply}
+      onCancel={cancel}
+      confirmText="Apply"
+      actions={
+        <TouchableOpacity onPress={reset}>
+          <ThemedText>Reset</ThemedText>
+        </TouchableOpacity>
+      }
+    >
+      <FormProvider {...form}>
         <View style={styles.container}>
           <DropdownInput
             name="serviceTypeIds"
@@ -110,9 +101,9 @@ export default function CaregiversFilterScreen() {
             placeholder="Service type"
             value={values.serviceTypeIds?.[0]}
             onChange={(value) =>
-              form.setValue("serviceTypeIds", [value as number])
+              form.setValue("serviceTypeIds", [Number(value)])
             }
-            disabled
+            disabled={disabledFields?.includes("serviceTypeIds")}
           />
 
           <DropdownInput
@@ -120,8 +111,8 @@ export default function CaregiversFilterScreen() {
             options={petTypeOptions}
             placeholder="Pet type"
             value={values.petTypeIds?.[0]}
-            onChange={(value) => form.setValue("petTypeIds", [value as number])}
-            disabled
+            onChange={(value) => form.setValue("petTypeIds", [Number(value)])}
+            disabled={disabledFields?.includes("petTypeIds")}
           />
 
           <SliderInput
@@ -142,7 +133,7 @@ export default function CaregiversFilterScreen() {
             name="radius"
             actions={
               <ThemedText style={{ fontSize: 12 }}>
-                (Max) ${values.radius || 0} / 20 mi
+                (Max) {values.radius || 0} / 20 mi
               </ThemedText>
             }
             minimumValue={0}
@@ -169,7 +160,7 @@ export default function CaregiversFilterScreen() {
             step={1}
           />
 
-          <Collapsible title="Home Types">
+          <CaregiversFilterCollapsible title="Home Types">
             {homeTypeOptions.map((item, i) => {
               const value = item.value as number;
 
@@ -203,9 +194,9 @@ export default function CaregiversFilterScreen() {
                 </View>
               );
             })}
-          </Collapsible>
+          </CaregiversFilterCollapsible>
 
-          <Collapsible title="Transportation Types">
+          <CaregiversFilterCollapsible title="Transportation Types">
             {transportationTypeOptions.map((item, i) => {
               const value = item.value as number;
 
@@ -240,9 +231,9 @@ export default function CaregiversFilterScreen() {
                 </View>
               );
             })}
-          </Collapsible>
+          </CaregiversFilterCollapsible>
 
-          <Collapsible title="Caregiver Preferences">
+          <CaregiversFilterCollapsible title="Caregiver Preferences">
             {caregiverPreferenceOptions.map((item, i) => {
               const value = item.value as number;
 
@@ -277,9 +268,9 @@ export default function CaregiversFilterScreen() {
                 </View>
               );
             })}
-          </Collapsible>
+          </CaregiversFilterCollapsible>
 
-          <Collapsible title="Unique Skills">
+          <CaregiversFilterCollapsible title="Unique Skills">
             {caregiverSkillOptions.map((item, i) => {
               const value = item.value as number;
 
@@ -318,21 +309,12 @@ export default function CaregiversFilterScreen() {
                 </View>
               );
             })}
-          </Collapsible>
-
-          <Button color="secondary" onPress={form.handleSubmit(apply)}>
-            Apply
-          </Button>
-
-          <Button color="white" onPress={() => form.reset()}>
-            Reset
-          </Button>
-          <View style={{ height: 100 }}></View>
+          </CaregiversFilterCollapsible>
         </View>
-      </ScrollViewWithRefresh>
-    </FormProvider>
+      </FormProvider>
+    </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

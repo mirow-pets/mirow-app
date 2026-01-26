@@ -51,9 +51,9 @@ export default function ExperiencesScreen() {
       {
         onSuccess: () => {
           form.reset();
-          router.replace("/caregiver/profile");
+          router.replace("/caregiver/account");
         },
-      },
+      }
     );
   };
 
@@ -69,7 +69,7 @@ export default function ExperiencesScreen() {
         <View>
           {petTypeOptions.map(({ label, value }, i) => {
             const isChecked = petTypes.includes(
-              value as TCaregiverPreference["id"],
+              value as TCaregiverPreference["id"]
             );
 
             const handleOnValueChange = (isChecked: boolean) => {

@@ -4,7 +4,7 @@ import { Entypo } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { Input } from "@/components/form/Input";
+import { TextInputField } from "@/components/form/TextInputField";
 import { Modal } from "@/components/modal/Modal";
 import { ThemedText } from "@/components/themed-text";
 import { redColor, whiteColor } from "@/constants/theme";
@@ -54,16 +54,16 @@ export const RateBookingButton = ({ booking }: RateBookingButtonProps) => {
   };
 
   return (
-    <FormProvider {...form}>
-      <Modal
-        id="ratings"
-        title="Let's rate your Caregiver service"
-        trigger={<ThemedText style={{ color: primaryColor }}>Rate</ThemedText>}
-        style={{ gap: 16 }}
-        onConfirm={form.handleSubmit(submit)}
-        disabled={isTippingCaregiver || isCreatingReview}
-        loading={isTippingCaregiver || isCreatingReview}
-      >
+    <Modal
+      id="ratings"
+      title="Let's rate your Caregiver service"
+      trigger={<ThemedText style={{ color: primaryColor }}>Rate</ThemedText>}
+      style={{ gap: 16 }}
+      onConfirm={form.handleSubmit(submit)}
+      disabled={isTippingCaregiver || isCreatingReview}
+      loading={isTippingCaregiver || isCreatingReview}
+    >
+      <FormProvider {...form}>
         <View style={{ gap: 16 }}>
           <ThemedText>
             How was the service of {booking?.careGivers?.users?.firstName}{" "}
@@ -118,15 +118,16 @@ export const RateBookingButton = ({ booking }: RateBookingButtonProps) => {
             })}
           </View>
 
-          <Input
+          <TextInputField
             name="feedback"
             label="We Value Your Feedback (optional)"
             multiline
+            numberOfLines={3}
             style={{ maxHeight: 100 }}
           />
         </View>
-      </Modal>
-    </FormProvider>
+      </FormProvider>
+    </Modal>
   );
 };
 

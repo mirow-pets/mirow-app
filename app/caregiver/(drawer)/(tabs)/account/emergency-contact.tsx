@@ -47,7 +47,7 @@ export default function EmergencyContactScreen() {
     updateProfile(form.getValues(), {
       onSuccess: () => {
         form.reset();
-        router.replace("/caregiver/profile");
+        router.replace("/caregiver/account");
       },
     });
   };

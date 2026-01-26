@@ -10,6 +10,8 @@ import { darkBlueColor, primaryColor, whiteColor } from "@/constants/theme";
 import { useLocation } from "@/hooks/use-location";
 import { addQueryParams, Get } from "@/services/http-service";
 import { TCaregiver } from "@/types";
+import { TCaregiversResponse } from "@/types/caregivers";
+import { centToMajorUnit, formatCurrency } from "@/utils";
 
 interface CaregiverNearby {
   id: string;
@@ -19,6 +21,7 @@ interface CaregiverNearby {
   distanceInMiles: number;
   overallRating: number;
   totalReviews: number;
+  services: { label: string; serviceRate: number }[];
 }
 
 const CaregiversNearby = ({
@@ -28,21 +31,25 @@ const CaregiversNearby = ({
   onClick: (_caregiverId: TCaregiver["usersId"]) => void;
   onSeeMore?: () => void;
 }) => {
-  const { lat, long } = useLocation();
+  const { lat, lng } = useLocation();
 
-  const { data: caregiversNearby, isLoading } = useQuery<CaregiverNearby[]>({
-    queryKey: ["caregivers-nearby", lat, long],
+  const { data: caregiversNearby, isLoading } = useQuery<TCaregiversResponse>({
+    queryKey: ["caregivers-nearby", lat, lng],
     queryFn: () =>
       Get(
-        addQueryParams("/v2/caregivers/nearby", {
+        addQueryParams("/v2/caregivers", {
+          radius: 5,
           lat,
-          long,
+          lng,
+          filter: JSON.stringify({
+            limit: 10,
+          }),
         })
       ),
-    enabled: !!lat && !!long,
+    enabled: !!lat && !!lng,
   });
 
-  if (isLoading || !lat || !long)
+  if (isLoading || !lat || !lng)
     return <ActivityIndicator size={32} color={whiteColor} />;
 
   if (!caregiversNearby?.length)
@@ -71,7 +78,7 @@ const CaregiversNearby = ({
         >
           {caregiversNearby?.map((caregiver, i) => (
             <TouchableOpacity
-              onPress={() => onClick(caregiver.id)}
+              onPress={() => onClick(caregiver.usersId)}
               key={i}
               style={{
                 width: 160,
@@ -84,56 +91,91 @@ const CaregiversNearby = ({
               <UserAvatar
                 src={caregiver.profileImage}
                 style={{
-                  borderRadius: 0,
+                  borderRadius: 8,
                   width: "100%",
                   height: 100,
                   borderWidth: 0,
                 }}
               />
-              <View
-                style={{
-                  paddingVertical: 4,
-                  paddingHorizontal: 8,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <ThemedText
+              <View>
+                <View
                   style={{
-                    color: whiteColor,
-                    fontWeight: "bold",
-                    width: 80,
+                    paddingVertical: 4,
+                    paddingHorizontal: 8,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
                 >
-                  {caregiver.firstName} {caregiver.id}
-                </ThemedText>
-                {caregiver.overallRating ? (
-                  <View style={{ flexDirection: "row" }}>
-                    {Array.from({ length: caregiver.overallRating }).map(
-                      (_, i) => (
-                        <AntDesign
-                          key={i}
-                          name="star"
-                          size={11}
-                          color={whiteColor}
-                        />
-                      )
-                    )}
-                  </View>
-                ) : (
                   <ThemedText
                     style={{
                       color: whiteColor,
-                      fontWeight: "light",
-                      fontSize: 8,
+                      fontWeight: "bold",
+                      width: 80,
                     }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
                   >
-                    No review
+                    {caregiver.firstName} {caregiver.usersId}
                   </ThemedText>
-                )}
+                  {caregiver.averageStarRatings ? (
+                    <View style={{ flexDirection: "row" }}>
+                      {Array.from({ length: caregiver.averageStarRatings }).map(
+                        (_, i) => (
+                          <AntDesign
+                            key={i}
+                            name="star"
+                            size={11}
+                            color={whiteColor}
+                          />
+                        )
+                      )}
+                    </View>
+                  ) : (
+                    <ThemedText
+                      style={{
+                        color: whiteColor,
+                        fontWeight: "light",
+                        fontSize: 8,
+                      }}
+                    >
+                      No review
+                    </ThemedText>
+                  )}
+                </View>
+                <View
+                  style={{
+                    paddingVertical: 4,
+                    paddingHorizontal: 8,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <ThemedText
+                    style={{
+                      color: whiteColor,
+                      width: 80,
+                      fontSize: 11,
+                    }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {caregiver.services?.[0]?.label}
+                  </ThemedText>
+                  <ThemedText
+                    style={{
+                      color: whiteColor,
+                      fontSize: 11,
+                    }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {formatCurrency(
+                      centToMajorUnit(caregiver.services?.[0]?.serviceRate)
+                    )}
+                  </ThemedText>
+                </View>
               </View>
             </TouchableOpacity>
           ))}

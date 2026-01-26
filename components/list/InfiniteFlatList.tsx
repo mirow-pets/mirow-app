@@ -22,6 +22,8 @@ export interface InfiniteFlatListProps<T> {
   loadingText?: string;
   order?: string;
   refetchInterval?: number;
+  numColumns?: number;
+  columnWrapperStyle?: StyleProp<ViewStyle>;
 }
 
 export const InfiniteFlatList = <T extends object>({
@@ -36,6 +38,8 @@ export const InfiniteFlatList = <T extends object>({
   loadingText,
   order,
   refetchInterval,
+  numColumns,
+  columnWrapperStyle,
 }: InfiniteFlatListProps<T>) => {
   const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery<T[]>(
     {
@@ -82,6 +86,8 @@ export const InfiniteFlatList = <T extends object>({
       contentContainerStyle={contentContainerStyle}
       style={style}
       renderItem={renderItem}
+      numColumns={numColumns}
+      columnWrapperStyle={columnWrapperStyle}
       ListEmptyComponent={() => <ThemedText>No data found</ThemedText>}
     />
   );

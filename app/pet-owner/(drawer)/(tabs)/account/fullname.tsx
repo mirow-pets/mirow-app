@@ -36,7 +36,7 @@ export default function FullnameScreen() {
 
     updateProfile(form.getValues(), () => {
       form.reset();
-      router.replace("/pet-owner/profile");
+      router.replace("/pet-owner/account");
     });
   };
 

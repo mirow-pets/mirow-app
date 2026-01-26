@@ -8,7 +8,7 @@ export enum UserRole {
 export enum Gender {
   Male = "MALE",
   Female = "FEMALE",
-  Others = "OTHERS",
+  Others = "NON_BINARY",
 }
 
 export interface TUser {
@@ -32,6 +32,7 @@ export interface TAuthUser extends TUser {
   relationshipName: string;
   notificationPreferences: TUserNotificationPreference[];
   isAutoPayout: boolean;
+  dateOfBirth: Date;
 }
 
 export interface TCurrentUser {

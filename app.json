@@ -43,8 +43,8 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#37b2ff",
-          "image": "./assets/images/mirow-logo.png",
-          "imageWidth": 200
+          "image": "./assets/images/mirow-text-logo.png",
+          "imageWidth": 240
         }
       ],
       "expo-font",
@@ -61,7 +61,7 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
-      ],
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

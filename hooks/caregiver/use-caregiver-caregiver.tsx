@@ -205,9 +205,7 @@ const CaregiverCaregiverProvider = ({
     mutate: startBackgroundVerification,
     isPending: isStartingBackgroundVerification,
   } = useMutation<unknown, Error, unknown>({
-    mutationFn: () => {
-      return Post("/v2/background-verifications/start");
-    },
+    mutationFn: () => Post("/v2/background-verifications/start"),
     onError,
   });
 

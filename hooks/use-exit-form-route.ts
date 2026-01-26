@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { useNavigation } from "expo-router";
 
@@ -16,6 +16,24 @@ export const useExitFormRouteWarning = ({
   onExit,
 }: UseExitFormRouteWarningProps) => {
   const navigation = useNavigation();
+
+  const handleGoBack = useCallback(() => {
+    if (!isDirty) {
+      navigation.goBack();
+      return;
+    }
+
+    confirm({
+      title: "Discard changes?",
+      description:
+        "You have unsaved changes. Are you sure you want to leave this screen?",
+      onConfirm: () => {
+        onExit?.();
+        navigation.goBack();
+      },
+      confirmText: "Exit",
+    });
+  }, [isDirty, navigation, onExit]);
 
   useEffect(() => {
     // BLOCK NAVIGATION IF FORM IS DIRTY
@@ -41,4 +59,6 @@ export const useExitFormRouteWarning = ({
 
     return unsubscribe;
   }, [navigation, disableNavigation, isDirty, onExit]);
+
+  return { handleGoBack };
 };

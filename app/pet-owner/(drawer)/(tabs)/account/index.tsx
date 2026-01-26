@@ -1,17 +1,18 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 import { FlatList } from "react-native-gesture-handler";
+import { useTheme } from "react-native-paper";
 
 import { ThemedText } from "@/components/themed-text";
-import { grayColor, redColor, whiteColor } from "@/constants/theme";
+import { grayColor, greenColor, redColor, whiteColor } from "@/constants/theme";
 import { PetOwnerProfileDetailsCard } from "@/features/profile/components/PetOwnerProfileDetails";
 import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
-import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function ProfileScreen() {
-  const primaryColor = useThemeColor({}, "primary");
+  const theme = useTheme();
   const router = useRouter();
 
   const { profileCompletion } = usePetOwnerProfile();
@@ -23,7 +24,7 @@ export default function ProfileScreen() {
       ),
       label: "Fullname",
       isDone: true,
-      onPress: () => router.push("/pet-owner/profile/fullname"),
+      onPress: () => router.push("/pet-owner/account/fullname"),
     },
     {
       icon: (
@@ -31,7 +32,7 @@ export default function ProfileScreen() {
       ),
       label: "Phone",
       isDone: true,
-      onPress: () => router.push("/pet-owner/profile/phone"),
+      onPress: () => router.push("/pet-owner/account/phone"),
     },
     {
       icon: (
@@ -39,7 +40,7 @@ export default function ProfileScreen() {
       ),
       label: "Address",
       isDone: true,
-      onPress: () => router.push("/pet-owner/profile/address"),
+      onPress: () => router.push("/pet-owner/account/address"),
     },
     {
       icon: (
@@ -47,7 +48,7 @@ export default function ProfileScreen() {
       ),
       label: "Emergency Contact",
       isDone: profileCompletion?.eDetails,
-      onPress: () => router.push("/pet-owner/profile/emergency-contact"),
+      onPress: () => router.push("/pet-owner/account/emergency-contact"),
     },
     {
       icon: (
@@ -55,7 +56,7 @@ export default function ProfileScreen() {
       ),
       label: "Payment Information",
       isDone: profileCompletion?.isCardAdded,
-      onPress: () => router.push("/pet-owner/profile/banks"),
+      onPress: () => router.push("/pet-owner/account/banks"),
     },
     {
       icon: (
@@ -75,7 +76,7 @@ export default function ProfileScreen() {
           style={{
             height: 8,
             width: `${profileCompletion?.percentage}%`,
-            backgroundColor: primaryColor,
+            backgroundColor: theme.colors.primary,
             borderRadius: 4,
           }}
         ></View>
@@ -91,7 +92,11 @@ export default function ProfileScreen() {
               style={[styles.itemContainer, item.isDone ? {} : styles.notDone]}
               onPress={item.onPress}
             >
-              {item.icon}
+              {item.isDone ? (
+                <AntDesign name="check-circle" size={24} color={greenColor} />
+              ) : (
+                <AntDesign name="close-circle" size={24} color={redColor} />
+              )}
               <ThemedText>{item.label}</ThemedText>
             </TouchableOpacity>
           );

@@ -69,7 +69,7 @@ export default function CaregiverTabsNavigation() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="account"
         options={{
           href: null,
         }}

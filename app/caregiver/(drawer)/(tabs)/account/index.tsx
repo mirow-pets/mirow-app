@@ -1,12 +1,13 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 import { FlatList } from "react-native-gesture-handler";
 
 import { ScrollViewWithRefresh } from "@/components/layout/ScrollViewWithRefresh";
 import { ThemedText } from "@/components/themed-text";
-import { grayColor, redColor, whiteColor } from "@/constants/theme";
+import { grayColor, greenColor, redColor, whiteColor } from "@/constants/theme";
 import { CaregiverProfileDetailsCard } from "@/features/profile/components/CaregiverProfileDetails";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useAuth } from "@/hooks/use-auth";
@@ -44,7 +45,7 @@ export default function ProfileScreen() {
       isDisabled:
         !isBackgroundVerificationLeft ||
         ["pending", "cleared"].includes(profile?.backgroundVerifyStatus),
-      onPress: () => router.push("/caregiver/profile/background-verification"),
+      onPress: () => router.push("/caregiver/account/background-verification"),
     },
     {
       icon: (
@@ -52,7 +53,7 @@ export default function ProfileScreen() {
       ),
       label: "Fullname",
       isDone: true,
-      onPress: () => router.push("/caregiver/profile/fullname"),
+      onPress: () => router.push("/caregiver/account/fullname"),
     },
     {
       icon: (
@@ -60,7 +61,7 @@ export default function ProfileScreen() {
       ),
       label: "Phone",
       isDone: true,
-      onPress: () => router.push("/caregiver/profile/phone"),
+      onPress: () => router.push("/caregiver/account/phone"),
     },
     {
       icon: (
@@ -68,7 +69,7 @@ export default function ProfileScreen() {
       ),
       label: "Bio Description",
       isDone: true,
-      onPress: () => router.push("/caregiver/profile/bio-description"),
+      onPress: () => router.push("/caregiver/account/bio-description"),
     },
     {
       icon: (
@@ -76,7 +77,7 @@ export default function ProfileScreen() {
       ),
       label: "Address",
       isDone: true,
-      onPress: () => router.push("/caregiver/profile/address"),
+      onPress: () => router.push("/caregiver/account/address"),
     },
     {
       icon: (
@@ -84,7 +85,7 @@ export default function ProfileScreen() {
       ),
       label: "Emergency Contact",
       isDone: profileCompletion?.isEmergencyDetailsAdded,
-      onPress: () => router.push("/caregiver/profile/emergency-contact"),
+      onPress: () => router.push("/caregiver/account/emergency-contact"),
     },
     {
       icon: (
@@ -93,7 +94,7 @@ export default function ProfileScreen() {
       label: "Payment Information",
       isDone: profileCompletion?.isPaymentMethod,
       isDisabled: !profileCompletion?.isBackgroundVerifyStatus,
-      onPress: () => router.push("/caregiver/profile/banks"),
+      onPress: () => router.push("/caregiver/account/banks"),
     },
     {
       icon: (
@@ -101,7 +102,7 @@ export default function ProfileScreen() {
       ),
       label: "Caregiver Preferences",
       isDone: profileCompletion?.isCaregiverPreferencesAdded,
-      onPress: () => router.push("/caregiver/profile/preferences"),
+      onPress: () => router.push("/caregiver/account/preferences"),
     },
     {
       icon: (
@@ -109,7 +110,7 @@ export default function ProfileScreen() {
       ),
       label: "Unique Skills",
       isDone: profileCompletion?.isCaregiverSkillsAdded,
-      onPress: () => router.push("/caregiver/profile/skills"),
+      onPress: () => router.push("/caregiver/account/skills"),
     },
     {
       icon: (
@@ -117,7 +118,7 @@ export default function ProfileScreen() {
       ),
       label: "Experience with Pet Care",
       isDone: true,
-      onPress: () => router.push("/caregiver/profile/experiences"),
+      onPress: () => router.push("/caregiver/account/experiences"),
     },
     {
       icon: (
@@ -125,7 +126,7 @@ export default function ProfileScreen() {
       ),
       label: "Rates & Services",
       isDone: profileCompletion?.isPriceAdded,
-      onPress: () => router.push("/caregiver/profile/service-types"),
+      onPress: () => router.push("/caregiver/account/service-types"),
     },
     {
       icon: (
@@ -133,7 +134,15 @@ export default function ProfileScreen() {
       ),
       label: "Gallery",
       isDone: profileCompletion?.isGalleryAdded,
-      onPress: () => router.push("/caregiver/profile/gallery"),
+      onPress: () => router.push("/caregiver/account/gallery"),
+    },
+    {
+      icon: (
+        <MaterialIcons name="domain-verification" size={25} color={"#525252"} />
+      ),
+      label: "Service Area",
+      isDone: profileCompletion?.isServiceArea,
+      onPress: () => router.push("/caregiver/account/location"),
     },
   ];
 
@@ -181,7 +190,11 @@ export default function ProfileScreen() {
                 onPress={item.onPress}
                 disabled={item.isDisabled}
               >
-                {item.icon}
+                {item.isDone ? (
+                  <AntDesign name="check-circle" size={24} color={greenColor} />
+                ) : (
+                  <AntDesign name="close-circle" size={24} color={redColor} />
+                )}
                 <ThemedText>{item.label}</ThemedText>
               </TouchableOpacity>
             );

@@ -30,6 +30,9 @@ export const updateCaregiverProfileSchema = z.object({
       return val <= eighteenYearsAgo;
     }, "You must be at least 18 years old"),
   customerId: z.string().optional(),
+  lat: z.number(),
+  lng: z.number(),
+  radius: z.number(),
 });
 
 export type TUpdateCaregiverProfile = z.infer<

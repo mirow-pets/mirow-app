@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -32,6 +32,7 @@ export const DropdownInput = ({
   mode = "outlined",
 }: DropdownInputProps) => {
   const form = useFormContext();
+  const dropdownRef = useRef<SelectDropdown>(null);
 
   // Always get the latest error from useFormState directly
   const error = get(
@@ -39,16 +40,35 @@ export const DropdownInput = ({
     name
   )?.message;
 
+  // Sync clearing selection in dropdown when value is cleared (undefined)
+  useEffect(() => {
+    // Pick the currently displayed value (_value or value)
+    const selectedValue = _value !== undefined ? _value : form.getValues(name);
+    // If value is cleared (undefined or null), call .reset() on dropdown
+    if (
+      dropdownRef.current &&
+      (selectedValue === undefined || selectedValue === null)
+    ) {
+      dropdownRef.current.reset();
+    }
+    // Only trigger when the observed value changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_value, form.watch(name)]);
+
   return (
     <Controller
       control={form.control}
       name={name}
       render={({ field: { onChange, onBlur, value } }) => (
         <View style={{ width: "100%" }}>
+          {/* <ThemedText>{_value || value}</ThemedText> */}
           <SelectDropdown
+            ref={dropdownRef}
             searchPlaceHolderColor={grayColor}
+            // If value is cleared, do not set defaultValue; resets selection
             defaultValue={options.find(
-              (option) => option.value === (_value || value)
+              (option) =>
+                option.value === (_value !== undefined ? _value : value)
             )}
             disabled={disabled}
             data={options}

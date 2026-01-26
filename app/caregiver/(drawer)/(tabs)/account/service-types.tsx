@@ -52,7 +52,7 @@ export default function ServiceTypesScreen() {
         ["caregiver-profile-completion", currUser?.sessionId],
       ]);
 
-      router.replace("/caregiver/profile");
+      router.replace("/caregiver/account");
 
       Toast.show({
         type: "success",
@@ -62,7 +62,7 @@ export default function ServiceTypesScreen() {
   });
 
   const transportation = serviceTypes?.find(
-    ({ type }) => type === "transportation",
+    ({ type }) => type === "transportation"
   );
   const transportId = transportation?.id;
 
@@ -100,7 +100,7 @@ export default function ServiceTypesScreen() {
       // Ensure transportIds is required if "transportation" service is active
       if (
         !services?.some(
-          (service) => service.id === transportId && service.isActive,
+          (service) => service.id === transportId && service.isActive
         )
       )
         return;
@@ -123,12 +123,12 @@ export default function ServiceTypesScreen() {
           });
         }
         const minServiceRate = centToMajorUnit(
-          serviceTypeMapper[service.id].minServiceRate,
+          serviceTypeMapper[service.id].minServiceRate
         );
         if (service.serviceRate && minServiceRate > service.serviceRate) {
           ctx.addIssue({
             code: "custom",
-            message: `Service rate must be at least ${minServiceRate}`,
+            message: `Service rate must be at least $${minServiceRate}`,
             path: ["services", idx, "serviceRate"],
           });
         }
@@ -150,7 +150,7 @@ export default function ServiceTypesScreen() {
     if (!transportId) return false;
 
     const isTransportationExists = values.services.find(
-      (service) => service.id === transportId && service.isActive,
+      (service) => service.id === transportId && service.isActive
     );
 
     if (isTransportationExists) return true;
@@ -223,14 +223,14 @@ export default function ServiceTypesScreen() {
               <View>
                 {transportTypeOptions.map(({ label, value }, i) => {
                   const isChecked = transportIds.includes(
-                    value as TTransportType["id"],
+                    value as TTransportType["id"]
                   );
 
                   const handleOnValueChange = (isChecked: boolean) => {
                     const newTransportationTypes = isChecked
                       ? [...transportIds, value as TTransportType["id"]]
                       : transportIds.filter(
-                          (transportId) => transportId !== value,
+                          (transportId) => transportId !== value
                         );
                     form.setValue("transportIds", newTransportationTypes);
                   };

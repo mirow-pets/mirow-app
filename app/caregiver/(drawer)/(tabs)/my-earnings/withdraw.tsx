@@ -174,18 +174,18 @@ export default function WithdrawScreen() {
             </View>
           </View>
 
-          <NumberInput name="amount" editable={!isWithdrawing} />
-          <Text style={{ color: "#888", fontSize: 13, marginTop: 6 }}>
+          <NumberInput label="Amount" name="amount" editable={!isWithdrawing} />
+          <Text style={{ color: "#888", fontSize: 13, marginBottom: 8 }}>
             Note: The minimum amount to withdraw is $10.
           </Text>
 
           <Button
-            title="Withdraw"
             onPress={handleSubmit(submit)}
-            style={styles.cta}
             disabled={isWithdrawing || !isValid}
             loading={isWithdrawing}
-          />
+          >
+            Withdraw
+          </Button>
         </ScrollView>
       </KeyboardAvoidingView>
     </FormProvider>
@@ -249,9 +249,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 10,
     marginLeft: 2,
-  },
-  cta: {
-    marginTop: 24,
-    borderRadius: 8,
   },
 });

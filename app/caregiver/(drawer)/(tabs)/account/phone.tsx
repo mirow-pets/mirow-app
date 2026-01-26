@@ -7,20 +7,20 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/button/Button";
 import { PhoneNumberInput } from "@/components/form/PhoneNumberInput";
-import { updatePetOwnerProfileSchema } from "@/features/profile/validations";
-import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
+import { updateCaregiverProfileSchema } from "@/features/profile/validations";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function PhoneScreen() {
   const router = useRouter();
-  const { profile, updateProfile, isUpdatingProfile } = usePetOwnerProfile();
+  const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
   const primaryColor = useThemeColor({}, "primary");
 
   const form = useForm({
-    resolver: zodResolver(updatePetOwnerProfileSchema),
+    resolver: zodResolver(updateCaregiverProfileSchema),
     defaultValues: {
-      phone: profile?.phone,
+      phone: profile?.users?.phone,
     },
   });
 
@@ -35,9 +35,11 @@ export default function PhoneScreen() {
     const result = await form.trigger(["phone"]);
     if (!result) return;
 
-    updateProfile(form.getValues(), () => {
-      form.reset();
-      router.replace("/pet-owner/profile");
+    updateProfile(form.getValues(), {
+      onSuccess: () => {
+        form.reset();
+        router.replace("/caregiver/account");
+      },
     });
   };
 

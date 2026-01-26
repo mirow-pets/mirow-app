@@ -1,24 +1,14 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useFormContext } from "react-hook-form";
 
-import { FilterButton } from "@/components/button/FilterButton";
-import { UserAvatar } from "@/components/image/UserAvatar";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
-import { InfiniteFlatList } from "@/components/list/InfiniteFlatList";
 import { ThemedText } from "@/components/themed-text";
-import {
-  grayColor,
-  primaryColor,
-  secondaryColor,
-  whiteColor,
-} from "@/constants/theme";
+import { primaryColor, secondaryColor, whiteColor } from "@/constants/theme";
 import { TAddBooking } from "@/features/bookings/validations";
-import { usePetOwnerCaregiverFilter } from "@/hooks/pet-owner/use-pet-owner-caregivers-filter";
-import { TCaregiver, TUser } from "@/types";
-import { majorToCentUnit } from "@/utils";
+import { CaregiversList } from "@/features/caregivers/components/CaregiversList";
+import { TUser } from "@/types";
 
 export interface AddBookingStepThreeProps {
   onPrev?: () => void;
@@ -33,27 +23,31 @@ export const AddBookingStepThree = ({
 }: AddBookingStepThreeProps) => {
   const router = useRouter();
 
-  const { filter } = usePetOwnerCaregiverFilter();
-
   const form = useFormContext<TAddBooking>();
 
   const values = form.watch();
 
-  const handleViewCaregiver = (userId: TUser["id"]) => {
+  const handleClick = (userId: TUser["id"]) => {
     router.push(`/pet-owner/bookings/add/caregivers/${userId}`);
-  };
-
-  const handleFilter = () => {
-    router.push(`/pet-owner/bookings/add/caregivers/filter`);
   };
 
   return (
     <FormStepsLayout {...{ onNext, onPrev, loading, progress: 0.8 }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <ThemedText type="defaultSemiBold">Pick your caregiver</ThemedText>
-        <FilterButton onPress={handleFilter} />
       </View>
-      <View style={{ gap: 8, flex: 1 }}>
+
+      <CaregiversList
+        defaultFilter={{
+          serviceTypeIds: [values.serviceTypesId],
+          petTypeIds: values.petTypes,
+        }}
+        disabledFields={["serviceTypeIds", "petTypeIds"]}
+        onClick={handleClick}
+        onSelect={(userId) => form.setValue("caregiversIds", [userId])}
+        selectedIds={values.caregiversIds}
+      />
+      {/* <View style={{ gap: 8, flex: 1 }}>
         <InfiniteFlatList<{
           usersId: TCaregiver["usersId"];
           acceptanceRadius: TCaregiver["acceptanceRadius"];
@@ -66,11 +60,14 @@ export const AddBookingStepThree = ({
           lastName: TUser["lastName"];
           profileImage: TUser["profileImage"];
           distance: { text?: string };
+          distanceInMiles: number | null;
         }>
           url="/v2/caregivers"
           queryParams={{
             ...filter,
             price: filter.price && majorToCentUnit(filter.price),
+            lng,
+            lat,
           }}
           perPage={10}
           style={{ height: 400 }}
@@ -92,7 +89,7 @@ export const AddBookingStepThree = ({
                   {item.firstName} {item.lastName}
                 </ThemedText>
                 <ThemedText>
-                  Distance: {item?.distance?.text ?? `0 mi`}
+                  Distance: {`${item?.distanceInMiles ?? 0} mi`}
                 </ThemedText>
               </View>
               <TouchableOpacity
@@ -111,7 +108,7 @@ export const AddBookingStepThree = ({
             </TouchableOpacity>
           )}
         />
-      </View>
+      </View> */}
     </FormStepsLayout>
   );
 };

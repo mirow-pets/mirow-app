@@ -3,12 +3,13 @@ import { StyleSheet, View } from "react-native";
 import { useFormContext } from "react-hook-form";
 import { HelperText } from "react-native-paper";
 
+import { Button } from "@/components/button/Button";
 import { DateTimeInput } from "@/components/form/DateTimeInput";
 import { TextInputField } from "@/components/form/TextInputField";
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { ThemedText } from "@/components/themed-text";
-import { secondaryColor, whiteColor } from "@/constants/theme";
+import { secondaryColor } from "@/constants/theme";
 import { AddPetModal } from "@/features/bookings/components/AddPetModal";
 import { TAddBooking } from "@/features/bookings/validations";
 import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
@@ -55,11 +56,7 @@ export const AddBookingStepOne = ({
       </View>
     </View>
   ) : (
-    <View style={styles.selectPetContainer}>
-      <ThemedText type="defaultSemiBold" style={styles.selectPetText}>
-        Select pet
-      </ThemedText>
-    </View>
+    <Button color="secondary">Select pet</Button>
   );
 
   return (
@@ -86,15 +83,6 @@ export const AddBookingStepOne = ({
 };
 
 const styles = StyleSheet.create({
-  selectPetContainer: {
-    padding: 8,
-    backgroundColor: secondaryColor,
-    borderRadius: 32,
-  },
-  selectPetText: {
-    textAlign: "center",
-    color: whiteColor,
-  },
   selectedPetContainer: {
     flexDirection: "row",
     gap: 8,

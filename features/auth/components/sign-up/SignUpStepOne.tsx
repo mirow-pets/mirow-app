@@ -64,7 +64,7 @@ export const SignUpStepOne = ({ onPrev, onNext }: SignUpStepOneProps) => {
         options={[
           { label: "Male", value: "MALE" },
           { label: "Female", value: "FEMALE" },
-          { label: "Unknown", value: "OTHERS" },
+          { label: "Non-binary, prefer not to say", value: "NON_BINARY" },
         ]}
         mode="flat"
       />

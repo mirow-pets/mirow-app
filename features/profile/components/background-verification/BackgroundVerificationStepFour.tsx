@@ -3,6 +3,7 @@ import { View } from "react-native";
 
 import { router } from "expo-router";
 import { useFormContext } from "react-hook-form";
+import { ScrollView } from "react-native-gesture-handler";
 
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { ThemedText } from "@/components/themed-text";
@@ -35,61 +36,65 @@ export const BackgroungVerificationStepFour = ({
   const values = form.watch();
 
   const handleDisclosureConsent = () => {
-    router.push(`/caregiver/profile/disclosure-consent`);
+    router.push(`/caregiver/account/disclosure-consent`);
   };
 
   return (
-    <FormStepsLayout {...{ loading, onPrev, onNext }}>
-      <ThemedText type="defaultSemiBold">
-        Please double check your information
-      </ThemedText>
-      <ThemedText>
-        The details you provided will be used to run a background check through
-        our verification partner,{" "}
-      </ThemedText>
-      <ThemedText
-        style={{
-          textDecorationLine: "underline",
-        }}
-        onPress={handleDisclosureConsent}
-      >
-        Checkr
-      </ThemedText>
-      <ThemedText>.</ThemedText>
-      <ThemedText>
-        Note: We check your background again every 12 months.
-      </ThemedText>
-      <View
-        style={{
-          borderWidth: 1,
-          padding: 16,
-          borderRadius: 8,
-          gap: 8,
-          backgroundColor: whiteColor,
-        }}
-      >
-        {Object.entries(values).map(([key, value]) => {
-          const label = fieldLabels[key] || key; // Get label from mapping, or use key if not found
-          if (key === "dateOfBirth") {
-            return (
-              <ThemedText key={key}>
-                {label}: {new Date(value).toLocaleDateString()}
-              </ThemedText>
-            );
-          }
-          if (key === "customerId") return null;
-          return (
-            <ThemedText key={key}>
-              {label}: {String(value)}
+    <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+      <FormStepsLayout {...{ loading, onPrev, onNext, progress: 80 }}>
+        <View style={{ gap: 16 }}>
+          <ThemedText type="defaultSemiBold">
+            Please double check your information
+          </ThemedText>
+          <ThemedText>
+            The details you provided will be used to run a background check
+            through our verification partner,{" "}
+            <ThemedText
+              style={{
+                textDecorationLine: "underline",
+              }}
+              onPress={handleDisclosureConsent}
+            >
+              Checkr
             </ThemedText>
-          );
-        })}
-      </View>
-      <View style={{ borderWidth: 1, padding: 16, borderRadius: 8 }}>
-        <ThemedText>
-          Please make sure everything is accurate before continuing.
-        </ThemedText>
-      </View>
-    </FormStepsLayout>
+            .
+          </ThemedText>
+          <ThemedText>
+            Note: We check your background again every 12 months.
+          </ThemedText>
+          <View
+            style={{
+              borderWidth: 1,
+              padding: 16,
+              borderRadius: 8,
+              gap: 8,
+              backgroundColor: whiteColor,
+            }}
+          >
+            {Object.entries(values).map(([key, value]) => {
+              const label = fieldLabels[key] || key; // Get label from mapping, or use key if not found
+              if (key === "dateOfBirth") {
+                return (
+                  <ThemedText key={key}>
+                    {label}: {new Date(value).toLocaleDateString()}
+                  </ThemedText>
+                );
+              }
+              if (key === "customerId") return null;
+              return (
+                <ThemedText key={key}>
+                  {label}: {String(value)}
+                </ThemedText>
+              );
+            })}
+          </View>
+          <View style={{ borderWidth: 1, padding: 16, borderRadius: 8 }}>
+            <ThemedText>
+              Please make sure everything is accurate before continuing.
+            </ThemedText>
+          </View>
+        </View>
+      </FormStepsLayout>
+    </ScrollView>
   );
 };

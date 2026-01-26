@@ -28,7 +28,7 @@ export const SliderInput = ({
   // Always get the latest error from useFormState directly
   const error = get(
     useFormState({ control: form.control, name }).errors,
-    name,
+    name
   )?.message;
 
   return (

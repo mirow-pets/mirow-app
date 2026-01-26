@@ -11,6 +11,7 @@ interface DateTimeInputProps {
   minimumDate?: Date;
   maximumDate?: Date;
   placeholder?: string;
+  mode?: "outlined" | "flat";
 }
 
 // Formats a user-friendly date and time string using user's locale
@@ -31,6 +32,7 @@ export const DateTimeInput = ({
   minimumDate,
   maximumDate,
   placeholder,
+  mode = "outlined",
 }: DateTimeInputProps) => {
   const form = useFormContext();
 
@@ -53,7 +55,11 @@ export const DateTimeInput = ({
             value={formatUserFriendlyDateTime(value)}
             placeholder={placeholder}
             readOnly
-            style={{ paddingRight: 30 }}
+            mode={mode}
+            style={{
+              paddingRight: 30,
+              backgroundColor: mode === "flat" ? "transparent" : undefined,
+            }}
             error={!!error}
           />
           <DateTimePickerModal

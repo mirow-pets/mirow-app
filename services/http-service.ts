@@ -1,5 +1,3 @@
-import Toast from "react-native-toast-message";
-
 import { ENV } from "@/env";
 import { authStore } from "@/stores/auth.store";
 
@@ -51,16 +49,12 @@ const request = async (
     }
     return result.json();
   } else {
+    const data = await result.json();
+
     if (!path.includes("/login") && result.status === 401) {
       authStore.getInitialState().removeAuth();
-
-      Toast.show({
-        type: "error",
-        text1: "The account is disabled",
-      });
     }
 
-    const data = await result.json();
     console.log(`Error body on ${url}:`, data.error);
     if (data.error) throw data.error;
     throw data;

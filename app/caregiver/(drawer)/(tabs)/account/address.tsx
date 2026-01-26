@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
+import { ScrollView } from "react-native-gesture-handler";
+import { useTheme } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
 import { Button } from "@/components/button/Button";
@@ -13,36 +15,35 @@ import { TextInputField } from "@/components/form/TextInputField";
 import { ThemedText } from "@/components/themed-text";
 import {
   TUpdateAddress,
-  updatePetOwnerProfileSchema,
+  updateAddressSchema,
 } from "@/features/profile/validations";
-import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
+import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useAuth } from "@/hooks/use-auth";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
 import { useRefetchQueries } from "@/hooks/use-refetch-queries";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { Patch } from "@/services/http-service";
 
 export default function AddressScreen() {
   const router = useRouter();
   const { currUser } = useAuth();
+  const { profile } = useCaregiverProfile();
+  const theme = useTheme();
+  const address = profile.users.address[0];
   const { refetch } = useRefetchQueries();
-  const { profile } = usePetOwnerProfile();
-  const primaryColor = useThemeColor({}, "primary");
-  const address = profile?.address[0];
 
   const form = useForm({
-    resolver: zodResolver(updatePetOwnerProfileSchema),
+    resolver: zodResolver(updateAddressSchema),
     defaultValues: {
-      address: address?.address,
-      city: address?.city,
-      state: address?.state,
-      country: address?.country,
-      postalCode: address?.postalCode,
+      address: address.address,
+      city: address.city,
+      state: address.state,
+      country: address.country,
+      postalCode: address.postalCode,
     },
   });
 
   const { mutate, isPending } = useMutation<void, Error, TUpdateAddress>({
-    mutationFn: (input) => Patch("/users/address", input),
+    mutationFn: (input) => Patch("/care-givers/address", input),
     onSuccess: () => {
       const queryKeys = [
         ["caregiver-profile", currUser?.sessionId],
@@ -52,11 +53,11 @@ export default function AddressScreen() {
       refetch(queryKeys);
 
       form.reset();
-      router.replace("/pet-owner/profile");
+      router.replace("/caregiver/account");
 
       Toast.show({
         type: "success",
-        text1: "Pet owner address updated successfully!",
+        text1: "Caregiver address updated successfully!",
       });
     },
   });
@@ -77,31 +78,29 @@ export default function AddressScreen() {
 
   return (
     <FormProvider {...form}>
-      <View style={styles.container}>
-        <TextInputField label="Address" name="address" placeholder="Address" />
-        <View
-          style={{
-            backgroundColor: primaryColor,
-            padding: 16,
-            borderRadius: 6,
-          }}
-        >
-          <ThemedText>
-            We are currently provide services only in the state of Florida, US.
-            We appreciate your understanding and will expand access in the
-            future
-          </ThemedText>
+      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+        <View style={styles.container}>
+          <TextInputField name="address" placeholder="Address" />
+          <View
+            style={{
+              backgroundColor: theme.colors.primary,
+              padding: 16,
+              borderRadius: 6,
+            }}
+          >
+            <ThemedText>
+              We are currently provide services only in the state of Florida,
+              US. We appreciate your understanding and will expand access in the
+              future
+            </ThemedText>
+          </View>
+          <PlacesInput placeholder="Search City, State and Country" />
+          <TextInputField name="postalCode" placeholder="Postal Code" />
+          <Button onPress={handleSubmit} loading={isPending} color="secondary">
+            Save
+          </Button>
         </View>
-        <PlacesInput placeholder="Search City, State and Country" />
-        <TextInputField
-          label="Postal code"
-          name="postalCode"
-          placeholder="Postal Code"
-        />
-        <Button onPress={handleSubmit} loading={isPending} color="secondary">
-          Save
-        </Button>
-      </View>
+      </ScrollView>
     </FormProvider>
   );
 }

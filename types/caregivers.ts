@@ -32,9 +32,6 @@ export interface TAuthCaregiver extends TCaregiver {
   experience: number;
   totalTips: number;
   totalReviews: number;
-  day: number;
-  month: number;
-  year: number;
   ssn: string;
   drivingLicense: string;
   driverLicenseState: string;
@@ -48,6 +45,9 @@ export interface TAuthCaregiver extends TCaregiver {
   kycStatusId: number;
   users: TAuthUser;
   isBackgroundVerificationPaid: boolean;
+  lat?: number;
+  lng?: number;
+  acceptanceRadius: number;
 }
 
 export interface TCaregiverPreference {
@@ -77,6 +77,7 @@ export interface TCaregiverProfileCompletion {
   isBackgroundVerifyStatus: boolean;
   isAddress: boolean;
   isPaymentMethod: boolean;
+  isServiceArea: boolean;
 }
 
 export interface THomeType {
@@ -127,3 +128,35 @@ export interface TCareGiversServiceTypesLink {
   careGiversId: string;
   serviceTypesId: number;
 }
+
+export interface TCaregiversFilter
+  extends Record<
+    string,
+    string | string[] | number | number[] | null | undefined
+  > {
+  search?: string;
+  price?: number;
+  radius?: number;
+  starrating?: number;
+  caregiverPreferenceIds?: number[];
+  caregiverSkillIds?: number[];
+  serviceTypeIds?: number[];
+  petTypeIds?: number[];
+  transportTypeIds?: number[];
+  homeTypeIds?: number[];
+}
+
+export type TCaregiversResponse = {
+  usersId: TCaregiver["usersId"];
+  acceptanceRadius: TCaregiver["acceptanceRadius"];
+  experience: TCaregiver["experience"] | null;
+  averageStarRatings: TCaregiver["averageStarRatings"] | null;
+  totalStars: TCaregiver["totalStars"] | null;
+  totalReviews: TCaregiver["totalReviews"] | 0;
+  serviceCompleted: number;
+  firstName: TUser["firstName"];
+  lastName: TUser["lastName"];
+  profileImage: TUser["profileImage"];
+  distanceInMiles: number;
+  services: { id: number; label: string; serviceRate: number }[];
+}[];

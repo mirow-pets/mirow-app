@@ -2,20 +2,21 @@ import { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { useRouter } from "expo-router";
+import { FAB, useTheme } from "react-native-paper";
 
 import { SearchButton } from "@/components/button/SearchButton";
+import { Chip } from "@/components/chip/Chip";
 import { SearchInput } from "@/components/form/SearchInput";
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { InfiniteFlatList } from "@/components/list/InfiniteFlatList";
 import { ThemedText } from "@/components/themed-text";
-import { grayColor, whiteColor } from "@/constants/theme";
+import { grayColor, primaryColor, whiteColor } from "@/constants/theme";
 import { PetTypesSelector } from "@/features/pets/components/PetTypesSelector";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { TPet } from "@/types";
 import { TPetType } from "@/types/pets";
 
 export default function PetsScreen() {
-  const primaryColor = useThemeColor({}, "primary");
+  const theme = useTheme();
   const router = useRouter();
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState<string>();
@@ -37,7 +38,10 @@ export default function PetsScreen() {
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <ThemedText type="defaultSemiBold" style={{ color: primaryColor }}>
+        <ThemedText
+          type="defaultSemiBold"
+          style={{ color: theme.colors.primary }}
+        >
           Who is getting spoiled?
         </ThemedText>
         <SearchButton onPress={() => setShowSearch((value) => !value)} />
@@ -96,28 +100,39 @@ export default function PetsScreen() {
                     </ThemedText>
                   )}
                 </View>
-                <View style={[styles.petChip, { borderColor: primaryColor }]}>
-                  <ThemedText style={styles.petGender}>
-                    {item.gender === null
-                      ? "Unknown"
-                      : item.gender
-                      ? "Male"
-                      : "Female"}
-                    , {item.age > 1 ? `${item.age}yrs` : `${item.age}yr`}
-                  </ThemedText>
+
+                <View style={{ flexDirection: "row" }}>
+                  <Chip
+                    mode="outlined"
+                    size="sm"
+                    style={{
+                      height: 24,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: 0,
+                      margin: 0,
+                    }}
+                    textStyle={{
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    <ThemedText style={{ fontSize: 10 }}>
+                      {item.gender === null
+                        ? "Unknown"
+                        : item.gender
+                        ? "Male"
+                        : "Female"}
+                      , {item.age > 1 ? `${item.age}yrs` : `${item.age}yr`}
+                    </ThemedText>
+                  </Chip>
                 </View>
               </View>
             </TouchableOpacity>
           )}
         />
+        <FAB icon="plus" style={styles.fab} onPress={handleAdd} />
       </View>
-
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: primaryColor }]}
-        onPress={handleAdd}
-      >
-        <ThemedText style={styles.fabText}>+</ThemedText>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -158,36 +173,11 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     color: grayColor,
   },
-  petChip: {
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 8,
-    paddingVertical: 1,
-    alignSelf: "flex-start",
-  },
-  petGender: {
-    fontSize: 10,
-    color: "#666",
-    marginTop: 4,
-  },
   fab: {
     position: "absolute",
-    right: 20,
+    margin: 16,
+    right: 0,
     bottom: 100,
-    width: 58,
-    height: 58,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5, // Android shadow
-    shadowColor: "#000", // iOS shadow
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-  },
-  fabText: {
-    color: "white",
-    fontSize: 30,
-    lineHeight: 30,
+    backgroundColor: primaryColor,
   },
 });

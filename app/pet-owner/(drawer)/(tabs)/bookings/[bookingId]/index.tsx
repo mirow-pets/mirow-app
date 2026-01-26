@@ -66,12 +66,9 @@ export default function BookingScreen() {
     ) {
       // TODO: Once the user is paid disable this button even the payment is not yet completed
       paymentButton = (
-        <Button
-          title="Pay Now"
-          onPress={handlePayNow}
-          size="sm"
-          disabled={isPayingBooking}
-        />
+        <Button onPress={handlePayNow} size="sm" disabled={isPayingBooking}>
+          Pay Now
+        </Button>
       );
     } else if (
       booking.bookingStatus?.status === "completed" &&
