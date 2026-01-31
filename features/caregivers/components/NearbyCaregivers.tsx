@@ -13,17 +13,6 @@ import { TCaregiver } from "@/types";
 import { TCaregiversResponse } from "@/types/caregivers";
 import { centToMajorUnit, formatCurrency } from "@/utils";
 
-interface CaregiverNearby {
-  id: string;
-  firstName: string;
-  lastName: string;
-  profileImage: string;
-  distanceInMiles: number;
-  overallRating: number;
-  totalReviews: number;
-  services: { label: string; serviceRate: number }[];
-}
-
 const CaregiversNearby = ({
   onClick,
   onSeeMore,

@@ -11,8 +11,8 @@ export interface PlaceAutoCompleteProps {
   onChange: (_value: { city: string; state: string; country: string }) => void;
   style?: StyleProp<TextStyle>;
   placeholder?: string;
-  onBlur?: (e: any) => void;
-  onFocus?: (e: any) => void;
+  onBlur?: (_e: any) => void;
+  onFocus?: (_e: any) => void;
 }
 
 export const PlaceAutoComplete = ({

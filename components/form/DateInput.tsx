@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 import { Controller, get, useFormContext, useFormState } from "react-hook-form";
 import DateTimePickerModal, {
@@ -15,8 +15,8 @@ interface DateInputProps
   inputMode?: "outlined" | "flat";
 }
 
+// Format date as per user's locale
 function formatUserFriendlyDate(date?: Date) {
-  // Format: Sep 28, 2024 (use user's locale)
   return date?.toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
@@ -40,26 +40,46 @@ export const DateInput = ({
     name
   )?.message;
 
+  /**
+   * Explanation:
+   * The original usage of TouchableOpacity wraps TextInput,
+   * but the react-native-paper TextInput is implemented natively and
+   * handles its own touch events—so it often blocks touch events from
+   * propagating up to TouchableOpacity.
+   *
+   * Solution: Make TextInput non-interactive, and overlay a transparent
+   * Pressable/View to capture touches, or use the pointerEvents property.
+   *
+   * Alternatively, disable TextInput's editable prop and handle `onPressIn` on TextInput directly.
+   * Here's an approach using the TextInput's own onPressIn, which is
+   * supported by react-native-paper v5+ (if not, use the overlay approach).
+   */
   return (
     <Controller
       control={form.control}
       name={name}
       render={({ field: { onChange, value } }) => (
-        <TouchableOpacity
-          onPress={() => setOpen(true)}
-          style={{ width: "100%" }}
-        >
+        <View style={{ width: "100%" }}>
           <TextInput
+            left={<TextInput.Icon icon="calendar" size={24} />}
             label={label}
             value={formatUserFriendlyDate(value)}
             placeholder={placeholder}
-            readOnly
+            mode={inputMode}
+            error={!!error}
             style={{
               paddingRight: 30,
               backgroundColor: inputMode === "flat" ? "transparent" : undefined,
             }}
-            error={!!error}
-            mode={inputMode}
+            editable={false} // Make sure the input isn't actually focusable
+            pointerEvents="none" // Prevent TextInput from capturing touch
+          />
+          {/* Overlay a transparent Pressable to capture all touches */}
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={label || name}
           />
           <DateTimePickerModal
             {...props}
@@ -70,10 +90,9 @@ export const DateInput = ({
               setOpen(false);
             }}
             onCancel={() => setOpen(false)}
-            display="spinner"
           />
           <HelperText type="error">{error?.toString()}</HelperText>
-        </TouchableOpacity>
+        </View>
       )}
     />
   );

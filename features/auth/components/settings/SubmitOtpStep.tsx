@@ -63,12 +63,8 @@ export const SubmitOtpStep = ({
         onChangeText={onEmailChange}
         autoCapitalize="none"
       />
-      <Button
-        onPress={form.handleSubmit(submit)}
-        loading={isSendingOtp}
-        color="secondary"
-      >
-        Continue
+      <Button onPress={form.handleSubmit(submit)} loading={isSendingOtp}>
+        Submit
       </Button>
     </FormProvider>
   );

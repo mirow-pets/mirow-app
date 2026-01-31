@@ -1,20 +1,28 @@
 import { z } from "zod";
 
-export const addBookingSchema = z.object({
-  pets: z
-    .string({ message: "Pet is required" })
-    .uuid({ message: "Pet is required" })
-    .array()
-    .min(1, { message: "Pet is required" }),
-  petTypes: z
-    .number({ message: "Pet types is required" })
-    .array()
-    .min(1, { message: "Pet types is required" }),
-  startDate: z.date({ message: "Service date is required" }),
-  notes: z.string().optional(),
-  isOpenShift: z.boolean({ message: "Shift type is required" }),
-  caregiversIds: z.string().uuid().array(),
-  serviceTypesId: z.number(),
-});
+export const addBookingSchema = z
+  .object({
+    serviceTypeId: z.number(),
+    petId: z
+      .string({ message: "Pet is required" })
+      .uuid({ message: "Pet is required" }),
+    petTypeId: z.number({ message: "Pet types is required" }),
+    startDate: z.date({ message: "Service start date is required" }),
+    startTime: z.date({ message: "Service start time is required" }),
+    endDate: z.date({ message: "Service end date is required" }),
+    endTime: z.date({ message: "Service end time is required" }),
+    notes: z.string().optional(),
+    isOpenShift: z.boolean({ message: "Shift type is required" }),
+    caregiverId: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.isOpenShift && !data.caregiverId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Caregiver is required",
+        path: ["caregiversIds"],
+      });
+    }
+  });
 
 export type TAddBooking = z.infer<typeof addBookingSchema>;

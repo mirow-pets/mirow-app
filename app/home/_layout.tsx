@@ -19,7 +19,6 @@ export default function HomeTabsNavigation() {
           tabBarButton: HapticTab,
           headerShadowVisible: false,
           headerStyle: {
-            margin: 8,
             backgroundColor: whiteColor,
           },
           headerTitleStyle: {

@@ -84,8 +84,9 @@ export default function CaregiverDrawerLayout() {
               <CaregiverBookingProvider>
                 <Drawer
                   screenOptions={{ headerShown: false }}
-                  drawerContent={() => (
+                  drawerContent={(props) => (
                     <Sidebar
+                      drawerNavigation={props.navigation}
                       profileImage={profile?.users?.profileImage}
                       fullName={`${profile?.users?.firstName} ${profile?.users?.lastName}`}
                       email={profile?.users?.email || ""}

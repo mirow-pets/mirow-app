@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 import { Controller, get, useFormContext, useFormState } from "react-hook-form";
@@ -14,7 +14,7 @@ interface DropdownInputProps {
   options: { label: string; value?: string | number | boolean }[];
   placeholder?: string;
   value?: unknown;
-  onChange?: (value: unknown) => void;
+  onChange?: (_value: unknown) => void;
   disabled?: boolean;
   inputStyle?: TextInputProps["style"];
   mode?: "flat" | "outlined";
@@ -80,6 +80,7 @@ export const DropdownInput = ({
             }
             renderButton={(selectedItem, isOpened) => (
               <View style={styles.input}>
+                {/* Overlay a transparent Pressable to open the dropdown when pressing the input */}
                 <TextInput
                   label={label}
                   value={selectedItem?.label}
@@ -95,10 +96,24 @@ export const DropdownInput = ({
                   ]}
                   error={!!error}
                   mode={mode}
+                  pointerEvents="none" // Make sure touch events pass through to Pressable
                 />
                 <Ionicons
                   name={isOpened ? "chevron-up" : "chevron-down"}
                   style={styles.dropdownButtonArrowStyle}
+                />
+                {/* This transparent Pressable is absolutely positioned over the TextInput */}
+                <Pressable
+                  style={StyleSheet.absoluteFill}
+                  disabled={disabled}
+                  onPress={() => {
+                    if (dropdownRef.current && !disabled) {
+                      // @ts-ignore
+                      dropdownRef.current.openDropdown();
+                    }
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel={label || name}
                 />
               </View>
             )}

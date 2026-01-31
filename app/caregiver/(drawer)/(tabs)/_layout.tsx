@@ -1,29 +1,28 @@
 import React from "react";
 
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { AntDesign } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Tabs } from "expo-router";
 
 import { HapticTab } from "@/components/haptic-tab";
-import { TabsHeader } from "@/components/layout/TabsHeader";
 import { blackColor, whiteColor } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
+
+export const unstable_settings = {
+  initialRouteName: "index",
+};
 
 export default function CaregiverTabsNavigation() {
   const primaryColor = useThemeColor({}, "primary");
   return (
     <Tabs
+      initialRouteName="(main)"
       screenOptions={{
         tabBarActiveTintColor: primaryColor,
         tabBarButton: HapticTab,
-        headerShadowVisible: false,
-        headerStyle: {
-          margin: 8,
-        },
         headerTitleStyle: {
           display: "none",
         },
-        header: () => <TabsHeader />,
         tabBarShowLabel: false,
         tabBarStyle: {
           paddingTop: 2,
@@ -47,69 +46,37 @@ export default function CaregiverTabsNavigation() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(home)"
         options={{
           tabBarIcon: ({ color }) => (
             <FontAwesome6 size={28} name="house" color={color} />
           ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="messages"
+        name="(main)"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="(messages)"
         options={{
           tabBarIcon: ({ color }) => (
             <AntDesign name="message" size={28} color={color} />
           ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="bookings"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="account"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="favorites"
+        name="(favorites)"
         options={{
           tabBarIcon: ({ color }) => (
             <FontAwesome6 name="heart" size={28} color={color} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="my-earnings"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="open-shifts"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="calendar"
-        options={{
-          href: null,
+          headerShown: false,
         }}
       />
     </Tabs>

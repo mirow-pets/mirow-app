@@ -1,47 +1,27 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router, Tabs, usePathname } from "expo-router";
+import { Tabs } from "expo-router";
 
 import { HapticTab } from "@/components/haptic-tab";
-import { TabsHeader } from "@/components/layout/TabsHeader";
 import { blackColor, Colors, whiteColor } from "@/constants/theme";
-import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 
 export default function PetOwnerTabsNavigation() {
-  const { profileCompletion } = usePetOwnerProfile();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    if (
-      !profileCompletion ||
-      profileCompletion?.percentage === 100 ||
-      pathname.startsWith("/pet-owner/account") ||
-      pathname.startsWith("/pet-owner/pets")
-    ) {
-      return;
-    }
-
-    router.replace("/pet-owner/account");
-  }, [profileCompletion, profileCompletion?.percentage, pathname]);
-
   return (
     <Tabs
+      initialRouteName="(main)"
       screenOptions={{
         tabBarActiveTintColor: Colors["light"].primary,
-        // headerShown: false,
         tabBarButton: HapticTab,
         headerShadowVisible: false,
         headerStyle: {
-          margin: 8,
           backgroundColor: whiteColor,
         },
         headerTitleStyle: {
           display: "none",
         },
-        header: () => <TabsHeader />,
         tabBarShowLabel: false,
         tabBarStyle: {
           paddingTop: 2,
@@ -65,71 +45,46 @@ export default function PetOwnerTabsNavigation() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(home)"
         options={{
           tabBarIcon: ({ color }) => (
             <FontAwesome6 size={28} name="house" color={color} />
           ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="messages"
+        name="(main)"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="(messages)"
         options={{
           tabBarIcon: ({ color }) => (
             <AntDesign name="message" size={28} color={color} />
           ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="bookings"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="favorites"
+        name="(favorites)"
         options={{
           tabBarIcon: ({ color }) => (
             <FontAwesome6 name="heart" size={28} color={color} />
           ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="pets"
+        name="(pets)"
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name="paw-outline" size={28} color={color} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="account"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="calendar"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="caregivers"
-        options={{
-          href: null,
+          headerShown: false,
         }}
       />
     </Tabs>

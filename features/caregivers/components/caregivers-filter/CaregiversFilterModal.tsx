@@ -17,10 +17,12 @@ import { TCaregiversFilter } from "@/types/caregivers";
 import { CaregiversFilterCollapsible } from "./CaregiversFilterCollapsible";
 
 export const CaregiversFilterModal = ({
+  petName,
   disabledFields,
   filter,
   onChange,
 }: {
+  petName?: string;
   disabledFields?: (keyof TCaregiversFilter)[];
   filter: TCaregiversFilter;
   onChange: (_filter: TCaregiversFilter) => void;
@@ -66,8 +68,6 @@ export const CaregiversFilterModal = ({
     form.setValue("homeTypeIds", undefined);
   };
 
-  console.log("values", values);
-
   const cancel = () => {
     form.reset();
     setOpenId("");
@@ -77,6 +77,13 @@ export const CaregiversFilterModal = ({
     onChange(form.getValues());
     setOpenId("");
   };
+
+  const selectedServiceType = serviceTypeOptions.find(
+    (option) => option.value === values.serviceTypeIds?.[0]
+  );
+  const selectedPetType = petTypeOptions.find(
+    (option) => option.value === values.petTypeIds?.[0]
+  );
 
   return (
     <Modal
@@ -95,25 +102,44 @@ export const CaregiversFilterModal = ({
     >
       <FormProvider {...form}>
         <View style={styles.container}>
-          <DropdownInput
-            name="serviceTypeIds"
-            options={serviceTypeOptions}
-            placeholder="Service type"
-            value={values.serviceTypeIds?.[0]}
-            onChange={(value) =>
-              form.setValue("serviceTypeIds", [Number(value)])
-            }
-            disabled={disabledFields?.includes("serviceTypeIds")}
-          />
-
-          <DropdownInput
-            name="petTypeIds"
-            options={petTypeOptions}
-            placeholder="Pet type"
-            value={values.petTypeIds?.[0]}
-            onChange={(value) => form.setValue("petTypeIds", [Number(value)])}
-            disabled={disabledFields?.includes("petTypeIds")}
-          />
+          {disabledFields?.includes("serviceTypeIds") ? (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <ThemedText>Service type: </ThemedText>
+              <ThemedText type="subtitle">
+                {selectedServiceType?.label}
+              </ThemedText>
+            </View>
+          ) : (
+            <DropdownInput
+              name="serviceTypeIds"
+              options={serviceTypeOptions}
+              placeholder="Service type"
+              value={values.serviceTypeIds?.[0]}
+              onChange={(value) =>
+                form.setValue("serviceTypeIds", [Number(value)])
+              }
+            />
+          )}
+          {petName && (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <ThemedText>Pet name: </ThemedText>
+              <ThemedText type="subtitle">{petName}</ThemedText>
+            </View>
+          )}
+          {disabledFields?.includes("petTypeIds") ? (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <ThemedText>Pet type: </ThemedText>
+              <ThemedText type="subtitle">{selectedPetType?.label}</ThemedText>
+            </View>
+          ) : (
+            <DropdownInput
+              name="petTypeIds"
+              options={petTypeOptions}
+              placeholder="Pet type"
+              value={values.petTypeIds?.[0]}
+              onChange={(value) => form.setValue("petTypeIds", [Number(value)])}
+            />
+          )}
 
           <SliderInput
             label="Price range"
@@ -320,7 +346,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 20,
     gap: 16,
   },
 });

@@ -66,9 +66,7 @@ export const ImagePicker = ({
         "camera"
       );
       console.log("Camera Permission Result:", hasPermission); // Added log
-      if (!hasPermission) {
-        return;
-      }
+      if (!hasPermission) return;
 
       const result = await BaseImagePicker.launchCameraAsync({
         cameraType: BaseImagePicker.CameraType.back,

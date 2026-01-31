@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 import { Controller, get, useFormContext, useFormState } from "react-hook-form";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -49,7 +49,7 @@ export const DateTimeInput = ({
       control={form.control}
       name={name}
       render={({ field: { onChange, value } }) => (
-        <TouchableOpacity onPress={() => setOpen(true)}>
+        <View style={{ width: "100%" }}>
           <TextInput
             label={label}
             value={formatUserFriendlyDateTime(value)}
@@ -62,6 +62,14 @@ export const DateTimeInput = ({
             }}
             error={!!error}
           />
+
+          {/* Overlay a transparent Pressable to capture all touches */}
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={label || name}
+          />
           <DateTimePickerModal
             isVisible={open}
             mode="datetime"
@@ -72,10 +80,9 @@ export const DateTimeInput = ({
               setOpen(false);
             }}
             onCancel={() => setOpen(false)}
-            display="spinner"
           />
           <HelperText type="error">{error?.toString()}</HelperText>
-        </TouchableOpacity>
+        </View>
       )}
     />
   );

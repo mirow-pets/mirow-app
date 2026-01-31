@@ -4,8 +4,9 @@ import { useFormContext } from "react-hook-form";
 import { HelperText } from "react-native-paper";
 
 import { Button } from "@/components/button/Button";
-import { DateTimeInput } from "@/components/form/DateTimeInput";
+import { DateInput } from "@/components/form/DateInput";
 import { TextInputField } from "@/components/form/TextInputField";
+import { TimeInput } from "@/components/form/TimeInput";
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { ThemedText } from "@/components/themed-text";
@@ -32,10 +33,10 @@ export const AddBookingStepOne = ({
   const selectedPet = pets.find((pet) => pet.id === values.pets?.[0]);
 
   const handlePetAdded = (petId: TPet["id"]) => {
-    form.setValue("pets", [petId]);
+    form.setValue("pets", [petId], { shouldDirty: true });
     const pet = pets.find((pet) => pet.id === petId);
     if (!pet) return;
-    form.setValue("petTypes", [pet.petTypesId]);
+    form.setValue("petTypes", [pet.petTypesId], { shouldDirty: true });
   };
 
   const addPetModalTrigger = selectedPet ? (
@@ -67,13 +68,10 @@ export const AddBookingStepOne = ({
           {errors?.pets?.message?.toString()}
         </HelperText>
       </View>
-      <DateTimeInput
-        label="Service date"
-        name="startDate"
-        minimumDate={new Date()}
-      />
+      <DateInput label="Service date" name="date" minimumDate={new Date()} />
+      <TimeInput label="Service time" name="time" minimumDate={new Date()} />
       <TextInputField
-        label="Special instructions / Notes"
+        label="Special instructions / Notes (optional)"
         name="notes"
         numberOfLines={3}
         multiline

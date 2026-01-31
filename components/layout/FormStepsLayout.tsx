@@ -34,7 +34,7 @@ export const FormStepsLayout = ({
       headerLeft: () => <HeaderBackButton onPress={onPrev} />,
       headerTitle: () => (
         <ProgressBar
-          progress={progress}
+          progress={progress / 100}
           color={theme.colors.primary}
           style={{ height: 8, borderRadius: 8 }}
         />

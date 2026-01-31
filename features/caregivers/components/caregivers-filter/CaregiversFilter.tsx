@@ -7,12 +7,14 @@ import { TCaregiversFilter } from "@/types/caregivers";
 import { CaregiversFilterModal } from "./CaregiversFilterModal";
 
 export interface CaregiversFilterProps {
+  petName?: string;
   disabledFields?: (keyof TCaregiversFilter)[];
   filter: TCaregiversFilter;
   onChange: (_filter: TCaregiversFilter) => void;
 }
 
 export const CaregiversFilter = ({
+  petName,
   disabledFields,
   filter: filter,
   onChange,
@@ -32,6 +34,7 @@ export const CaregiversFilter = ({
         />
       </View>
       <CaregiversFilterModal
+        petName={petName}
         disabledFields={disabledFields}
         filter={filter}
         onChange={onChange}

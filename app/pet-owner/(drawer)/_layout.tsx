@@ -72,8 +72,9 @@ export default function PetOwnerDrawerLayout() {
                 <PetOwnerBookingProvider>
                   <Drawer
                     screenOptions={{ headerShown: false }}
-                    drawerContent={() => (
+                    drawerContent={(props) => (
                       <Sidebar
+                        drawerNavigation={props.navigation}
                         profileImage={profile?.profileImage}
                         fullName={`${profile?.firstName} ${profile?.lastName}`}
                         email={profile?.email || ""}

@@ -10,23 +10,22 @@ const requestOptions = async (
 ) => {
   const accessToken = authStore.getState().token;
 
-  const headers = {
-    ...(accessToken
-      ? {
-          Authorization: `Bearer ${accessToken}`,
-        }
-      : {}),
+  const headers: Record<string, string> = {
     "Content-Type": contentType,
     "Cache-Control": "no-cache",
   };
 
-  let options = {
+  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+
+  const options = {
     method: method,
     headers,
-    body: (contentType === "application/json"
-      ? JSON.stringify(body)
-      : body) as string,
+    body: body as string,
   };
+
+  if (contentType === "application/json") {
+    options.body = JSON.stringify(body);
+  }
 
   return options;
 };

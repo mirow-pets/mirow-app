@@ -19,6 +19,7 @@ import {
 import { centToMajorUnit, formatCurrency, majorToCentUnit } from "@/utils";
 
 export interface CaregiversListProps {
+  filterPetName?: string;
   disabledFields?: (keyof TCaregiversFilter)[];
   defaultFilter?: TCaregiversFilter;
   selectedIds?: TCaregiver["usersId"][];
@@ -27,6 +28,7 @@ export interface CaregiversListProps {
 }
 
 export const CaregiversList = ({
+  filterPetName,
   disabledFields,
   defaultFilter,
   onClick,
@@ -41,6 +43,7 @@ export const CaregiversList = ({
   return (
     <View style={{ flex: 1 }}>
       <CaregiversFilter
+        petName={filterPetName}
         disabledFields={disabledFields}
         filter={defaultFilter ?? {}}
         onChange={setFilter}

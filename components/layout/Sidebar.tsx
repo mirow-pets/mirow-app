@@ -3,6 +3,8 @@ import { TouchableOpacity, View } from "react-native";
 
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { DrawerActions } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 import { useTheme } from "react-native-paper";
 
 import { whiteColor } from "@/constants/theme";
@@ -46,6 +48,8 @@ export interface SidebarProps {
   fullName: string;
   email: string;
   menus: MenuItemProps[];
+  /** Pass the drawer's navigation from drawerContent(props) => <Sidebar drawerNavigation={props.navigation} /> so close works */
+  drawerNavigation?: { dispatch: (_action: unknown) => void };
 }
 
 export const Sidebar = ({
@@ -53,10 +57,22 @@ export const Sidebar = ({
   fullName,
   email,
   menus,
+  drawerNavigation,
 }: SidebarProps) => {
   const theme = useTheme();
+  const rootNavigation = useNavigation();
   const statusBarHeight = getStatusBarHeight();
   const { logout } = useAuth();
+
+  const closeDrawer = () => {
+    const nav = drawerNavigation ?? rootNavigation;
+    nav.dispatch(DrawerActions.closeDrawer());
+  };
+
+  const handleMenuPress = (onPress: () => void) => () => {
+    closeDrawer();
+    onPress();
+  };
 
   return (
     <View style={{ backgroundColor: whiteColor, paddingTop: statusBarHeight }}>
@@ -81,12 +97,12 @@ export const Sidebar = ({
       </View>
       <View style={{ gap: 16, padding: 32 }}>
         {menus.map((menu, i) => (
-          <MenuItem key={i} {...menu} />
+          <MenuItem key={i} {...menu} onPress={handleMenuPress(menu.onPress)} />
         ))}
         <MenuItem
           icon={<MaterialIcons name="logout" size={24} color="black" />}
           label="Logout"
-          onPress={logout}
+          onPress={handleMenuPress(logout)}
         />
       </View>
     </View>

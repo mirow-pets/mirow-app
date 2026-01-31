@@ -1,28 +1,18 @@
 import { StyleProp } from "react-native";
 
-import { ImageStyle } from "expo-image";
+import { Image, ImageStyle } from "expo-image";
 
 import { ENV } from "@/env";
-
-import { Image } from "./Image";
 
 const placeholderImage = require("@/assets/images/placeholder-avatar.png");
 
 export interface UserAvatarProps {
   src?: string;
   size?: number;
-  isEditable?: boolean;
-  onChange?: (_filePath: string) => void;
   style?: StyleProp<ImageStyle>;
 }
 
-export const UserAvatar = ({
-  src,
-  size = 40,
-  isEditable,
-  onChange,
-  style,
-}: UserAvatarProps) => {
+export const UserAvatar = ({ src, size = 40, style }: UserAvatarProps) => {
   let imagePath = src;
 
   if (src && !src.startsWith("http")) {
@@ -41,8 +31,6 @@ export const UserAvatar = ({
         },
         style,
       ]}
-      isEditable={isEditable}
-      onChange={onChange}
     />
   );
 };

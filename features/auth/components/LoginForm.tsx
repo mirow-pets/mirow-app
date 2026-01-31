@@ -11,12 +11,15 @@ import Toast from "react-native-toast-message";
 import { PasswordInput } from "@/components/form/PasswordInput";
 import { TextInputField } from "@/components/form/TextInputField";
 import { ThemedText } from "@/components/themed-text";
-import { blackColor } from "@/constants/theme";
+import { blackColor, grayColor } from "@/constants/theme";
 import { TLogin, loginSchema } from "@/features/auth/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { Post } from "@/services/http-service";
 import { TCurrentUser, UserRole } from "@/types/users";
 import { confirm, onError } from "@/utils";
+
+import { AppleLoginButton } from "./sso/AppleLoginButton";
+import { GoogleLoginButton } from "./sso/GoogleLoginButton";
 
 export interface LoginFormProps {
   path: string;
@@ -109,7 +112,12 @@ export const LoginForm = ({ path, redirect, signUpPath }: LoginFormProps) => {
           mode="contained"
           buttonColor={theme.colors.secondary}
           textColor={blackColor}
-          style={{ width: "90%", borderRadius: 28, marginTop: 56 }}
+          style={{
+            width: "90%",
+            borderRadius: 28,
+            marginTop: 56,
+            marginBottom: 24,
+          }}
           labelStyle={{
             fontSize: 20,
             height: 28,
@@ -123,6 +131,45 @@ export const LoginForm = ({ path, redirect, signUpPath }: LoginFormProps) => {
         >
           Log in
         </Button>
+
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 8,
+            alignItems: "center",
+            paddingHorizontal: 16,
+          }}
+        >
+          <View
+            style={{
+              height: 1,
+              borderWidth: 0.5,
+              borderColor: grayColor,
+              flex: 1,
+            }}
+          />
+          <ThemedText>Or Sign up with</ThemedText>
+          <View
+            style={{
+              height: 1,
+              borderWidth: 0.5,
+              borderColor: grayColor,
+              flex: 1,
+            }}
+          />
+        </View>
+
+        <View
+          style={{
+            alignItems: "center",
+            marginVertical: 16,
+            flexDirection: "row",
+            gap: 8,
+          }}
+        >
+          <AppleLoginButton redirect={redirect} />
+          <GoogleLoginButton redirect={redirect} />
+        </View>
 
         <View
           style={{

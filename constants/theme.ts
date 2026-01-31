@@ -74,7 +74,7 @@ export const caregiverTheme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#6dcc78",
+    primary: "#6dcb78",
     secondary: secondaryColor,
     black: blackColor,
     white: whiteColor,

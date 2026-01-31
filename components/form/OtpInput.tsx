@@ -30,7 +30,6 @@ export const OtpInput = ({
   ...props
 }: OtpInputProps) => {
   const form = useFormContext();
-  const { errors } = useFormState({ control: form.control, name });
   const ref = useBlurOnFulfill({ value: props.value, cellCount: CELL_COUNT });
 
   const setValue = (value: string) => form.setValue(name, value);
@@ -41,7 +40,10 @@ export const OtpInput = ({
   });
 
   // Always get the latest error from useFormState directly
-  const error = get(useFormState({ control: form.control, name }).errors, name)?.message;
+  const error = get(
+    useFormState({ control: form.control, name }).errors,
+    name
+  )?.message;
 
   return (
     <View style={{ width: "100%" }}>
@@ -74,9 +76,7 @@ export const OtpInput = ({
           )}
         ></Controller>
       </View>
-      <ThemedText style={styles.errorText}>
-        {error?.toString()}
-      </ThemedText>
+      <ThemedText style={styles.errorText}>{error?.toString()}</ThemedText>
     </View>
   );
 };

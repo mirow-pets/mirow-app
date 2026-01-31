@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import { UserAvatar } from "@/components/image/UserAvatar";
+import { UserAvatarEditable } from "@/components/image/UserAvatarEditable";
 import { ThemedText } from "@/components/themed-text";
 import { blackColor, redColor, whiteColor } from "@/constants/theme";
 import { TUpdateCaregiverProfile } from "@/features/profile/validations";
@@ -24,9 +24,8 @@ export const CaregiverProfileDetailsCard = () => {
           flexWrap: "wrap",
         }}
       >
-        <UserAvatar
+        <UserAvatarEditable
           src={profile?.users?.profileImage}
-          isEditable
           size={72}
           onChange={(profileImage) =>
             updateProfile({ profileImage } as TUpdateCaregiverProfile)

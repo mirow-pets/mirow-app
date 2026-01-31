@@ -7,7 +7,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/button/Button";
 import { DropdownInput } from "@/components/form/DropdownInput";
 import { TextInputField } from "@/components/form/TextInputField";
-import { PetAvatar } from "@/components/image/PetAvatar";
+import { PetAvatarEditable } from "@/components/image/PetAvatarEditable";
 import { addPetSchema } from "@/features/pets/validations";
 import { usePetOwnerPet } from "@/hooks/pet-owner/use-pet-owner-pet";
 
@@ -28,15 +28,12 @@ export const AddPetForm = () => {
     },
   });
 
-  const petVaccinations = form.watch("petVaccinations");
-
   return (
     <FormProvider {...form}>
       <View style={styles.container}>
         <View style={{ alignItems: "center", padding: 16 }}>
-          <PetAvatar
+          <PetAvatarEditable
             size={80}
-            isEditable
             onChange={(value) => form.setValue("profileImage", value)}
           />
         </View>

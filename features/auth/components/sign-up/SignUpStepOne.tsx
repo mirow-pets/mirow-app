@@ -6,7 +6,7 @@ import { useFormContext } from "react-hook-form";
 import { DateInput } from "@/components/form/DateInput";
 import { DropdownInput } from "@/components/form/DropdownInput";
 import { TextInputField } from "@/components/form/TextInputField";
-import { UserAvatar } from "@/components/image/UserAvatar";
+import { UserAvatarEditable } from "@/components/image/UserAvatarEditable";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { ThemedText } from "@/components/themed-text";
 import { TSignUp } from "@/features/auth/validations";
@@ -35,8 +35,7 @@ export const SignUpStepOne = ({ onPrev, onNext }: SignUpStepOneProps) => {
           neighborhood.
         </ThemedText>
       </View>
-      <UserAvatar
-        isEditable
+      <UserAvatarEditable
         size={80}
         onChange={(value) => {
           console.log("IMAGE", value);

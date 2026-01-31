@@ -9,25 +9,16 @@ import {
   useMutation,
   useQuery,
 } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 
 import { ENV } from "@/env";
-import {
-  TAddBooking,
-  TCancelBooking,
-  TPayBooking,
-} from "@/features/bookings/validations";
+import { TCancelBooking, TPayBooking } from "@/features/bookings/validations";
 import { useModal } from "@/hooks/use-modal";
 import { Get, Patch, Post } from "@/services/http-service";
 import { TBooking } from "@/types";
 import { onError } from "@/utils";
 
 export interface PetOwnerBookingContextValues {
-  bookings: TBooking[];
-  isLoadingBookings: boolean;
-  addBooking: (_input: TAddBooking) => void;
-  isAddingBooking: boolean;
   cancelBooking: (_input: TCancelBooking) => void;
   isCancellingBooking: boolean;
   getBooking: (_bookingId: string) => void;
@@ -48,18 +39,7 @@ const PetOwnerBookingProvider = ({
   children,
 }: PetOwnerBookingProviderProps) => {
   const { setOpenId } = useModal();
-  const router = useRouter();
   const [bookingId, setBookingId] = useState<TBooking["id"]>();
-
-  const {
-    data: bookings = [],
-    isLoading: isLoadingBookings,
-    refetch: refetchBookings,
-  } = useQuery<TBooking[]>({
-    queryKey: ["bookings"],
-    queryFn: () => Get("/users/bookings"),
-    enabled: false,
-  });
 
   const {
     data: booking,
@@ -71,26 +51,6 @@ const PetOwnerBookingProvider = ({
     enabled: !!bookingId,
   });
 
-  const { mutate: add, isPending: isAddingBooking } = useMutation<
-    TBooking,
-    Error,
-    TAddBooking
-  >({
-    mutationFn: ({ serviceTypesId, ...input }: TAddBooking) =>
-      Post("/users/bookings/meal-service", input),
-    onSuccess: async () => {
-      if (bookingId) await Promise.all([refetchBookings(), refetchBooking()]);
-
-      router.replace("/pet-owner/bookings");
-
-      Toast.show({
-        type: "success",
-        text1: "Booking added successfully!",
-      });
-    },
-    onError,
-  });
-
   const { mutate: cancel, isPending: isCancellingBooking } = useMutation<
     TBooking,
     Error,
@@ -99,7 +59,7 @@ const PetOwnerBookingProvider = ({
     mutationFn: ({ bookingId, cancelReason }: TCancelBooking) =>
       Patch(`/users/bookings/${bookingId}/cancel`, { cancelReason }),
     onSuccess: async () => {
-      if (bookingId) await Promise.all([refetchBookings(), refetchBooking()]);
+      if (bookingId) await Promise.all([refetchBooking()]);
       setOpenId("");
 
       Toast.show({
@@ -134,8 +94,6 @@ const PetOwnerBookingProvider = ({
     },
   });
 
-  const addBooking = (input: TAddBooking) => add(input);
-
   const cancelBooking = (input: TCancelBooking) => cancel(input);
 
   const getBooking = (bookingId: string) => {
@@ -145,10 +103,6 @@ const PetOwnerBookingProvider = ({
   return (
     <PetOwnerBookingContext.Provider
       value={{
-        bookings,
-        isLoadingBookings,
-        addBooking,
-        isAddingBooking,
         cancelBooking,
         isCancellingBooking,
         getBooking,

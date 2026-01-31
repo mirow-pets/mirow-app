@@ -76,18 +76,15 @@ const ForgotPasswordStep = ({ email }: ForgotPasswordStepProps) => {
         label="Confirm password"
         mode="outlined"
       />
-      <Button
-        onPress={form.handleSubmit(submit)}
-        loading={isChangingPassword}
-        color="secondary"
-      >
-        Reset password
+      <Button onPress={form.handleSubmit(submit)} loading={isChangingPassword}>
+        Done!
       </Button>
     </FormProvider>
   );
 };
 
 export default function ForgotPasswordForm() {
+  const { userRole } = useAuth();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState<string>();
 
@@ -95,11 +92,17 @@ export default function ForgotPasswordForm() {
 
   return (
     <OtpProvider>
-      <AuthScreenLayout>
+      <AuthScreenLayout
+        bgImage={
+          userRole === UserRole.PetOwner
+            ? require("@/assets/images/pet-owner-login-bg.png")
+            : require("@/assets/images/caregiver-login-bg.png")
+        }
+      >
         <View style={styles.container}>
           {step === 1 && (
             <SubmitOtpStep
-              description="We'll send you a one-time password (OTP) to help you reset your password."
+              description="We got you! Fill in your email and we will send a code to reset your password"
               type="password-update"
               next={handleNext}
               onEmailChange={setEmail}

@@ -36,7 +36,7 @@ export interface PetOwnerProfileContextValues {
   isLoadingProfileCompletion: boolean;
   updateProfile: (
     _input: TUpdatePetOwnerProfile,
-    _onSuccess?: () => void,
+    _onSuccess?: () => void
   ) => void;
   isUpdatingProfile: boolean;
   petOwnerProfileFormFields: TPetOwnerProfileFormFields;
@@ -47,6 +47,7 @@ export interface PetOwnerProfileContextValues {
   petTypeOptions: TOption[];
   homeTypeOptions: TOption[];
   transportationTypeOptions: TOption[];
+  serviceTypes: TServiceType[];
 }
 
 export const PetOwnerProfileContext =
@@ -121,7 +122,7 @@ const PetOwnerProfileProvider = ({
 
   const updateProfile = (
     input: TUpdatePetOwnerProfile,
-    onSuccess?: () => void,
+    onSuccess?: () => void
   ) => _updateProfile(input, { onSuccess });
 
   const caregiverPreferenceOptions =
@@ -129,42 +130,42 @@ const PetOwnerProfileProvider = ({
       ({ preference, id }) => ({
         label: preference,
         value: id,
-      }),
+      })
     );
 
   const caregiverSkillOptions = petOwnerProfileFormFields.careGiverSkills.map(
     ({ skill, id }) => ({
       label: skill,
       value: id,
-    }),
+    })
   );
 
   const serviceTypeOptions = petOwnerProfileFormFields.serviceTypes.map(
     ({ display, id }) => ({
       label: display,
       value: id,
-    }),
+    })
   );
 
   const petTypeOptions = petOwnerProfileFormFields.petTypes.map(
     ({ display, id }) => ({
       label: display,
       value: id,
-    }),
+    })
   );
 
   const homeTypeOptions = petOwnerProfileFormFields.homeTypes.map(
     ({ display, id }) => ({
       label: display,
       value: id,
-    }),
+    })
   );
 
   const transportationTypeOptions = petOwnerProfileFormFields.transportType.map(
     ({ display, id }) => ({
       label: display,
       value: id,
-    }),
+    })
   );
 
   return (
@@ -184,6 +185,7 @@ const PetOwnerProfileProvider = ({
         petTypeOptions,
         homeTypeOptions,
         transportationTypeOptions,
+        serviceTypes: petOwnerProfileFormFields.serviceTypes,
       }}
     >
       {children}
@@ -198,7 +200,7 @@ export const usePetOwnerProfile = () => {
 
   if (!profile) {
     throw new Error(
-      "Cannot access usePetOwnerProfile outside PetOwnerProfileProvider",
+      "Cannot access usePetOwnerProfile outside PetOwnerProfileProvider"
     );
   }
   return profile;

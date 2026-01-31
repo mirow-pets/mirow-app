@@ -13,6 +13,7 @@ import Toast from "react-native-toast-message";
 
 import { TSendLocation } from "@/features/auth/validations";
 import { Patch } from "@/services/http-service";
+import { authStore } from "@/stores/auth.store";
 import { onError } from "@/utils";
 
 import { useAuth } from "./use-auth";
@@ -102,7 +103,11 @@ const LocationProvider = ({ children }: LocationProviderProps) => {
 
         if (loc) {
           const { latitude, longitude } = loc.coords;
+
           setCoords({ lat: latitude, lng: longitude });
+
+          const token = await authStore.getState().token;
+
           if (token)
             sendLocation({
               lat: latitude.toString(),

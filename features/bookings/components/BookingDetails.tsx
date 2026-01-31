@@ -124,7 +124,6 @@ export default function BookingDetails({
           user={booking.careGivers.users}
           actions={
             <View style={{ flexDirection: "row", gap: 16 }}>
-              {messageButton}
               {isPetOwner ? (
                 <SetAsFavoriteCaregiver
                   isFavourite={booking.careGivers.isFavourite}

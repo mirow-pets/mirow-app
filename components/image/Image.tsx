@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Image as BaseImage,
   ImageProps as BaseImageProps,
+  Platform,
   StyleSheet,
   Text,
   View,
@@ -62,7 +63,7 @@ export const Image = ({
             source={image ? { uri: image } : source}
             style={[styles.image]}
             onLoad={image ? undefined : () => setIsLoading(false)}
-            onLoadStart={() => setIsLoading(true)}
+            onLoadStart={() => Platform.OS !== "ios" && setIsLoading(true)}
             onLoadEnd={image ? undefined : () => setIsLoading(false)}
             {...rest}
           />
