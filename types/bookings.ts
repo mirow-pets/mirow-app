@@ -56,3 +56,9 @@ export interface TBookingStatus {
   display: string;
   image: string | null;
 }
+
+export interface TTrainingType {
+  id: number;
+  type: string;
+  display: string;
+}

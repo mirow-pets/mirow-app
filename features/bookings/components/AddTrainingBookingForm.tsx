@@ -9,6 +9,7 @@ import { AddBookingIsOpenShift } from "./add-booking/AddBookingIsOpenShift";
 import { AddBookingSelectCaregiver } from "./add-booking/AddBookingSelectCaregiver";
 import { AddBookingSelectDateTime } from "./add-booking/AddBookingSelectDateTime";
 import { AddBookingSelectPet } from "./add-booking/AddBookingSelectPet";
+import { AddBookingSelectTrainingType } from "./add-booking/AddBookingSelectTrainingType";
 import { AddBookingSpecialInstruction } from "./add-booking/AddBookingSpecialInstruction";
 
 export const AddTrainingBookingForm = () => {
@@ -25,16 +26,17 @@ export const AddTrainingBookingForm = () => {
     <>
       <View style={styles.container}>
         {step === 1 && <AddBookingSelectPet progress={0} />}
-        {step === 2 && <AddBookingSelectDateTime progress={20} />}
-        {step === 3 && <AddBookingSpecialInstruction progress={40} />}
-        {step === 4 && <AddBookingIsOpenShift progress={60} />}
-        {step === 5 && (
+        {step === 2 && <AddBookingSelectTrainingType progress={20} />}
+        {step === 3 && <AddBookingSelectDateTime progress={30} />}
+        {step === 4 && <AddBookingSpecialInstruction progress={40} />}
+        {step === 5 && <AddBookingIsOpenShift progress={60} />}
+        {step === 6 && (
           <AddBookingSelectCaregiver
             progress={80}
             serviceTypeId={serviceType.id}
           />
         )}
-        {step === 6 && (
+        {step === 7 && (
           <AddBookingConfirmation serviceType={serviceType.display} />
         )}
       </View>

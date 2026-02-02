@@ -3,6 +3,8 @@ import { z } from "zod";
 export const addBookingSchema = z
   .object({
     serviceTypeId: z.number(),
+    trainingTypeId: z.number({ message: "Training type is required" }),
+    customTrainingType: z.string().optional(),
     petId: z
       .string({ message: "Pet is required" })
       .uuid({ message: "Pet is required" }),

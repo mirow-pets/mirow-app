@@ -13,11 +13,15 @@ import Toast from "react-native-toast-message";
 
 import { ENV } from "@/env";
 import { TCancelBooking, TPayBooking } from "@/features/bookings/validations";
+import { useAuth } from "@/hooks/use-auth";
 import { useModal } from "@/hooks/use-modal";
 import { Get, Patch, Post } from "@/services/http-service";
-import { TBooking } from "@/types";
+import { TBooking, TOption, TTrainingType } from "@/types";
 import { onError } from "@/utils";
 
+interface TPetOwnerBookingFormFields {
+  trainingType: TTrainingType[];
+}
 export interface PetOwnerBookingContextValues {
   cancelBooking: (_input: TCancelBooking) => void;
   isCancellingBooking: boolean;
@@ -26,6 +30,7 @@ export interface PetOwnerBookingContextValues {
   isLoadingBooking: boolean;
   payBooking: UseMutateFunction<void, Error, TPayBooking>;
   isPayingBooking: boolean;
+  trainingTypeOptions: TOption[];
 }
 
 export const PetOwnerBookingContext =
@@ -40,6 +45,18 @@ const PetOwnerBookingProvider = ({
 }: PetOwnerBookingProviderProps) => {
   const { setOpenId } = useModal();
   const [bookingId, setBookingId] = useState<TBooking["id"]>();
+  const { currUser } = useAuth();
+
+  const {
+    data: petOwnerBookingFormFields = {
+      trainingType: [],
+    },
+    isLoading: isLoadingPetOwnerBookingFormFields,
+  } = useQuery<TPetOwnerBookingFormFields>({
+    queryKey: ["pet-owner-booking-fields"],
+    queryFn: () => Get("/fields/users/bookings"),
+    enabled: !!currUser,
+  });
 
   const {
     data: booking,
@@ -100,6 +117,13 @@ const PetOwnerBookingProvider = ({
     setBookingId(bookingId);
   };
 
+  const trainingTypeOptions = petOwnerBookingFormFields.trainingType.map(
+    ({ display, id }) => ({
+      label: display,
+      value: id,
+    })
+  );
+
   return (
     <PetOwnerBookingContext.Provider
       value={{
@@ -110,6 +134,7 @@ const PetOwnerBookingProvider = ({
         isLoadingBooking,
         payBooking,
         isPayingBooking,
+        trainingTypeOptions,
       }}
     >
       {children}

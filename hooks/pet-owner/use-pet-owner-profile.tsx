@@ -76,7 +76,7 @@ const PetOwnerProfileProvider = ({
     isLoading: isLoadingPetOwnerProfileFormFields,
   } = useQuery<TPetOwnerProfileFormFields>({
     queryKey: ["pet-owner-profile-fields"],
-    queryFn: () => Get("/fields/users/filters"),
+    queryFn: () => Get("/fields/users/bookings"),
     enabled: !!currUser,
   });
 
@@ -126,47 +126,42 @@ const PetOwnerProfileProvider = ({
   ) => _updateProfile(input, { onSuccess });
 
   const caregiverPreferenceOptions =
-    petOwnerProfileFormFields.careGiverPreferences.map(
+    petOwnerProfileFormFields?.careGiverPreferences?.map(
       ({ preference, id }) => ({
         label: preference,
         value: id,
       })
-    );
+    ) ?? [];
 
-  const caregiverSkillOptions = petOwnerProfileFormFields.careGiverSkills.map(
-    ({ skill, id }) => ({
+  const caregiverSkillOptions =
+    petOwnerProfileFormFields?.careGiverSkills?.map(({ skill, id }) => ({
       label: skill,
       value: id,
-    })
-  );
+    })) ?? [];
 
-  const serviceTypeOptions = petOwnerProfileFormFields.serviceTypes.map(
-    ({ display, id }) => ({
+  const serviceTypeOptions =
+    petOwnerProfileFormFields?.serviceTypes?.map(({ display, id }) => ({
       label: display,
       value: id,
-    })
-  );
+    })) ?? [];
 
-  const petTypeOptions = petOwnerProfileFormFields.petTypes.map(
-    ({ display, id }) => ({
+  const petTypeOptions =
+    petOwnerProfileFormFields?.petTypes?.map(({ display, id }) => ({
       label: display,
       value: id,
-    })
-  );
+    })) ?? [];
 
-  const homeTypeOptions = petOwnerProfileFormFields.homeTypes.map(
-    ({ display, id }) => ({
+  const homeTypeOptions =
+    petOwnerProfileFormFields?.homeTypes?.map(({ display, id }) => ({
       label: display,
       value: id,
-    })
-  );
+    })) ?? [];
 
-  const transportationTypeOptions = petOwnerProfileFormFields.transportType.map(
-    ({ display, id }) => ({
+  const transportationTypeOptions =
+    petOwnerProfileFormFields?.transportType?.map(({ display, id }) => ({
       label: display,
       value: id,
-    })
-  );
+    })) ?? [];
 
   return (
     <PetOwnerProfileContext.Provider

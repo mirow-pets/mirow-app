@@ -18,6 +18,7 @@ import { Post } from "@/services/http-service";
 import { TBooking } from "@/types";
 import { onError } from "@/utils";
 
+import { usePetOwnerBooking } from "./pet-owner/use-pet-owner-booking";
 import { useExitFormRouteWarning } from "./use-exit-form-route";
 import { useRefetchQueries } from "./use-refetch-queries";
 
@@ -89,6 +90,7 @@ export interface AddBookingContextValues {
   handleSelectDateTimeNext: (_fields: string[]) => () => void;
   handleIsOpenShiftNext: (_fields: string[]) => () => void;
   handleCaregiverNext: (_fields: string[]) => () => void;
+  handleTrainingTypeNext: (_fields: string[]) => () => void;
 }
 
 export const AddBookingContext = createContext<AddBookingContextValues | null>(
@@ -110,6 +112,7 @@ const AddBookingProvider = ({
 }: AddBookingProviderProps) => {
   const [step, setStep] = useState(1);
   const { refetch } = useRefetchQueries();
+  const { trainingTypeOptions } = usePetOwnerBooking();
 
   const currentDate = new Date();
 
@@ -144,6 +147,8 @@ const AddBookingProvider = ({
         serviceTypeId: input.serviceTypeId,
         caregiverId: input.caregiverId,
         petId: input.petId,
+        trainingTypeId: input.trainingTypeId,
+        customTrainingType: input.customTrainingType,
         startDate: mergeDateAndTime({ date: startDate, time: startTime }),
         endDate:
           endDate && endTime
@@ -227,7 +232,22 @@ const AddBookingProvider = ({
     }
   };
 
-  console.log("form.watch()", form.watch());
+  const handleTrainingTypeNext = (fields: string[]) => async () => {
+    const result = await form.trigger(fields as unknown as keyof TAddBooking);
+    if (!result) return;
+
+    const isCustomTrainingType = trainingTypeOptions.find(
+      (option) =>
+        option.label === "Custom" && option.value === values.trainingTypeId
+    );
+
+    if (isCustomTrainingType && !values.customTrainingType) {
+      form.setError("customTrainingType", {
+        message: "Custom training type is required",
+      });
+    } else setStep((step) => step + 1);
+  };
+
   console.log(form.formState.errors);
 
   return (
@@ -243,6 +263,7 @@ const AddBookingProvider = ({
         handleSelectDateTimeNext,
         handleIsOpenShiftNext,
         handleCaregiverNext,
+        handleTrainingTypeNext,
       }}
     >
       <FormProvider {...form}>{children}</FormProvider>

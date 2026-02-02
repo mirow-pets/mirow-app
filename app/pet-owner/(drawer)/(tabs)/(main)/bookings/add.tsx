@@ -10,8 +10,8 @@ import AddBookingProvider from "@/hooks/use-add-booking-form";
 
 const mapper = {
   [SERVICE_TYPE.TRAINING]: {
-    isOpenShiftStep: 4,
-    confirmationStep: 6,
+    isOpenShiftStep: 5,
+    confirmationStep: 7,
   },
 };
 

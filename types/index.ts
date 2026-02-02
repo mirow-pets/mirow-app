@@ -1,4 +1,4 @@
-export { TBooking } from "./bookings";
+export { TBooking, TTrainingType } from "./bookings";
 export { TCalendarEvent } from "./calendar";
 export {
   TCaregiver,

@@ -38,7 +38,6 @@ export const AddBookingConfirmation = ({
   const notes = values.notes || "-";
 
   const onNext = form.handleSubmit((input) => {
-    form.reset();
     addBooking(input);
   });
 
