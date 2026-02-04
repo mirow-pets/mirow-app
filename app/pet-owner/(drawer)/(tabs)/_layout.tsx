@@ -11,7 +11,7 @@ import { blackColor, Colors, whiteColor } from "@/constants/theme";
 export default function PetOwnerTabsNavigation() {
   return (
     <Tabs
-      initialRouteName="(main)"
+      initialRouteName="(home)"
       screenOptions={{
         tabBarActiveTintColor: Colors["light"].primary,
         tabBarButton: HapticTab,
@@ -50,13 +50,6 @@ export default function PetOwnerTabsNavigation() {
           tabBarIcon: ({ color }) => (
             <FontAwesome6 size={28} name="house" color={color} />
           ),
-          headerShown: false,
-        }}
-      />
-      <Tabs.Screen
-        name="(main)"
-        options={{
-          href: null,
           headerShown: false,
         }}
       />

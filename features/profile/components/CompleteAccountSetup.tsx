@@ -3,21 +3,28 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { router } from "expo-router";
 import { useTheme } from "react-native-paper";
-import { Pie, PolarChart } from "victory-native";
 
-import { grayColor } from "@/constants/theme";
 import { useAuth } from "@/hooks/use-auth";
 import { UserRole } from "@/types";
 
 export interface CompleteAccountSetupProps {
-  progress: number; // value between 0 and 1, i.e., 0.67 for 67%
+  /** 0–1 (e.g. 0.67) or 0–100 (e.g. 67) */
+  progress: number;
 }
+
+const SIZE = 56;
+const STROKE = 5;
 
 export const CompleteAccountSetup = ({
   progress,
 }: CompleteAccountSetupProps) => {
   const theme = useTheme();
   const { userRole } = useAuth();
+
+  const percent =
+    progress <= 1
+      ? Math.min(1, Math.max(0, progress)) * 100
+      : Math.min(100, Math.max(0, progress));
 
   const handlePress = () => {
     router.replace(`/${userRole as UserRole}/account`);
@@ -29,31 +36,13 @@ export const CompleteAccountSetup = ({
       onPress={handlePress}
     >
       <View style={styles.donutContainer}>
-        <View style={{ height: 56, width: 56 }}>
-          <PolarChart
-            data={[
-              {
-                label: "",
-                value: 100 - progress,
-                color: grayColor,
-              },
-              {
-                label: "",
-                value: progress,
-                color: theme.colors.primary,
-              },
-            ]} // 👈 specify your data
-            labelKey={"label"} // 👈 specify data key for labels
-            valueKey={"value"} // 👈 specify data key for values
-            colorKey={"color"}
-          >
-            <Pie.Chart innerRadius={"80%"} />
-          </PolarChart>
-        </View>
-        <View style={styles.percentOverlay}>
-          <Text style={[styles.percent, { color: theme.colors.primary }]}>
-            {progress}%
-          </Text>
+        <View style={styles.donutInner}>
+          {/* Center label */}
+          <View style={styles.percentOverlay}>
+            <Text style={[styles.percent, { color: theme.colors.primary }]}>
+              {Math.round(percent)}%
+            </Text>
+          </View>
         </View>
       </View>
       <View style={{ flex: 1, minWidth: 0 }}>
@@ -99,12 +88,53 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
   },
+  donutInner: {
+    width: SIZE,
+    height: SIZE,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  ring: {
+    position: "absolute",
+    width: SIZE,
+    height: SIZE,
+    borderRadius: SIZE / 2,
+    borderWidth: STROKE,
+  },
+  ringBg: {
+    borderColor: "#E0E0E0",
+  },
+  ringClipRight: {
+    position: "absolute",
+    left: SIZE / 2,
+    width: SIZE / 2,
+    height: SIZE,
+    overflow: "hidden",
+  },
+  ringClipLeft: {
+    position: "absolute",
+    left: 0,
+    width: SIZE / 2,
+    height: SIZE,
+    overflow: "hidden",
+  },
+  ringFg: {
+    borderRightColor: "transparent",
+    borderBottomColor: "transparent",
+    borderLeftColor: "transparent",
+  },
+  ringOffsetRight: {
+    left: -SIZE / 2,
+  },
+  ringFgLeft: {
+    borderTopColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "transparent",
+  },
   percentOverlay: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    width: 60,
-    height: 60,
+    width: SIZE,
+    height: SIZE,
     alignItems: "center",
     justifyContent: "center",
   },

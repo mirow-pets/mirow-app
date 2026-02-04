@@ -1,21 +1,19 @@
 import { createContext, ReactNode, useContext } from "react";
 
 import {
-  initPaymentSheet,
-  presentPaymentSheet,
-} from "@stripe/stripe-react-native";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+  UseMutateFunction,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 
-import { ENV } from "@/env";
-import { TBackgroundCheckInitialPayment } from "@/features/payments/validations";
 import { TAddBankAccount } from "@/features/payments/validations/add-bank-account-schema";
+import { useAuth } from "@/hooks/use-auth";
 import { Delete, Get, Post } from "@/services/http-service";
 import { TBankAccount } from "@/types";
-import { TInitialPay } from "@/types/payments";
 import { onError } from "@/utils";
 
-import { useAuth } from "../use-auth";
 import { useCaregiverProfile } from "./use-caregiver-profile";
 
 export interface BankAccountsResponse {
@@ -28,17 +26,22 @@ export interface BankAccountsResponse {
 export interface CaregiverPaymentContextValues {
   bankAccounts?: BankAccountsResponse;
   isLoadingBankAccounts: boolean;
-  addBankAccount: (_input: TAddBankAccount, _onSuccess?: () => void) => void;
+  addBankAccount: UseMutateFunction<
+    any,
+    Error,
+    {
+      country: string;
+      accHolderName: string;
+      routingNumber: string;
+      accNum: string;
+    },
+    unknown
+  >;
   isAddingBankAccount: boolean;
   deleteBankAccount: (_bankAccountId: TBankAccount["id"]) => void;
   isDeletingBankAccount: boolean;
   setAsDefault: (_bankAccountId: TBankAccount["id"]) => void;
   isSettingAsDefault: boolean;
-  backgroundCheckInitialPayment: (
-    _input: TBackgroundCheckInitialPayment,
-    _onSuccess: (_initialPay?: TInitialPay) => void
-  ) => void;
-  isLoadingBackgroundCheckInitialPayment: boolean;
 }
 
 export const CaregiverPaymentContext =
@@ -64,30 +67,31 @@ const CaregiverPaymentProvider = ({
     enabled: !!currUser && profileCompletion?.percentage === 100,
   });
 
-  const { mutate: add, isPending: isAddingBankAccount } = useMutation({
-    mutationFn: (input: TAddBankAccount) =>
-      Post("/payment-method/bank/connected-account", input),
-    onSuccess: async () => {
-      const queryKeys = [
-        ["bank-accounts"],
-        ["caregiver-profile-completion", currUser?.sessionId],
-      ];
+  const { mutate: addBankAccount, isPending: isAddingBankAccount } =
+    useMutation({
+      mutationFn: (input: TAddBankAccount) =>
+        Post("/payment-method/bank/connected-account", input),
+      onSuccess: async () => {
+        const queryKeys = [
+          ["bank-accounts"],
+          ["caregiver-profile-completion", currUser?.sessionId],
+        ];
 
-      await Promise.all(
-        queryKeys.map((queryKey) =>
-          queryClient.refetchQueries({
-            queryKey,
-          })
-        )
-      );
+        await Promise.all(
+          queryKeys.map((queryKey) =>
+            queryClient.refetchQueries({
+              queryKey,
+            })
+          )
+        );
 
-      Toast.show({
-        type: "success",
-        text1: "A new bank is added successfully",
-      });
-    },
-    onError,
-  });
+        Toast.show({
+          type: "success",
+          text1: "A new bank is added successfully",
+        });
+      },
+      onError,
+    });
 
   const { mutate: del, isPending: isDeletingBankAccount } = useMutation({
     mutationFn: (bankAccountId: string) =>
@@ -119,57 +123,7 @@ const CaregiverPaymentProvider = ({
     onError,
   });
 
-  const {
-    mutate: _backgroundCheckInitialPayment,
-    isPending: isLoadingBackgroundCheckInitialPayment,
-  } = useMutation<
-    TInitialPay | undefined,
-    Error,
-    TBackgroundCheckInitialPayment
-  >({
-    mutationFn: async (input: TBackgroundCheckInitialPayment) => {
-      const initialPay = await Post(
-        "/v2/background-verifications/payment",
-        input
-      );
-
-      if (initialPay.isFree) return;
-
-      const { error } = await initPaymentSheet({
-        paymentIntentClientSecret: initialPay.clientSecret,
-        merchantDisplayName: ENV.MERCHANT_NAME,
-      });
-
-      if (!error) {
-        const { error: presentError } = await presentPaymentSheet();
-        if (presentError) {
-          throw presentError;
-        }
-      }
-
-      return initialPay as TInitialPay;
-    },
-  });
-
-  const addBankAccount = (input: TAddBankAccount, onSuccess?: () => void) =>
-    add(input, { onSuccess });
-
   const deleteBankAccount = (bankAccountId: string) => del(bankAccountId);
-
-  const backgroundCheckInitialPayment = (
-    input: TBackgroundCheckInitialPayment,
-    onSuccess: (_initialPay?: TInitialPay) => void
-  ) =>
-    _backgroundCheckInitialPayment(input, {
-      onSuccess: async (initialPay?: TInitialPay) => {
-        Toast.show({
-          type: "success",
-          text1: "Background check paid successfully",
-        });
-
-        onSuccess(initialPay);
-      },
-    });
 
   return (
     <CaregiverPaymentContext.Provider
@@ -182,8 +136,6 @@ const CaregiverPaymentProvider = ({
         isDeletingBankAccount,
         setAsDefault,
         isSettingAsDefault,
-        backgroundCheckInitialPayment,
-        isLoadingBackgroundCheckInitialPayment,
       }}
     >
       {children}

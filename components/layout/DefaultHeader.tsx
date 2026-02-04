@@ -1,7 +1,5 @@
 import { Text, View } from "react-native";
 
-import "react-native-reanimated";
-
 import { HeaderBackButton } from "@react-navigation/elements";
 
 import { whiteColor } from "@/constants/theme";

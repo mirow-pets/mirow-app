@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
+import { Platform } from "react-native";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as Notifications from "expo-notifications";
@@ -127,23 +128,25 @@ const CaregiverBookingProvider = ({
       if (bookingId) await Promise.all([refetchBookings(), refetchBooking()]);
       setOpenId("");
 
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Service in progress",
-          body: `${booking?.pets?.[0]?.name}'s ${booking?.serviceTypes?.display} service is inprogress!`,
-          sound: "default",
-          autoDismiss: true,
-          data: {
-            url: `/care-givers/bookings/${bookingId}`,
-          },
-        },
-        trigger: null,
-      });
-
       Toast.show({
         type: "success",
         text1: "Booking started successfully!",
       });
+
+      if (Platform.OS !== "web") {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Service in progress",
+            body: `${booking?.pets?.[0]?.name}'s ${booking?.serviceTypes?.display} service is inprogress!`,
+            sound: "default",
+            autoDismiss: true,
+            data: {
+              url: `/care-givers/bookings/${bookingId}`,
+            },
+          },
+          trigger: null,
+        });
+      }
     },
     onError,
   });
@@ -164,18 +167,20 @@ const CaregiverBookingProvider = ({
         text1: "Booking completed successfully!",
       });
 
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Service completed",
-          body: `${booking?.pets?.[0]?.name}'s ${booking?.serviceTypes?.display} service is completed!`,
-          sound: "default",
-          autoDismiss: true,
-          data: {
-            url: `/care-givers/bookings/${bookingId}`,
+      if (Platform.OS !== "web") {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Service completed",
+            body: `${booking?.pets?.[0]?.name}'s ${booking?.serviceTypes?.display} service is completed!`,
+            sound: "default",
+            autoDismiss: true,
+            data: {
+              url: `/care-givers/bookings/${bookingId}`,
+            },
           },
-        },
-        trigger: null,
-      });
+          trigger: null,
+        });
+      }
     },
     onError,
   });

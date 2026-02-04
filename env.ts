@@ -1,5 +1,15 @@
+import { Platform } from "react-native";
+
+let apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL!;
+
+if (Platform.OS === "android") {
+  apiBaseUrl = process.env.EXPO_PUBLIC_API_ANDROID_BASE_URL ?? apiBaseUrl;
+} else if (Platform.OS === "ios") {
+  apiBaseUrl = process.env.EXPO_PUBLIC_API_IOS_BASE_URL ?? apiBaseUrl;
+}
+
 export const ENV = {
-  API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL!,
+  API_BASE_URL: apiBaseUrl,
   GOOGLE_MAPS_API_KEY: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY!,
   IMAGE_BASE_URL: process.env.EXPO_PUBLIC_IMAGE_BASE_URL!,
   MERCHANT_NAME: process.env.EXPO_PUBLIC_MERCHANT_NAME!,

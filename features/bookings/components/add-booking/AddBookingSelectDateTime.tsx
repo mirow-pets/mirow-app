@@ -1,5 +1,5 @@
-import { DateInput } from "@/components/form/DateInput";
-import { TimeInput } from "@/components/form/TimeInput";
+import { DateInput } from "@/components/form/DateInput/DateInput";
+import { TimeInput } from "@/components/form/TimeInput/TimeInput";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { useAddBooking } from "@/hooks/use-add-booking-form";
 

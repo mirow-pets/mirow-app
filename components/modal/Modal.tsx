@@ -103,7 +103,10 @@ export const Modal = ({
                 </TouchableOpacity>
               )}
               {onConfirm && (
-                <TouchableOpacity onPress={onConfirm} disabled={loading}>
+                <TouchableOpacity
+                  onPress={onConfirm}
+                  disabled={loading || disabled}
+                >
                   <ThemedText
                     style={[styles.footerText, { color: theme.colors.primary }]}
                   >

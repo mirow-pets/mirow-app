@@ -4,6 +4,7 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 
 export async function registerForPushNotificationsAsync() {
+  if (Platform.OS === "web") return;
   if (!Device.isDevice) {
     // alert("Must use physical device for Push Notifications");
     return "TEST";

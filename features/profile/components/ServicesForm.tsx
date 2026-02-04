@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
 
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { Checkbox, HelperText } from "react-native-paper";
 
 import { NumberInput } from "@/components/form/NumberInput";
@@ -22,7 +22,11 @@ export const ServicesForm = () => {
 
   const form = useFormContext<TUpdateCaregiverServices>();
 
-  const services = form.watch("services");
+  const services = useWatch({
+    control: form.control,
+    name: "services",
+    defaultValue: form.getValues("services"),
+  });
 
   const labelMapper: Record<string, string> = {
     pricePerHour: "Price per hour",
@@ -35,14 +39,20 @@ export const ServicesForm = () => {
       <View style={{ gap: 4 }}>
         {services?.map(({ id, isActive, serviceRate }, i) => {
           const service = serviceMapper[id];
+          if (!service) return null;
 
           const handleOnValueChange = (isChecked: boolean) => {
-            form.setValue(`services.${i}.isActive`, isChecked);
+            const next = services.map((s, idx) =>
+              idx === i ? { ...s, isActive: isChecked } : s
+            );
+            form.setValue("services", next, {
+              shouldDirty: true,
+            });
           };
 
           return (
             <View
-              key={i}
+              key={id}
               style={{
                 backgroundColor: whiteColor,
                 padding: 16,
@@ -51,7 +61,6 @@ export const ServicesForm = () => {
               }}
             >
               <View
-                key={i}
                 style={{
                   flexDirection: "row",
                   gap: 8,

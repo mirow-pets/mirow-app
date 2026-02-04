@@ -9,7 +9,7 @@ import { Modal } from "@/components/modal/Modal";
 import { ThemedText } from "@/components/themed-text";
 import { redColor, whiteColor } from "@/constants/theme";
 import { rateBookingSchema } from "@/features/bookings/validations";
-import { usePetOwnerPayment } from "@/hooks/pet-owner/use-pet-owner-payment";
+import { usePetOwnerPayment } from "@/hooks/pet-owner/use-pet-owner-payment/use-pet-owner-payment";
 import { useReview } from "@/hooks/use-review";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { TBooking } from "@/types";

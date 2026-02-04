@@ -1,6 +1,6 @@
 import React from "react";
 
-import { DateInput } from "@/components/form/DateInput";
+import { DateInput } from "@/components/form/DateInput/DateInput";
 import { TextInputField } from "@/components/form/TextInputField";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { formatSsn } from "@/utils";

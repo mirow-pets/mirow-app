@@ -12,7 +12,7 @@ import {
   updateCaregiverProfileSchema,
 } from "@/features/profile/validations";
 import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
-import { useCaregiverPayment } from "@/hooks/caregiver/use-caregiver-payment";
+import { useCaregiverPayBackgroundCheck } from "@/hooks/caregiver/use-caregiver-pay-background-check/use-caregiver-pay-background-check";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 import { useExitFormRouteWarning } from "@/hooks/use-exit-form-route";
 import { addQueryParams, Get } from "@/services/http-service";
@@ -34,10 +34,8 @@ export default function BackgroundVerificationForm() {
     isStartingBackgroundVerification,
   } = useCaregiverCaregiver();
   const { profile, updateProfile, isUpdatingProfile } = useCaregiverProfile();
-  const {
-    backgroundCheckInitialPayment,
-    isLoadingBackgroundCheckInitialPayment,
-  } = useCaregiverPayment();
+  const { payBackgroundCheck, isPayingBackgroundCheck } =
+    useCaregiverPayBackgroundCheck();
 
   const convenienceFee = Number(settings["convenience-fee"]);
 
@@ -112,19 +110,21 @@ export default function BackgroundVerificationForm() {
     );
 
   const handlePayment = () => {
-    backgroundCheckInitialPayment(
+    payBackgroundCheck(
       {
         promoCode,
       },
-      (initialPay?: TInitialPay) => {
-        form.setValue("customerId", initialPay?.customerId);
-        updateProfile(
-          {
-            ...values,
-            customerId: initialPay?.customerId,
-          },
-          { onSuccess: () => setStep(4) }
-        );
+      {
+        onSuccess: (initialPay?: TInitialPay) => {
+          form.setValue("customerId", initialPay?.customerId);
+          updateProfile(
+            {
+              ...values,
+              customerId: initialPay?.customerId,
+            },
+            { onSuccess: () => setStep(4) }
+          );
+        },
       }
     );
   };
@@ -156,7 +156,7 @@ export default function BackgroundVerificationForm() {
             convenienceFee={convenienceFee}
             onNext={handlePayment}
             onPrev={handlePrev}
-            loading={isLoadingBackgroundCheckInitialPayment}
+            loading={isPayingBackgroundCheck}
             onPromocodeChange={setPromocode}
           />
         )}

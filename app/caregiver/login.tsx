@@ -6,7 +6,7 @@ import { LoginForm } from "@/features/auth/components/LoginForm";
 
 export default function LoginScreen() {
   return (
-    <View style={{ backgroundColor: "red", flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <AuthScreenLayout
         bgImage={require("@/assets/images/caregiver-login-bg.png")}
         showLogo

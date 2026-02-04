@@ -1,4 +1,3 @@
-import { StripeProvider } from "@stripe/stripe-react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
@@ -9,12 +8,14 @@ import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
+import { ConfirmProvider } from "@/components/confirm/ConfirmProvider";
 import { SplashScreen } from "@/components/SplashScreen";
 import { defaultTheme } from "@/constants/theme";
-import { ENV } from "@/env";
 import AuthProvider, { useAuth } from "@/hooks/use-auth";
 import ModalProvider from "@/hooks/use-modal";
 import { useNotificationObserver } from "@/hooks/use-notification-observer";
+import { GoogleOAuthProvider } from "@/plugins/google/components/GoogleOauthProvider";
+import { StripeProvider } from "@/plugins/stripe/components/StripeProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,21 +43,19 @@ export default function RootLayout() {
   useNotificationObserver();
 
   return (
-    <StripeProvider
-      publishableKey={ENV.STRIPE_PUBLISHABLE_KEY}
-      merchantIdentifier={ENV.MERCHANT_NAME}
-      urlScheme={ENV.URL_SCHEME}
-    >
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <ModalProvider>
-            <RootLayoutNav />
-            <StatusBar style="auto" />
-            <Toast />
-          </ModalProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </StripeProvider>
+    <GoogleOAuthProvider>
+      <StripeProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <ModalProvider>
+              <RootLayoutNav />
+              <StatusBar style="auto" />
+              <Toast />
+            </ModalProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </StripeProvider>
+    </GoogleOAuthProvider>
   );
 }
 
@@ -72,17 +71,19 @@ const RootLayoutNav = () => {
 
   return (
     <PaperProvider theme={defaultTheme}>
-      <GestureHandlerRootView>
-        <Stack initialRouteName="index" screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="home" />
-          <Stack.Screen name="select-role" />
-          <Stack.Protected guard={!!userRole}>
-            <Stack.Screen name="pet-owner" />
-            <Stack.Screen name="caregiver" />
-          </Stack.Protected>
-        </Stack>
-      </GestureHandlerRootView>
+      <ConfirmProvider>
+        <GestureHandlerRootView>
+          <Stack initialRouteName="home" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="home" />
+            <Stack.Screen name="select-role" />
+            <Stack.Protected guard={!!userRole}>
+              <Stack.Screen name="pet-owner" />
+              <Stack.Screen name="caregiver" />
+            </Stack.Protected>
+          </Stack>
+        </GestureHandlerRootView>
+      </ConfirmProvider>
     </PaperProvider>
   );
 };

@@ -1,21 +1,12 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
-import {
-  initPaymentSheet,
-  presentPaymentSheet,
-} from "@stripe/stripe-react-native";
-import {
-  UseMutateFunction,
-  useMutation,
-  useQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 
-import { ENV } from "@/env";
-import { TCancelBooking, TPayBooking } from "@/features/bookings/validations";
+import { TCancelBooking } from "@/features/bookings/validations";
 import { useAuth } from "@/hooks/use-auth";
 import { useModal } from "@/hooks/use-modal";
-import { Get, Patch, Post } from "@/services/http-service";
+import { Get, Patch } from "@/services/http-service";
 import { TBooking, TOption, TTrainingType } from "@/types";
 import { onError } from "@/utils";
 
@@ -28,8 +19,6 @@ export interface PetOwnerBookingContextValues {
   getBooking: (_bookingId: string) => void;
   booking: TBooking;
   isLoadingBooking: boolean;
-  payBooking: UseMutateFunction<void, Error, TPayBooking>;
-  isPayingBooking: boolean;
   trainingTypeOptions: TOption[];
 }
 
@@ -51,7 +40,6 @@ const PetOwnerBookingProvider = ({
     data: petOwnerBookingFormFields = {
       trainingType: [],
     },
-    isLoading: isLoadingPetOwnerBookingFormFields,
   } = useQuery<TPetOwnerBookingFormFields>({
     queryKey: ["pet-owner-booking-fields"],
     queryFn: () => Get("/fields/users/bookings"),
@@ -87,30 +75,6 @@ const PetOwnerBookingProvider = ({
     onError,
   });
 
-  const { mutate: payBooking, isPending: isPayingBooking } = useMutation<
-    void,
-    Error,
-    TPayBooking
-  >({
-    mutationFn: async (input: TPayBooking) => {
-      const payCaregiver = await Post(`/v2/bookings/${input.bookingId}/pay`);
-
-      const { error } = await initPaymentSheet({
-        paymentIntentClientSecret: payCaregiver?.clientSecret,
-        merchantDisplayName: ENV.MERCHANT_NAME,
-        customerId: payCaregiver?.customerId,
-        customerEphemeralKeySecret: payCaregiver?.ephemeralKey,
-      });
-
-      if (!error) {
-        const { error: presentError } = await presentPaymentSheet();
-        if (presentError) {
-          throw presentError;
-        }
-      }
-    },
-  });
-
   const cancelBooking = (input: TCancelBooking) => cancel(input);
 
   const getBooking = (bookingId: string) => {
@@ -132,8 +96,6 @@ const PetOwnerBookingProvider = ({
         getBooking,
         booking,
         isLoadingBooking,
-        payBooking,
-        isPayingBooking,
         trainingTypeOptions,
       }}
     >

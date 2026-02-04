@@ -7,7 +7,7 @@ import { Drawer } from "expo-router/drawer";
 import { Sidebar } from "@/components/layout/Sidebar";
 import PetOwnerBookingProvider from "@/hooks/pet-owner/use-pet-owner-booking";
 import PetOwnerCaregiverProvider from "@/hooks/pet-owner/use-pet-owner-caregiver";
-import PetOwnerPaymentProvider from "@/hooks/pet-owner/use-pet-owner-payment";
+import { PetOwnerPaymentProvider } from "@/hooks/pet-owner/use-pet-owner-payment/use-pet-owner-payment";
 import PetOwnerPetProvider from "@/hooks/pet-owner/use-pet-owner-pet";
 import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 import LocationProvider from "@/hooks/use-location";

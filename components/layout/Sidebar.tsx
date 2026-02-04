@@ -3,6 +3,7 @@ import { TouchableOpacity, View } from "react-native";
 
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { useTheme } from "react-native-paper";
@@ -49,7 +50,7 @@ export interface SidebarProps {
   email: string;
   menus: MenuItemProps[];
   /** Pass the drawer's navigation from drawerContent(props) => <Sidebar drawerNavigation={props.navigation} /> so close works */
-  drawerNavigation?: { dispatch: (_action: unknown) => void };
+  drawerNavigation?: DrawerContentComponentProps["navigation"];
 }
 
 export const Sidebar = ({

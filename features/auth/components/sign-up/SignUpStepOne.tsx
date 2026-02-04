@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { useFormContext } from "react-hook-form";
 
-import { DateInput } from "@/components/form/DateInput";
+import { DateInput } from "@/components/form/DateInput/DateInput";
 import { DropdownInput } from "@/components/form/DropdownInput";
 import { TextInputField } from "@/components/form/TextInputField";
 import { UserAvatarEditable } from "@/components/image/UserAvatarEditable";

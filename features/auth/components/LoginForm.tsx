@@ -19,7 +19,7 @@ import { TCurrentUser, UserRole } from "@/types/users";
 import { confirm, onError } from "@/utils";
 
 import { AppleLoginButton } from "./sso/AppleLoginButton";
-import { GoogleLoginButton } from "./sso/GoogleLoginButton";
+import { GoogleLoginButton } from "./sso/GoogleLoginButton/GoogleLoginButton";
 
 export interface LoginFormProps {
   path: string;

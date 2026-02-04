@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { DateInput } from "@/components/form/DateInput";
+import { DateInput } from "@/components/form/DateInput/DateInput";
 import { TextInputField } from "@/components/form/TextInputField";
 import { Modal } from "@/components/modal/Modal";
 import { useModal } from "@/hooks/use-modal";

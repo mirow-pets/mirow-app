@@ -4,9 +4,9 @@ import { useFormContext } from "react-hook-form";
 import { HelperText } from "react-native-paper";
 
 import { Button } from "@/components/button/Button";
-import { DateInput } from "@/components/form/DateInput";
+import { DateInput } from "@/components/form/DateInput/DateInput";
 import { TextInputField } from "@/components/form/TextInputField";
-import { TimeInput } from "@/components/form/TimeInput";
+import { TimeInput } from "@/components/form/TimeInput/TimeInput";
 import { PetAvatar } from "@/components/image/PetAvatar";
 import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { ThemedText } from "@/components/themed-text";

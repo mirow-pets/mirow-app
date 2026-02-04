@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 
 import { DefaultHeader } from "@/utils";
-import "react-native-reanimated";
 
 export default function MessagesLayout() {
   return (

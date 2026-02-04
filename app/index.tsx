@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/use-auth";
 export default function HomeScreen() {
   const { userRole } = useAuth();
 
+  console.log("userRole", userRole);
+
   useEffect(() => {
     router.replace("/home");
   }, []);
