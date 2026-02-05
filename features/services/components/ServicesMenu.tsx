@@ -14,7 +14,6 @@ const imageMapper: Record<string, ImageSource> = {
   sitting: require("@/assets/images/services/sitting.png"),
   grooming: require("@/assets/images/services/grooming.png"),
   training: require("@/assets/images/services/training.png"),
-  "meal-prep": require("@/assets/images/services/meal-prep.png"),
   transportation: require("@/assets/images/services/transportation.png"),
 };
 
@@ -35,25 +34,27 @@ export const ServicesMenu = ({ onClick }: ServicesMenuProps) => {
           <ThemedText>Loading...</ThemedText>
         ) : (
           <View style={styles.gridContainer}>
-            {data?.map((serviceType, i) => (
-              <TouchableOpacity
-                key={i}
-                style={styles.gridItem}
-                onPress={() => onClick(serviceType.type)}
-              >
-                <Image
-                  source={imageMapper[serviceType.type]}
-                  style={{ width: 40, height: 40, objectFit: "cover" }}
-                />
-                <ThemedText
-                  type="defaultSemiBold"
+            {data?.map((serviceType, i) =>
+              imageMapper[serviceType.type] ? (
+                <TouchableOpacity
                   key={i}
-                  style={{ fontSize: 8 }}
+                  style={styles.gridItem}
+                  onPress={() => onClick(serviceType.type)}
                 >
-                  {serviceType.display}
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
+                  <Image
+                    source={imageMapper[serviceType.type]}
+                    style={{ width: 40, height: 40, objectFit: "cover" }}
+                  />
+                  <ThemedText
+                    type="defaultSemiBold"
+                    key={i}
+                    style={{ fontSize: 8 }}
+                  >
+                    {serviceType.display}
+                  </ThemedText>
+                </TouchableOpacity>
+              ) : null
+            )}
           </View>
         )}
       </View>
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   gridItem: {
-    width: "23%", // Approximately 3 items per row (30% * 3 = 90%, with 10% for spacing)
+    width: "30%", // Approximately 3 items per row (30% * 3 = 90%, with 10% for spacing)
     aspectRatio: 1, // Make items square (width = height)
     alignItems: "center",
     justifyContent: "center",

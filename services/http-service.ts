@@ -11,7 +11,7 @@ const requestOptions = async (
   const accessToken = authStore.getState().token;
 
   const headers: Record<string, string> = {
-    "Content-Type": contentType,
+    ...(contentType === "" ? {} : { "Content-Type": contentType }),
     "Cache-Control": "no-cache",
   };
 

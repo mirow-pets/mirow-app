@@ -142,7 +142,7 @@ export default function ProfileScreen() {
       ),
       label: "Service Area",
       isDone: profileCompletion?.isServiceArea,
-      onPress: () => router.push("/caregiver/account/location"),
+      onPress: () => router.push("/caregiver/account/service-area"),
     },
   ];
 

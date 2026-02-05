@@ -82,7 +82,7 @@ export const Image = ({
             </View>
           </View>
         )}
-        {(isLoading || isUploading) && (
+        {Platform.OS === "android" && (isLoading || isUploading) && (
           <View style={[styles.loaderStyle]}>
             <ActivityIndicator size={20} color={primaryColor} />
             <Text style={styles.textStyle}>Loading..</Text>
@@ -105,6 +105,8 @@ export const Image = ({
   const handleSelect = async (image: BaseImagePicker.ImagePickerAsset) => {
     console.log("uri", image.uri);
     setImage(image.uri);
+
+    console.log("image: ", image);
 
     upload(image);
   };

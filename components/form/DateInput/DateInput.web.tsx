@@ -1,10 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { Controller, get, useFormContext, useFormState } from "react-hook-form";
-import DateTimePickerModal, {
-  DateTimePickerProps,
-} from "react-native-modal-datetime-picker";
+import { DateTimePickerProps } from "react-native-modal-datetime-picker";
 import { HelperText, TextInput } from "react-native-paper";
 
 interface DateInputProps
@@ -24,6 +22,17 @@ function formatUserFriendlyDate(date?: Date) {
   });
 }
 
+// Helper to convert Date to yyyy-mm-dd string for HTML date input
+function toISODateString(date?: Date) {
+  if (!date) return undefined;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate()),
+  ].join("-");
+}
+
 export const DateInput = ({
   label,
   name,
@@ -32,7 +41,6 @@ export const DateInput = ({
   ...props
 }: DateInputProps) => {
   const form = useFormContext();
-  const [open, setOpen] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
 
   // Always get the latest error from useFormState directly
@@ -86,6 +94,8 @@ export const DateInput = ({
               width: 0,
               height: 0,
             }}
+            min={toISODateString(props.minimumDate)}
+            max={toISODateString(props.maximumDate)}
             // Open the browser date picker when value is changed
             onChange={(e) => {
               // Parse the date in yyyy-mm-dd format to Date object
@@ -116,16 +126,6 @@ export const DateInput = ({
             }
             accessibilityRole="button"
             accessibilityLabel={label || name}
-          />
-          <DateTimePickerModal
-            {...props}
-            isVisible={open}
-            mode="date"
-            onConfirm={(date) => {
-              onChange(date);
-              setOpen(false);
-            }}
-            onCancel={() => setOpen(false)}
           />
           <HelperText type="error">{error?.toString()}</HelperText>
         </View>

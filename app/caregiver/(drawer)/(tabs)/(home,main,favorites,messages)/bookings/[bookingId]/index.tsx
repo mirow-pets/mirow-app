@@ -5,6 +5,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 
+import { Button } from "@/components/button/Button";
 import { ThemedText } from "@/components/themed-text";
 import { greenColor, lightGrayColor } from "@/constants/theme";
 import BookingDetails from "@/features/bookings/components/BookingDetails";
@@ -52,7 +53,7 @@ export default function BookingScreen() {
         {(!!queue || booking.isOpenShift) && (
           <View>
             {booking.bookingStatus?.status === "accepted" && (
-              <TouchableOpacity
+              <Button
                 disabled={isStartingBooking}
                 onPress={() =>
                   confirm({
@@ -65,11 +66,11 @@ export default function BookingScreen() {
                   })
                 }
               >
-                <ThemedText style={{ color: greenColor }}>Start</ThemedText>
-              </TouchableOpacity>
+                <ThemedText>LET&apos;S GO!</ThemedText>
+              </Button>
             )}
             {booking.bookingStatus?.status === "inprogress" && (
-              <TouchableOpacity
+              <Button
                 disabled={isCompletingBooking}
                 onPress={() =>
                   confirm({
@@ -79,8 +80,8 @@ export default function BookingScreen() {
                   })
                 }
               >
-                <ThemedText style={{ color: greenColor }}>Delivered</ThemedText>
-              </TouchableOpacity>
+                <ThemedText>ALL DONE!</ThemedText>
+              </Button>
             )}
             <View
               style={{

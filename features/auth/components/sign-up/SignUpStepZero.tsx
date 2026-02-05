@@ -64,6 +64,7 @@ export const SignUpStepZero = ({ onPrev, onNext }: SignUpStepZeroProps) => {
                 flexDirection: "row",
                 flexWrap: "wrap",
                 alignItems: "center",
+                width: "100%",
               }}
             >
               <ThemedText style={{ fontSize: 12 }}>

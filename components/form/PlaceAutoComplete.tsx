@@ -24,7 +24,7 @@ export const PlaceAutoComplete = ({
   onFocus,
 }: PlaceAutoCompleteProps) => {
   const handlePlaceSelect = (place: Place) => {
-    const { details } = place;
+    const { details, text } = place;
     if (details) {
       const addressComponents = details.addressComponents;
       const getComponent = (types: string[]) => {
@@ -49,6 +49,11 @@ export const PlaceAutoComplete = ({
       const country = getComponent(["country"]) || "Unknown Country";
 
       onChange({ city, state, country });
+    } else if (text?.text) {
+      const split = text.text.split(",");
+      const len = split.length;
+
+      onChange({ city: split[len - 3], state: split[len - 2], country: "US" });
     }
   };
 
@@ -58,9 +63,9 @@ export const PlaceAutoComplete = ({
         value={value}
         showClearButton={false}
         placeHolderText={placeholder}
-        detailsFields={["addressComponents", "formattedAddress", "location"]}
+        // detailsFields={["addressComponents", "formattedAddress", "location"]}
         fetchDetails
-        includedRegionCodes={["us"]}
+        // includedRegionCodes={["us"]}
         apiKey={ENV.GOOGLE_MAPS_API_KEY}
         onPlaceSelect={handlePlaceSelect}
         onBlur={onBlur}

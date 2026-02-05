@@ -6,9 +6,8 @@ import { useTheme } from "react-native-paper";
 import { PhoneNumberInput } from "@/components/form/PhoneNumberInput";
 import { PlacesInput } from "@/components/form/PlacesInput";
 import { TextInputField } from "@/components/form/TextInputField";
+import { FormStepsLayout } from "@/components/layout/FormStepsLayout";
 import { ThemedText } from "@/components/themed-text";
-
-import { FormStepsLayout } from "../../../../components/layout/FormStepsLayout";
 
 export interface SignUpStepTwoProps {
   onPrev?: () => void;

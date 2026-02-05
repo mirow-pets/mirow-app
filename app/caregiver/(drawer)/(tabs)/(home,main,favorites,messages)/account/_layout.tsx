@@ -59,7 +59,7 @@ export default function ProfileLayout() {
         options={{ presentation: "modal", title: "Address" }}
       />
       <Stack.Screen
-        name="location"
+        name="service-area"
         options={{ presentation: "modal", title: "Service Area" }}
       />
     </Stack>

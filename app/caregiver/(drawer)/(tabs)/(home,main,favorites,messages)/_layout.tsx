@@ -14,8 +14,8 @@ export default function MainLayout() {
     <Stack screenOptions={mainScreenOptions}>
       <Stack.Screen name="index" />
       <Stack.Screen name="messages" options={{ headerShown: false }} />
-      <Stack.Screen name="bookings" options={{ headerShown: false }} />
       <Stack.Screen name="favorites" options={{ headerShown: false }} />
+      <Stack.Screen name="bookings" options={{ headerShown: false }} />
       <Stack.Screen name="open-shifts" options={{ headerShown: false }} />
       <Stack.Screen name="calendar" options={{ headerShown: false }} />
       <Stack.Screen name="notifications" options={notificationsScreenOptions} />

@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 import { useMutation } from "@tanstack/react-query";
 import * as BaseImagePicker from "expo-image-picker";
 
@@ -16,16 +18,20 @@ export const useUploadImage = (props?: UseUploadImageProps) => {
 
       const splitFileName = image.fileName?.split(".") ?? [];
 
-      formdata.append("image", {
-        uri: image.uri,
-        name: image.fileName ?? "",
-        type: `image/${splitFileName[splitFileName.length - 1]}`,
-      } as unknown as File);
+      formdata.append(
+        "image",
+        image.file ??
+          ({
+            uri: image.uri,
+            name: image.fileName ?? "",
+            type: `image/${splitFileName[splitFileName.length - 1]}`,
+          } as unknown as File)
+      );
 
       const result = await Post(
         "/upload/image",
         formdata,
-        "multipart/form-data"
+        Platform.OS !== "web" ? "multipart/form-data" : ""
       );
       return result?.image;
     },

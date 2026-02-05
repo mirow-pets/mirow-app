@@ -64,21 +64,16 @@ export const PetsList = ({ selectedIds, onSelect }: PetsListProps) => {
         <InfiniteFlatList<TPet>
           key={"add-booking-pets"}
           url="/v2/users/pets"
-          perPage={5}
+          perPage={6}
           queryParams={{
             petTypeIds: selectedTypeIds,
             search,
           }}
-          contentContainerStyle={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "flex-start",
-            paddingBottom: 80,
-            columnGap: "4%",
-          }}
-          renderItem={({ item, index }) => (
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapper}
+          contentContainerStyle={styles.listContent}
+          renderItem={({ item }) => (
             <TouchableOpacity
-              key={index}
               style={styles.itemContainer}
               onPress={() => handleView(item.id)}
             >
@@ -166,12 +161,21 @@ export const PetsList = ({ selectedIds, onSelect }: PetsListProps) => {
   );
 };
 const styles = StyleSheet.create({
+  listContent: {
+    paddingBottom: 80,
+    paddingHorizontal: 4,
+  },
+  columnWrapper: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 16,
+  },
   itemContainer: {
-    // minWidth: "100%",
-    minWidth: "48%",
+    flex: 1,
+    maxWidth: "48%",
+    minWidth: 0,
     backgroundColor: whiteColor,
     borderRadius: 12,
-    marginBottom: 16,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "#e0e0e0",
@@ -179,7 +183,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
-    elevation: 3, // for Android shadow
+    elevation: 3,
   },
   petInfo: {
     padding: 12,

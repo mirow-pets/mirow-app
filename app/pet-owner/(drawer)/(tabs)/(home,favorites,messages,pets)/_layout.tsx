@@ -8,10 +8,10 @@ export default function MainLayout() {
     <Stack screenOptions={{ header: () => <TabsHeader /> }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="messages" options={{ headerShown: false }} />
-      <Stack.Screen name="bookings" options={{ headerShown: false }} />
       <Stack.Screen name="favorites" options={{ headerShown: false }} />
-      <Stack.Screen name="caregivers" options={{ headerShown: false }} />
       <Stack.Screen name="pets" options={{ headerShown: false }} />
+      <Stack.Screen name="bookings" options={{ headerShown: false }} />
+      <Stack.Screen name="caregivers" options={{ headerShown: false }} />
       <Stack.Screen
         name="notifications"
         options={{

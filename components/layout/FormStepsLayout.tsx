@@ -53,7 +53,7 @@ export const FormStepsLayout = ({
           disabled={nextDisabled}
           buttonColor={primaryColor}
           textColor={whiteColor}
-          style={{ width: "80%", marginTop: 56 }}
+          style={{ minWidth: 240, width: "80%", maxWidth: 300, marginTop: 56 }}
         >
           Continue
         </Button>
