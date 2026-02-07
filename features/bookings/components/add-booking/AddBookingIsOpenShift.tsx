@@ -27,7 +27,7 @@ export const AddBookingIsOpenShift = ({
   const options = [
     {
       icon: <Feather name="clock" size={32} color="black" />,
-      label: "Post as open shift",
+      label: "Broadcast request",
       description: `Your request is automatically sent to nearby pet caregivers who are ready to help`,
       value: true,
     },

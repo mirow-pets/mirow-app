@@ -50,7 +50,10 @@ export const CaregiversFilterModal = ({
    */
   const reset = () => {
     form.setValue("price", 0);
-    form.setValue("radius", 0);
+    form.setValue(
+      "radius",
+      disabledFields?.includes("radius") ? filter.radius : 0
+    );
     form.setValue("starrating", 0);
     form.setValue(
       "serviceTypeIds",
@@ -154,18 +157,25 @@ export const CaregiversFilterModal = ({
             step={1}
           />
 
-          <SliderInput
-            label="Radius"
-            name="radius"
-            actions={
-              <ThemedText style={{ fontSize: 12 }}>
-                (Max) {values.radius || 0} / 20 mi
-              </ThemedText>
-            }
-            minimumValue={0}
-            maximumValue={20}
-            step={1}
-          />
+          {disabledFields?.includes("radius") ? (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <ThemedText>Radius: </ThemedText>
+              <ThemedText type="subtitle">{values.radius || 0} mi</ThemedText>
+            </View>
+          ) : (
+            <SliderInput
+              label="Radius"
+              name="radius"
+              actions={
+                <ThemedText style={{ fontSize: 12 }}>
+                  (Max) {values.radius || 0} / 20 mi
+                </ThemedText>
+              }
+              minimumValue={0}
+              maximumValue={20}
+              step={1}
+            />
+          )}
 
           <SliderInput
             label="Ratings"

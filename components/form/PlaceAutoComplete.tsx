@@ -8,7 +8,14 @@ import { ENV } from "@/env";
 
 export interface PlaceAutoCompleteProps {
   value?: string;
-  onChange: (_value: { city: string; state: string; country: string }) => void;
+  onChange: (_value: {
+    city: string;
+    state: string;
+    country: string;
+    lat?: number;
+    lng?: number;
+    addressText?: string;
+  }) => void;
   style?: StyleProp<TextStyle>;
   placeholder?: string;
   onBlur?: (_e: any) => void;
@@ -24,7 +31,7 @@ export const PlaceAutoComplete = ({
   onFocus,
 }: PlaceAutoCompleteProps) => {
   const handlePlaceSelect = (place: Place) => {
-    const { details, text } = place;
+    const { details, text } = place as Place & { text: { text: string } };
     if (details) {
       const addressComponents = details.addressComponents;
       const getComponent = (types: string[]) => {
@@ -48,7 +55,14 @@ export const PlaceAutoComplete = ({
         getComponent(["administrative_area_level_1"]) || "Unknown State";
       const country = getComponent(["country"]) || "Unknown Country";
 
-      onChange({ city, state, country });
+      onChange({
+        city,
+        state,
+        country,
+        lat: details.location.latitude,
+        lng: details.location.longitude,
+        addressText: details.formattedAddress,
+      });
     } else if (text?.text) {
       const split = text.text.split(",");
       const len = split.length;
@@ -61,11 +75,14 @@ export const PlaceAutoComplete = ({
     <View style={{ width: "100%" }}>
       <GooglePlacesTextInput
         value={value}
-        showClearButton={false}
         placeHolderText={placeholder}
-        // detailsFields={["addressComponents", "formattedAddress", "location"]}
+        detailsProxyUrl={ENV.API_BASE_URL + "/v2/google/places/details"}
+        detailsProxyHeaders={{
+          "Content-Type": "application/json",
+        }}
+        detailsFields={["addressComponents", "formattedAddress", "location"]}
         fetchDetails
-        // includedRegionCodes={["us"]}
+        includedRegionCodes={["us"]}
         apiKey={ENV.GOOGLE_MAPS_API_KEY}
         onPlaceSelect={handlePlaceSelect}
         onBlur={onBlur}

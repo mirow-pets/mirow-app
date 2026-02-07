@@ -33,6 +33,7 @@ export interface ModalProps {
   disabled?: boolean;
   open?: boolean;
   actions?: ReactNode;
+  triggerStyle?: StyleProp<ViewStyle>;
 }
 
 export const Modal = ({
@@ -50,6 +51,7 @@ export const Modal = ({
   disabled,
   open,
   actions,
+  triggerStyle,
 }: ModalProps) => {
   const theme = useTheme();
   const { openId, setOpenId } = useModal();
@@ -61,7 +63,11 @@ export const Modal = ({
   return (
     <>
       {trigger && (
-        <TouchableOpacity onPress={() => setOpenId(id)} disabled={disabled}>
+        <TouchableOpacity
+          onPress={() => setOpenId(id)}
+          disabled={disabled}
+          style={triggerStyle}
+        >
           {trigger}
         </TouchableOpacity>
       )}

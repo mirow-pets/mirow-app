@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Image, ImageSource } from "expo-image";
 
 import { ThemedText } from "@/components/themed-text";
-import { primaryColor } from "@/constants/theme";
+import { primaryColor, whiteColor } from "@/constants/theme";
 import { Get } from "@/services/http-service";
 import { TServiceType } from "@/types";
 
@@ -43,12 +43,12 @@ export const ServicesMenu = ({ onClick }: ServicesMenuProps) => {
                 >
                   <Image
                     source={imageMapper[serviceType.type]}
-                    style={{ width: 40, height: 40, objectFit: "cover" }}
+                    style={{ width: 56, height: 56, objectFit: "cover" }}
                   />
                   <ThemedText
                     type="defaultSemiBold"
                     key={i}
-                    style={{ fontSize: 8 }}
+                    style={{ fontSize: 10, color: whiteColor }}
                   >
                     {serviceType.display}
                   </ThemedText>
@@ -71,12 +71,12 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-around",
+    justifyContent: "center",
     width: "100%",
-    gap: 8,
+    gap: 16,
   },
   gridItem: {
-    width: "30%", // Approximately 3 items per row (30% * 3 = 90%, with 10% for spacing)
+    width: "25%", // Approximately 3 items per row (30% * 3 = 90%, with 10% for spacing)
     aspectRatio: 1, // Make items square (width = height)
     alignItems: "center",
     justifyContent: "center",

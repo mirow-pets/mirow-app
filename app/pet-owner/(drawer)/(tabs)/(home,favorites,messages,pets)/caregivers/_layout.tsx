@@ -16,6 +16,12 @@ export default function CaregiversLayout() {
         }}
       />
       <Stack.Screen
+        name="nearby"
+        options={{
+          headerTitle: "Nearby Caregivers",
+        }}
+      />
+      <Stack.Screen
         name="[userId]/index"
         options={{ presentation: "modal", title: "View Caregiver" }}
       />

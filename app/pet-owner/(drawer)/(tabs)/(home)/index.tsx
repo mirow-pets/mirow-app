@@ -26,7 +26,8 @@ export default function PetOwnerHomeScreen() {
     router.push(`/pet-owner/caregivers/${caregiverId}`);
   };
 
-  const handleViewCaregivers = () => router.replace(`/pet-owner/caregivers`);
+  const handleViewCaregivers = () =>
+    router.replace(`/pet-owner/caregivers/nearby`);
 
   return (
     <ScrollView>

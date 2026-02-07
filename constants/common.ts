@@ -9,7 +9,7 @@ export const monthOptions = MONTHS?.map((month, index) => ({
 
 export const SERVICE_TYPE = {
   TRAINING: "training",
-  BOADRING: "boarding",
+  BOARDING: "boarding",
   WALKING: "walking",
   SITTING: "sitting",
   GROOMING: "grooming",

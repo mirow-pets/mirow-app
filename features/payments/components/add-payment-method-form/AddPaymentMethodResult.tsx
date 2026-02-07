@@ -50,9 +50,11 @@ export const AddPaymentMethodResult = ({
             {errorMessage ?? "Sorry! Something went wrong"}
           </ThemedText>
         </View>
-        <Button style={styles.resultButton} onPress={handleTryAgain}>
-          <ThemedText style={styles.resultButtonText}>Try Again</ThemedText>
-        </Button>
+        <View style={{ alignItems: "center" }}>
+          <Button style={styles.resultButton} onPress={handleTryAgain}>
+            <ThemedText style={styles.resultButtonText}>Try Again</ThemedText>
+          </Button>
+        </View>
       </View>
     );
   }
@@ -94,6 +96,7 @@ const styles = StyleSheet.create({
   },
   resultButton: {
     backgroundColor: whiteColor,
+    width: "80%",
   },
   resultButtonText: {
     color: primaryColor,

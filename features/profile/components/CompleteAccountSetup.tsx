@@ -27,7 +27,7 @@ export const CompleteAccountSetup = ({
       : Math.min(100, Math.max(0, progress));
 
   const handlePress = () => {
-    router.replace(`/${userRole as UserRole}/account`);
+    router.push(`/${userRole as UserRole}/account`);
   };
 
   return (

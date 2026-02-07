@@ -46,7 +46,7 @@ export const DateTimeInput = ({
     <Controller
       control={form.control}
       name={name}
-      render={({ field: { onChange, value } }) => (
+      render={({ field: { value } }) => (
         <View style={{ width: "100%" }}>
           <TextInput
             label={label}

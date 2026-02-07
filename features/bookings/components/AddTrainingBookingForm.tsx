@@ -5,7 +5,6 @@ import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 import { useAddBooking } from "@/hooks/use-add-booking-form";
 
 import { AddBookingConfirmation } from "./add-booking/AddBookingConfirmation";
-import { AddBookingIsOpenShift } from "./add-booking/AddBookingIsOpenShift";
 import { AddBookingSelectCaregiver } from "./add-booking/AddBookingSelectCaregiver";
 import { AddBookingSelectDateTime } from "./add-booking/AddBookingSelectDateTime";
 import { AddBookingSelectPet } from "./add-booking/AddBookingSelectPet";
@@ -29,14 +28,13 @@ export const AddTrainingBookingForm = () => {
         {step === 2 && <AddBookingSelectTrainingType progress={20} />}
         {step === 3 && <AddBookingSelectDateTime progress={30} />}
         {step === 4 && <AddBookingSpecialInstruction progress={40} />}
-        {step === 5 && <AddBookingIsOpenShift progress={60} />}
-        {step === 6 && (
+        {step === 5 && (
           <AddBookingSelectCaregiver
             progress={80}
             serviceTypeId={serviceType.id}
           />
         )}
-        {step === 7 && (
+        {step === 6 && (
           <AddBookingConfirmation serviceType={serviceType.display} />
         )}
       </View>

@@ -1,5 +1,11 @@
 import React, { ReactNode } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleProp,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 
 import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
@@ -47,12 +53,14 @@ export interface ImagePickerProps {
   trigger: ReactNode;
   disabled?: boolean;
   onSelect: (_image: BaseImagePicker.ImagePickerAsset) => void;
+  triggerStyle?: StyleProp<ViewStyle>;
 }
 
 export const ImagePicker = ({
   trigger,
   disabled,
   onSelect,
+  triggerStyle,
 }: ImagePickerProps) => {
   const { setOpenId } = useModal();
 
@@ -119,6 +127,7 @@ export const ImagePicker = ({
       trigger={trigger}
       style={{ width: 300 }}
       disabled={disabled}
+      triggerStyle={triggerStyle}
     >
       <View
         style={{

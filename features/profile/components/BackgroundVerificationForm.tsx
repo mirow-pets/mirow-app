@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -22,10 +22,12 @@ import { BackgroungVerificationStepFour } from "./background-verification/Backgr
 import { BackgroungVerificationStepOne } from "./background-verification/BackgroundVerificationStepOne";
 import { BackgroungVerificationStepThree } from "./background-verification/BackgroundVerificationStepThree";
 import { BackgroungVerificationStepTwo } from "./background-verification/BackgroundVerificationStepTwo";
+import { BackgroundCheckPaymentModal } from "./BackgroundCheckPaymentModal";
 
 export default function BackgroundVerificationForm() {
   const [step, setStep] = useState(1);
   const [promoCode, setPromocode] = useState<string>();
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const queryClient = useQueryClient();
 
   const {
@@ -96,10 +98,11 @@ export default function BackgroundVerificationForm() {
     const result = await form.trigger(
       fields as unknown as keyof TUpdateCaregiverProfile
     );
-    if (result)
-      setStep((step) =>
-        step === 2 && profile.isBackgroundVerificationPaid ? 4 : step + 1
-      );
+    if (!result) return;
+
+    setStep((step) =>
+      step === 2 && profile.isBackgroundVerificationPaid ? 4 : step + 1
+    );
 
     updateProfile(form.getValues());
   };
@@ -109,21 +112,52 @@ export default function BackgroundVerificationForm() {
       step === 4 && profile.isBackgroundVerificationPaid ? 2 : step - 1
     );
 
-  const handlePayment = () => {
-    payBackgroundCheck(
+  const runPaymentSuccess = (initialPay?: TInitialPay) => {
+    form.setValue("customerId", initialPay?.customerId);
+    updateProfile(
       {
-        promoCode,
+        ...values,
+        customerId: initialPay?.customerId,
       },
+      { onSuccess: () => setStep(4) }
+    );
+  };
+  console.log("showPaymentModal", showPaymentModal);
+  const handlePayment = () => {
+    console.log("handlePayment");
+    if (Platform.OS === "web") {
+      setShowPaymentModal(true);
+      return;
+    }
+    payBackgroundCheck(
+      { promoCode },
+      {
+        onSuccess: runPaymentSuccess,
+        onError: (error) => {
+          Toast.show({
+            type: "error",
+            text1: "Payment failed",
+            text2: error?.message ?? "Please try again.",
+          });
+        },
+      }
+    );
+  };
+
+  const handleModalPay = () => {
+    payBackgroundCheck(
+      { promoCode },
       {
         onSuccess: (initialPay?: TInitialPay) => {
-          form.setValue("customerId", initialPay?.customerId);
-          updateProfile(
-            {
-              ...values,
-              customerId: initialPay?.customerId,
-            },
-            { onSuccess: () => setStep(4) }
-          );
+          setShowPaymentModal(false);
+          runPaymentSuccess(initialPay);
+        },
+        onError: (error) => {
+          Toast.show({
+            type: "error",
+            text1: "Payment failed",
+            text2: error?.message ?? "Please try again.",
+          });
         },
       }
     );
@@ -168,6 +202,14 @@ export default function BackgroundVerificationForm() {
           />
         )}
       </View>
+      {Platform.OS === "web" && (
+        <BackgroundCheckPaymentModal
+          open={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          onPay={handleModalPay}
+          loading={isPayingBackgroundCheck}
+        />
+      )}
     </FormProvider>
   );
 }

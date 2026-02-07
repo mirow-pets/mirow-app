@@ -84,8 +84,8 @@ const CaregiverProfileProvider = ({
     });
 
   const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
-    mutationFn: (input: TUpdateCaregiverProfile) =>
-      Patch(`/care-givers`, {
+    mutationFn: (input: TUpdateCaregiverProfile) => {
+      console.log("input", {
         ...input,
         ...(input.dateOfBirth
           ? {
@@ -94,7 +94,18 @@ const CaregiverProfileProvider = ({
               year: input.dateOfBirth.getFullYear(),
             }
           : {}),
-      }),
+      });
+      return Patch(`/care-givers`, {
+        ...input,
+        ...(input.dateOfBirth
+          ? {
+              day: input.dateOfBirth.getDate(),
+              month: input.dateOfBirth.getMonth() + 1,
+              year: input.dateOfBirth.getFullYear(),
+            }
+          : {}),
+      });
+    },
     onSuccess: async () => {
       const queryKeys = [
         ["caregiver-profile", currUser?.sessionId],

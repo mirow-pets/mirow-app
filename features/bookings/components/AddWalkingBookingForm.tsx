@@ -10,12 +10,12 @@ import { AddBookingSelectDateTime } from "./add-booking/AddBookingSelectDateTime
 import { AddBookingSelectPet } from "./add-booking/AddBookingSelectPet";
 import { AddBookingSpecialInstruction } from "./add-booking/AddBookingSpecialInstruction";
 
-export const AddSittingBookingForm = () => {
+export const AddWalkingBookingForm = () => {
   const { step } = useAddBooking();
   const { serviceTypes } = usePetOwnerProfile();
 
   const serviceType = serviceTypes?.find(
-    (serviceType) => serviceType.type === SERVICE_TYPE.SITTING
+    (serviceType) => serviceType.type === SERVICE_TYPE.WALKING
   );
 
   if (!serviceType) return null;

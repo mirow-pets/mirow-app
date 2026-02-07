@@ -142,8 +142,8 @@ export default function BookingDetails({
         </ThemedText>
         {/* TODO: Apply this to service with pickup */}
         {/* <InfoRow label="Pickup Location" value={booking.pickupAddressText} />
-        {booking.dropupAddressText && (
-          <InfoRow label="Dropoff Location" value={booking.dropupAddressText} />
+        {booking.dropOffAddressText && (
+          <InfoRow label="Dropoff Location" value={booking.dropOffAddressText} />
         )} */}
         <InfoRow label="Service Started" value={serviceStarted} />
         {booking.isFeeding && <InfoRow label="Feeding Required" value="Yes" />}

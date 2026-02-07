@@ -5,17 +5,18 @@ import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 import { useAddBooking } from "@/hooks/use-add-booking-form";
 
 import { AddBookingConfirmation } from "./add-booking/AddBookingConfirmation";
+import { AddBookingPickUpDropOff } from "./add-booking/AddBookingPickUpDropOff";
 import { AddBookingSelectCaregiver } from "./add-booking/AddBookingSelectCaregiver";
 import { AddBookingSelectDateTime } from "./add-booking/AddBookingSelectDateTime";
 import { AddBookingSelectPet } from "./add-booking/AddBookingSelectPet";
 import { AddBookingSpecialInstruction } from "./add-booking/AddBookingSpecialInstruction";
 
-export const AddSittingBookingForm = () => {
+export const AddTransportationBookingForm = () => {
   const { step } = useAddBooking();
   const { serviceTypes } = usePetOwnerProfile();
 
   const serviceType = serviceTypes?.find(
-    (serviceType) => serviceType.type === SERVICE_TYPE.SITTING
+    (serviceType) => serviceType.type === SERVICE_TYPE.TRANSPORTATION
   );
 
   if (!serviceType) return null;
@@ -25,14 +26,15 @@ export const AddSittingBookingForm = () => {
       <View style={styles.container}>
         {step === 1 && <AddBookingSelectPet progress={0} />}
         {step === 2 && <AddBookingSelectDateTime progress={30} />}
-        {step === 3 && <AddBookingSpecialInstruction progress={40} />}
-        {step === 4 && (
+        {step === 3 && <AddBookingPickUpDropOff progress={40} />}
+        {step === 4 && <AddBookingSpecialInstruction progress={50} />}
+        {step === 5 && (
           <AddBookingSelectCaregiver
             progress={80}
             serviceTypeId={serviceType.id}
           />
         )}
-        {step === 5 && (
+        {step === 6 && (
           <AddBookingConfirmation serviceType={serviceType.display} />
         )}
       </View>

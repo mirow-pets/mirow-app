@@ -43,7 +43,7 @@ export const TimeInput = ({
     <Controller
       control={form.control}
       name={name}
-      render={({ field: { onChange, value } }) => (
+      render={({ field: { value } }) => (
         <View style={{ width: "100%" }}>
           <TextInput
             left={<TextInput.Icon icon="clock" size={24} />}

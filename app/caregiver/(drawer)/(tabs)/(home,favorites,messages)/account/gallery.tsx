@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
 import Feather from "@expo/vector-icons/Feather";
+import { Image } from "expo-image";
 
-import { CaregiverImage } from "@/components/image/CaregiverImage";
 import { ImagePicker } from "@/components/image/ImagePicker";
 import { ThemedText } from "@/components/themed-text";
+import { ENV } from "@/env";
 import { useCaregiverCaregiver } from "@/hooks/caregiver/use-caregiver-caregiver";
 import { useCaregiverProfile } from "@/hooks/caregiver/use-caregiver-profile";
 
@@ -24,6 +25,7 @@ export default function GalleryScreen() {
         <View style={styles.gridItem}>
           <ImagePicker
             disabled={isUploadingImage}
+            triggerStyle={{ width: "100%", height: "100%" }}
             trigger={
               <View style={styles.triggerContainer}>
                 {isUploadingImage ? (
@@ -38,7 +40,10 @@ export default function GalleryScreen() {
         </View>
         {caregiverGalleries?.map((gallery, i) => (
           <View key={i} style={styles.gridItem}>
-            <CaregiverImage src={gallery.url} size={"100%"} />
+            <Image
+              source={{ uri: `${ENV.IMAGE_BASE_URL}${gallery.url}` }}
+              style={{ width: "100%", height: "100%" }}
+            />
           </View>
         ))}
       </View>
@@ -62,7 +67,7 @@ const styles = StyleSheet.create({
     maxWidth: "32%",
     aspectRatio: 1,
     flexDirection: "row",
-    height: 30,
+    minHeight: 30,
   },
   triggerContainer: {
     borderWidth: 1,

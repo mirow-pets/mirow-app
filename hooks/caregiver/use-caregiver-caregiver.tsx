@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { Platform } from "react-native";
 
 import {
   UseMutateFunction,
@@ -142,7 +143,11 @@ const CaregiverCaregiverProvider = ({
     FormData
   >({
     mutationFn: (input: FormData) =>
-      Post("/care-givers/galleries", input, "multipart/form-data"),
+      Post(
+        "/care-givers/galleries",
+        input,
+        Platform.OS !== "web" ? "multipart/form-data" : ""
+      ),
     onSuccess: async () => {
       const queryKeys = [
         ["caregiver-galleries", userId],
@@ -218,11 +223,17 @@ const CaregiverCaregiverProvider = ({
 
     const formdata = new FormData();
 
-    formdata.append("image", {
-      uri: image.uri,
-      name: image.fileName ?? "",
-      type: `image/${splitFileName[splitFileName.length - 1]}`,
-    } as unknown as File);
+    console.log(image);
+
+    formdata.append(
+      "image",
+      image.file ??
+        ({
+          uri: image.uri,
+          name: image.fileName ?? "",
+          type: `image/${splitFileName[splitFileName.length - 1]}`,
+        } as unknown as File)
+    );
 
     _uploadImage(formdata);
   };

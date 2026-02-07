@@ -37,9 +37,7 @@ export const AddBookingConfirmation = ({
   // Notes may be optional
   const notes = values.notes || "-";
 
-  const onNext = form.handleSubmit((input) => {
-    addBooking(input);
-  });
+  const onNext = () => addBooking(values);
 
   return (
     <FormStepsLayout

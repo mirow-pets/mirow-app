@@ -16,6 +16,20 @@ export const addBookingSchema = z
     notes: z.string().optional(),
     isOpenShift: z.boolean({ message: "Shift type is required" }),
     caregiverId: z.string().optional(),
+    pickup: z
+      .object({
+        lat: z.number(),
+        lng: z.number(),
+        addressText: z.string(),
+      })
+      .optional(),
+    dropOff: z
+      .object({
+        lat: z.number(),
+        lng: z.number(),
+        addressText: z.string(),
+      })
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (!data.isOpenShift && !data.caregiverId) {

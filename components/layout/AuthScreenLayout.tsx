@@ -34,7 +34,7 @@ export default function AuthScreenLayout({
       <ImageBackground
         source={bgImage || require("@/assets/images/signup-bg.png")}
         style={{ flex: 1 }}
-        contentFit="cover"
+        contentFit="fill"
       >
         <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
           <View style={styles.container}>

@@ -179,12 +179,12 @@ export const LoginForm = ({ path, redirect, signUpPath }: LoginFormProps) => {
             gap: 4,
           }}
         >
-          <ThemedText style={{ fontWeight: "600", fontSize: 15 }}>
+          <ThemedText style={{ fontWeight: "600", fontSize: 12 }}>
             Don&apos;t have an account yet?
           </ThemedText>
           <ThemedText
             style={{
-              fontSize: 15,
+              fontSize: 12,
               fontWeight: "bold",
               marginTop: -3,
             }}
@@ -194,8 +194,8 @@ export const LoginForm = ({ path, redirect, signUpPath }: LoginFormProps) => {
             Sign up
           </ThemedText>
         </View>
-
-        <View style={{ alignItems: "center", marginTop: 32, gap: 4 }}>
+        {/* TODO: Add contact support */}
+        {/* <View style={{ alignItems: "center", marginTop: 32, gap: 4 }}>
           <ThemedText style={{ fontWeight: "600", fontSize: 15 }}>
             Having trouble?
           </ThemedText>
@@ -221,7 +221,7 @@ export const LoginForm = ({ path, redirect, signUpPath }: LoginFormProps) => {
               info@mirow.app
             </ThemedText>
           </View>
-        </View>
+        </View> */}
       </View>
     </FormProvider>
   );

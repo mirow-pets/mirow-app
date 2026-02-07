@@ -16,7 +16,7 @@ export interface TBooking {
   tips: number;
   pickup: string;
   pickupAddressText: string;
-  dropupAddressText: string;
+  dropOffAddressText: string;
   dropOff: string;
   rejectReason: string;
   cancelReason: string;

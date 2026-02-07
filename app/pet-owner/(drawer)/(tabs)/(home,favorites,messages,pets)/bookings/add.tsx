@@ -4,18 +4,38 @@ import { useLocalSearchParams } from "expo-router";
 
 import { SERVICE_TYPE } from "@/constants/common";
 import { whiteColor } from "@/constants/theme";
+import { AddBoardingBookingForm } from "@/features/bookings/components/AddBoardingBookingForm";
+import { AddGroomingBookingForm } from "@/features/bookings/components/AddGroomingBookingForm";
 import { AddSittingBookingForm } from "@/features/bookings/components/AddSittingBookingForm";
 import { AddTrainingBookingForm } from "@/features/bookings/components/AddTrainingBookingForm";
+import { AddTransportationBookingForm } from "@/features/bookings/components/AddTransportationBookingForm";
+import { AddWalkingBookingForm } from "@/features/bookings/components/AddWalkingBookingForm";
 import { usePetOwnerProfile } from "@/hooks/pet-owner/use-pet-owner-profile";
 import AddBookingProvider from "@/hooks/use-add-booking-form";
 
 const mapper = {
   [SERVICE_TYPE.TRAINING]: {
     isOpenShiftStep: 5,
-    confirmationStep: 7,
+    confirmationStep: 6,
   },
   [SERVICE_TYPE.SITTING]: {
     isOpenShiftStep: 4,
+    confirmationStep: 5,
+  },
+  [SERVICE_TYPE.GROOMING]: {
+    isOpenShiftStep: 5,
+    confirmationStep: 6,
+  },
+  [SERVICE_TYPE.WALKING]: {
+    isOpenShiftStep: 4,
+    confirmationStep: 5,
+  },
+  [SERVICE_TYPE.BOARDING]: {
+    isOpenShiftStep: 5,
+    confirmationStep: 6,
+  },
+  [SERVICE_TYPE.TRANSPORTATION]: {
+    isOpenShiftStep: 5,
     confirmationStep: 6,
   },
 };
@@ -40,6 +60,12 @@ export default function AddBookingScreen() {
       >
         {type === SERVICE_TYPE.TRAINING && <AddTrainingBookingForm />}
         {type === SERVICE_TYPE.SITTING && <AddSittingBookingForm />}
+        {type === SERVICE_TYPE.GROOMING && <AddGroomingBookingForm />}
+        {type === SERVICE_TYPE.WALKING && <AddWalkingBookingForm />}
+        {type === SERVICE_TYPE.BOARDING && <AddBoardingBookingForm />}
+        {type === SERVICE_TYPE.TRANSPORTATION && (
+          <AddTransportationBookingForm />
+        )}
       </AddBookingProvider>
     </View>
   );

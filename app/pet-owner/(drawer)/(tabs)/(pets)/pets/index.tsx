@@ -1,22 +1,13 @@
-import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { useRouter } from "expo-router";
-import { FAB, useTheme } from "react-native-paper";
+import { FAB } from "react-native-paper";
 
 import { primaryColor, whiteColor } from "@/constants/theme";
 import { PetsList } from "@/features/pets/components/PetsList";
-import { TPetType } from "@/types/pets";
 
 export default function PetsScreen() {
-  const theme = useTheme();
   const router = useRouter();
-  const [showSearch, setShowSearch] = useState(false);
-  const [search, setSearch] = useState<string>();
-
-  const [selectedTypeIds, setSelectePetTypeIds] = useState<TPetType["id"][]>(
-    []
-  );
 
   const handleAdd = () => {
     router.push("/pet-owner/pets/add", {

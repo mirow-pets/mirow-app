@@ -248,6 +248,8 @@ const AddBookingProvider = ({
     } else setStep((step) => step + 1);
   };
 
+  console.log("errors", form.formState.errors);
+
   return (
     <AddBookingContext.Provider
       value={{

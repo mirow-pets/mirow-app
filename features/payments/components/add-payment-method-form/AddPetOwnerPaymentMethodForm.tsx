@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { CardField } from "@stripe/stripe-react-native";
+import { Image } from "expo-image";
 import Toast from "react-native-toast-message";
 
 import { Button } from "@/components/button/Button";
@@ -58,6 +59,12 @@ export const AddPetOwnerPaymentMethodForm = ({
 
   return (
     <View style={styles.container}>
+      {/* Card preview */}
+      <Image
+        source={require("@/assets/images/card.png")}
+        style={styles.cardPreview}
+      />
+
       <CardField
         cardStyle={{
           backgroundColor: "#FFFFFF",
@@ -92,5 +99,14 @@ const styles = StyleSheet.create({
     height: 50,
     marginVertical: 20,
     color: blackColor,
+  },
+  cardPreview: {
+    width: "100%",
+    aspectRatio: 1.586,
+    maxHeight: 800,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 24,
+    justifyContent: "space-between",
   },
 });
